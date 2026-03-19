@@ -1,149 +1,386 @@
-// 语音播放功能
 class AudioPlayer {
   constructor() {
-    this.audioPlayer = document.getElementById('audio-player');
-    this.synth = window.speechSynthesis;
+    this.audio = null;
     this.isSpeaking = false;
-    this.init();
+    this.speakQueue = [];
+    this.isProcessingQueue = false;
+    this.zhipuApiKey = '4580c38bffb3433ba83182c20d7a4050.ulSX2n8qexklBZU1';
+    this.zhipuApiUrl = 'https://open.bigmodel.cn/api/paas/v4/audio/speech';
   }
 
-  init() {
-    if (!this.synth) {
-      console.warn('Speech synthesis not supported');
-      return;
-    }
+  // 清理文本，移除括号内容
+  cleanText(text) {
+    if (!text) return '';
 
-    // 延迟加载声音，确保页面完全加载
-    setTimeout(() => {
-      this.loadVoices();
+    console.log('原始文本:', text);
 
-      // 监听声音变化（某些浏览器需要）
-      this.synth.onvoiceschanged = () => {
-        this.loadVoices();
-      };
-    }, 100);
+    // 移除各种类型的括号及其内容
+    let cleaned = text
+      // 移除全角中文括号（）及其内容
+      .replace(/（[^）]*）/g, '')
+      // 移除半角英文括号()及其内容
+      .replace(/\([^)]*\)/g, '')
+      // 移除方头括号【】及其内容
+      .replace(/【[^】]*】/g, '')
+      // 移除方括号[]及其内容
+      .replace(/\[[^\]]*\]/g, '')
+      // 移除花括号{}及其内容
+      .replace(/\{[^}]*\}/g, '')
+      // 移除尖括号<>及其内容
+      .replace(/<[^>]*>/g, '')
+      // 移除特殊字符，但保留基本的标点符号
+      .replace(/[""''']/g, "'")     // 统一引号为撇号
+      // 清理多余的空格（但保留必要的空格）
+      .replace(/\s+/g, ' ')
+      // 移除导致API错误的标点问题
+      .replace(/\s+\./g, '.')        // 移除句号前的空格
+      .replace(/\s+\,/g, ',')        // 移除逗号前的空格
+      .replace(/\s+\?/g, '?')        // 移除问号前的空格
+      .replace(/\s+\!/g, '!')        // 移除感叹号前的空格
+      // 移除结尾的孤立标点符号（句子中间的标点保留）
+      .replace(/[,\.\?!]$/, '')      // 移除句尾的逗号、句号、问号、感叹号
+      .trim();                       // 移除首尾空格
+
+    console.log('清理后文本:', cleaned);
+
+    return cleaned;
   }
 
-  loadVoices() {
-    try {
-      this.voices = this.synth.getVoices();
-      console.log('Available voices:', this.voices.length);
+  // 进一步清理文本，确保TTS API兼容性
+  sanitizeText(text) {
+    if (!text) return '';
 
-      // 等待声音加载
-      if (this.voices.length === 0) {
-        setTimeout(() => this.loadVoices(), 100);
-      }
-    } catch (error) {
-      console.error('Error loading voices:', error);
-    }
+    return text
+      // 移除可能导致API问题的特殊字符，但保留基本标点
+      .replace(/[^\w\s\u4e00-\u9fa5'?!.,\-]/g, '')
+      // 处理一些特殊的有道API问题
+      .replace(/^\.+$/, '')           // 移除只有句号的情况
+      .replace(/^\?+$/, '')           // 移除只有问号的情况
+      .replace(/^!+$/, '')            // 移除只有感叹号的情况
+      // 确保空格正确
+      .replace(/\s+/g, ' ')
+      // 移除首尾空格
+      .trim();
   }
 
-  // 使用浏览器TTS播放英语发音
   speak(text, options = {}) {
-    if (!this.synth) {
-      console.error('Speech synthesis not available');
-      return Promise.reject('Speech synthesis not available');
-    }
-
-    // 停止当前播放
-    this.synth.cancel();
-
     return new Promise((resolve, reject) => {
-      try {
-        const utterance = new SpeechSynthesisUtterance(text);
-
-        // 设置发音参数 - 适合小朋友的设置，并增强音量感知
-        utterance.lang = 'en-US';
-        utterance.rate = options.rate || 0.8; // 语速稍慢，更清晰
-        utterance.pitch = options.pitch || 1.0; // 音调正常，避免过高影响音量
-        utterance.volume = options.volume || 1.0; // 最大音量
-
-        // 优先选择适合小朋友的英语声音
-        if (this.voices && this.voices.length > 0) {
-          // 优先选择女性声音，通常更适合小朋友
-          const childFriendlyVoice = this.voices.find(voice =>
-            voice.lang.startsWith('en') &&
-            (voice.name.toLowerCase().includes('female') ||
-             voice.name.toLowerCase().includes('samantha') ||
-             voice.name.toLowerCase().includes('zira') ||
-             voice.name.toLowerCase().includes('victoria'))
-          );
-
-          // 其次选择标准英语声音
-          const englishVoice = childFriendlyVoice || this.voices.find(voice =>
-            voice.lang.startsWith('en')
-          ) || this.voices[0];
-
-          if (englishVoice) {
-            utterance.voice = englishVoice;
-            console.log('Using voice:', englishVoice.name, 'Language:', englishVoice.lang);
-          }
-        } else {
-          console.warn('No voices available, using default');
-        }
-
-        utterance.onend = () => {
-          this.isSpeaking = false;
-          console.log('Speech completed successfully');
-          resolve();
-        };
-
-        utterance.onerror = (event) => {
-          this.isSpeaking = false;
-          console.error('Speech synthesis error:', event.error);
-          console.error('Error details:', {
-            error: event.error,
-            name: event.name,
-            message: event.message
-          });
-          reject(event.error);
-        };
-
-        // 开始播放
-        this.synth.speak(utterance);
-        this.isSpeaking = true;
-        console.log('Speaking:', text, 'with rate:', utterance.rate);
-
-        // 确保音频开始播放
-        setTimeout(() => {
-          if (this.synth.pending || this.synth.speaking) {
-            console.log('Audio is playing');
-          } else {
-            console.warn('Audio may not have started');
-          }
-        }, 100);
-
-      } catch (error) {
-        this.isSpeaking = false;
-        console.error('Error creating utterance:', error);
-        reject(error);
+      if (!text) {
+        reject(new Error('文本为空'));
+        return;
       }
+
+      // 清理文本，移除括号内容
+      const cleaned = this.cleanText(text);
+      if (!cleaned) {
+        console.warn('清理后的文本为空:', text);
+        reject(new Error('清理后的文本为空'));
+        return;
+      }
+
+      // 进一步清理特殊字符，但保留基本标点
+      const finalText = this.sanitizeText(cleaned);
+      if (!finalText || finalText.trim().length < 1) {
+        console.warn('最终文本过短或为空:', finalText);
+        reject(new Error('最终文本过短或为空'));
+        return;
+      }
+
+      console.log('原始文本:', text);
+      console.log('最终处理文本:', finalText);
+
+      // 将请求加入队列，支持自定义语速
+      this.speakQueue.push({
+        text: finalText,
+        options: {
+          ...options,
+          speed: options.speed || 1.2 // 默认语速1.2倍
+        },
+        resolve: resolve,
+        reject: reject
+      });
+
+      // 处理队列
+      this.processQueue();
     });
   }
 
-  // 停止播放
-  stop() {
-    if (this.synth) {
-      this.synth.cancel();
-      this.isSpeaking = false;
+  async processQueue() {
+    if (this.isProcessingQueue || this.speakQueue.length === 0) {
+      return;
+    }
+
+    this.isProcessingQueue = true;
+
+    while (this.speakQueue.length > 0) {
+      const current = this.speakQueue.shift();
+
+      try {
+        await this.playAudio(current.text, current.options);
+        current.resolve();
+      } catch (error) {
+        console.error('音频播放失败:', error);
+        current.reject(error);
+      }
+
+      // 添加小延迟，避免连续播放问题
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    this.isProcessingQueue = false;
+  }
+
+  playAudio(cleanText, options = {}) {
+    return new Promise((resolve, reject) => {
+      // 停止当前播放
+      this.stop();
+
+      console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
+
+      // 调用智谱AI API，传入语速参数
+      this.callZhipuAPI(cleanText, options.speed || 1.2)
+        .then(audioBlob => {
+          // 创建本地URL
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          this.audio = new Audio();
+          this.audio.src = audioUrl;
+          this.audio.volume = 1; // 设置音量为1
+
+          console.log('设置音量为:', this.audio.volume);
+
+          // 设置超时
+          const timeout = setTimeout(() => {
+            this.isSpeaking = false;
+            console.error('音频播放超时:', cleanText);
+            URL.revokeObjectURL(audioUrl);
+            reject(new Error('音频播放超时'));
+          }, 15000); // 15秒超时
+
+          this.audio.onloadeddata = () => {
+            clearTimeout(timeout);
+            console.log('智谱AI音频数据加载完成:', cleanText);
+          };
+
+          this.audio.onended = () => {
+            clearTimeout(timeout);
+            this.isSpeaking = false;
+            console.log('智谱AI发音播放完成:', cleanText);
+            URL.revokeObjectURL(audioUrl);
+            resolve();
+          };
+
+          this.audio.onerror = (e) => {
+            clearTimeout(timeout);
+            this.isSpeaking = false;
+            console.error('智谱AI发音播放失败:', e);
+            URL.revokeObjectURL(audioUrl);
+            reject(e);
+          };
+
+          this.isSpeaking = true;
+
+          this.audio.addEventListener('canplaythrough', () => {
+            this.audio.play().then(() => {
+              console.log('智谱AI发音播放成功:', cleanText);
+            }).catch(err => {
+              clearTimeout(timeout);
+              this.isSpeaking = false;
+              console.error('播放失败:', err);
+              URL.revokeObjectURL(audioUrl);
+              reject(err);
+            });
+          }, { once: true });
+
+          this.audio.load();
+        })
+        .catch(error => {
+          console.error('智谱AI API调用失败:', error);
+
+          // 显示友好的错误提示
+          const userFriendlyError = new Error(`发音服务暂时不可用，请稍后再试。详情: ${error.message}`);
+          reject(userFriendlyError);
+        });
+    });
+  }
+
+  // 调用智谱AI TTS API
+  async callZhipuAPI(text, speed = 1.2) {
+    try {
+      console.log('发送智谱AI请求:', text);
+
+      const requestBody = {
+        model: 'glm-tts',
+        input: text,
+        voice: 'chuichui',
+        response_format: 'wav', // 改回wav格式
+        stream: false,
+        speed: speed // 使用传入的语速参数
+      };
+
+      console.log('请求参数:', JSON.stringify(requestBody, null, 2));
+
+      const response = await fetch(this.zhipuApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.zhipuApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      console.log('智谱AI响应状态:', response.status, response.statusText);
+
+      if (!response.ok) {
+        // 尝试读取错误信息
+        let errorMessage = `智谱AI API响应错误: ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          console.error('智谱AI错误详情:', errorData);
+          errorMessage += ` - ${JSON.stringify(errorData)}`;
+        } catch (e) {
+          console.error('无法解析错误响应');
+        }
+        throw new Error(errorMessage);
+      }
+
+      // 检查响应类型
+      const contentType = response.headers.get('content-type');
+      console.log('智谱AI响应类型:', contentType);
+
+      // 获取音频blob
+      const audioBlob = await response.blob();
+      console.log('音频blob大小:', audioBlob.size, 'bytes');
+
+      // 检查是否是有效的音频
+      if (audioBlob.size === 0) {
+        throw new Error('智谱AI返回了空的音频数据');
+      }
+
+      // 尝试去除音频前面的提示音
+      return await this.removeAudioBeep(audioBlob);
+
+    } catch (error) {
+      console.error('智谱AI API调用失败:', error);
+      throw error;
     }
   }
 
-  // 是否正在播放
+  // 去除音频前面的提示音
+  async removeAudioBeep(audioBlob) {
+    try {
+      // 创建音频上下文来处理音频
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const arrayBuffer = await audioBlob.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // 去除前面1.8秒的音频
+      const sampleRate = audioBuffer.sampleRate;
+      const samplesToRemove = Math.floor(sampleRate * 1.8); // 1.8秒
+
+      console.log(`去除音频前${(samplesToRemove/sampleRate).toFixed(2)}秒的提示音`);
+
+      if (audioBuffer.length > samplesToRemove) {
+        // 创建新的音频缓冲区，去除前面的提示音
+        const newBuffer = audioContext.createBuffer(
+          audioBuffer.numberOfChannels,
+          audioBuffer.length - samplesToRemove,
+          sampleRate
+        );
+
+        // 复制音频数据（跳过前面的样本）
+        for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+          const channelData = audioBuffer.getChannelData(channel);
+          const newChannelData = newBuffer.getChannelData(channel);
+
+          for (let i = 0; i < newBuffer.length; i++) {
+            newChannelData[i] = channelData[i + samplesToRemove];
+          }
+        }
+
+        // 将处理后的音频转换回blob
+        const wavBlob = await this.audioBufferToWav(newBuffer);
+        audioContext.close();
+        return wavBlob;
+      }
+
+      // 如果音频太短，直接返回原音频
+      audioContext.close();
+      return audioBlob;
+
+    } catch (error) {
+      console.warn('音频处理失败，返回原音频:', error);
+      return audioBlob;
+    }
+  }
+
+  // 将AudioBuffer转换为WAV Blob
+  async audioBufferToWav(buffer) {
+    const numberOfChannels = buffer.numberOfChannels;
+    const length = buffer.length * numberOfChannels * 2 + 44;
+    const arrayBuffer = new ArrayBuffer(length);
+    const view = new DataView(arrayBuffer);
+
+    // WAV文件头
+    const writeString = (offset, string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    };
+
+    let offset = 0;
+    writeString(offset, 'RIFF'); offset += 4;
+    view.setUint32(offset, length - 8, true); offset += 4;
+    writeString(offset, 'WAVE'); offset += 4;
+    writeString(offset, 'fmt '); offset += 4;
+    view.setUint32(offset, 16, true); offset += 4;
+    view.setUint16(offset, 1, true); offset += 2;
+    view.setUint16(offset, numberOfChannels, true); offset += 2;
+    view.setUint32(offset, buffer.sampleRate, true); offset += 4;
+    view.setUint32(offset, buffer.sampleRate * 2 * numberOfChannels, true); offset += 4;
+    view.setUint16(offset, numberOfChannels * 2, true); offset += 2;
+    view.setUint16(offset, 16, true); offset += 2;
+    writeString(offset, 'data'); offset += 4;
+    view.setUint32(offset, length - offset - 4, true); offset += 4;
+
+    // 写入音频数据
+    const floatTo16BitPCM = (output, offset, input) => {
+      for (let i = 0; i < input.length; i++, offset += 2) {
+        const s = Math.max(-1, Math.min(1, input[i]));
+        output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      }
+    };
+
+    for (let channel = 0; channel < numberOfChannels; channel++) {
+      floatTo16BitPCM(view, 44, buffer.getChannelData(channel));
+    }
+
+    return new Blob([arrayBuffer], { type: 'audio/wav' });
+  }
+
   isPlaying() {
     return this.isSpeaking;
   }
 
-  // 播放单词发音
   speakWord(word) {
-    console.log('speakWord called with:', word);
     return this.speak(word);
   }
 
-  // 播放句子发音
   speakSentence(sentence) {
-    console.log('speakSentence called with:', sentence);
-    return this.speak(sentence, { rate: 0.9 }); // 句子语速稍快一点
+    return this.speak(sentence);
+  }
+
+  stop() {
+    // 清空队列
+    this.speakQueue = [];
+    this.isProcessingQueue = false;
+
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.src = '';
+      this.audio = null;
+    }
+    this.isSpeaking = false;
   }
 }
 

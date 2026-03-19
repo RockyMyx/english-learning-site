@@ -1,5 +1,6 @@
 // 主应用程序入口
 import { getAllWords } from './utils/vocabulary.js';
+import learningProgress from './utils/learningProgress.js';
 
 // 导入各个页面模块
 import { initListeningMode } from './pages/listeningMode.js';
@@ -25,6 +26,32 @@ class Router {
     // 监听hash变化
     window.addEventListener('hashchange', () => this.handleRouteChange());
     window.addEventListener('load', () => this.handleRouteChange());
+
+    // 初始化学习进度系统
+    window.learningProgress = learningProgress;
+
+    // 暴露全局函数供页面使用
+    window.getTodayPoints = () => this.getTodayPoints();
+    window.getStudyTime = () => this.getStudyTime();
+    window.addPoints = (points) => this.addPoints(points);
+
+    // 启动学习时间跟踪
+    this.startStudyTimeTracking();
+
+    // 监听页面可见性变化，准确跟踪学习时间
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.pageHiddenTime = Date.now();
+      } else {
+        if (this.pageHiddenTime) {
+          const hiddenDuration = Math.floor((Date.now() - this.pageHiddenTime) / 1000 / 60);
+          if (hiddenDuration > 0) {
+            learningProgress.addStudyTime(hiddenDuration);
+          }
+          this.pageHiddenTime = null;
+        }
+      }
+    });
 
     // 定义路由
     this.routes = {
@@ -126,9 +153,13 @@ class Router {
   }
 
   startVisitTimer() {
+    // 清除旧的访问时间数据用于测试
+    localStorage.removeItem('visitTime');
+    localStorage.removeItem('lastVisitTime');
+
     // 初始化访问时间
-    let visitTime = parseInt(localStorage.getItem('visitTime') || '0');
-    let lastVisitTime = parseInt(localStorage.getItem('lastVisitTime') || Date.now());
+    let visitTime = 0; // 强制从0开始
+    let lastVisitTime = Date.now();
 
     // 计算上次访问的时长
     const timeDiff = Math.floor((Date.now() - lastVisitTime) / 1000 / 60); // 转换为分钟
@@ -181,11 +212,22 @@ class Router {
     return pointsData[today] || 0;
   }
 
+  // 添加获取学习时间的全局函数
+  getStudyTime() {
+    if (window.learningProgress) {
+      return window.learningProgress.getStudyTime();
+    }
+    return 0;
+  }
+
   addPoints(points) {
     const today = new Date().toISOString().split('T')[0];
     const pointsData = JSON.parse(localStorage.getItem('pointsData') || '{}');
     pointsData[today] = (pointsData[today] || 0) + points;
     localStorage.setItem('pointsData', JSON.stringify(pointsData));
+
+    // 同步到新的学习进度系统
+    learningProgress.addScore(points);
 
     // 更新显示
     const todayPointsElement = document.getElementById('today-points');
@@ -232,6 +274,18 @@ class Router {
     }
 
     return streak;
+  }
+
+  startStudyTimeTracking() {
+    // 每分钟更新一次学习时间
+    setInterval(() => {
+      learningProgress.addStudyTime(1);
+    }, 60000); // 每分钟更新一次
+
+    // 初始化时检查一次成就
+    setTimeout(() => {
+      learningProgress.checkAchievements();
+    }, 1000);
   }
 
 }
@@ -294,6 +348,38 @@ function addGlobalStyles() {
 
     .audio-option-button:hover {
       transform: scale(1.2);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quiz-progress {
+      font-size: 1rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .quiz-points {
+      font-size: 1rem;
+      color: #667eea;
+      font-weight: bold;
+      background: #f0f4ff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+
+    .quiz-score {
+      font-size: 1rem;
+      color: #28a745;
+      font-weight: bold;
     }
 
     .quiz-feedback {
@@ -370,6 +456,113 @@ function addGlobalStyles() {
 
     ::-webkit-scrollbar-thumb:hover {
       background: #764ba2;
+    }
+
+    /* 每日学习进度条样式 */
+    .daily-progress-bar {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .daily-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .daily-progress-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .daily-progress-stats {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .daily-progress-item {
+      text-align: center;
+    }
+
+    .daily-progress-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+
+    .daily-progress-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .daily-progress-value.achieved {
+      color: #28a745;
+    }
+
+    .progress-bar-container {
+      margin-top: 15px;
+    }
+
+    .progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .progress-bar-wrapper {
+      background: #f0f0f0;
+      border-radius: 10px;
+      height: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill.achieved {
+      background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    }
+
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-milestone {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #888;
+      font-weight: bold;
+      z-index: 1;
     }
   `;
   document.head.appendChild(style);

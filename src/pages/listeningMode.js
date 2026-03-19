@@ -255,9 +255,9 @@ function markResult(index, isCorrect) {
   `;
   buttonsDiv.classList.add('correct');
   
-  // 加2分
+  // 加1分
   if (window.router) {
-    window.router.addPoints(2);
+    window.router.addPoints(1);
   }
 
   updateDictationProgress();

@@ -12,6 +12,9 @@ export class QuizMode {
     this.score = 0;
     this.answers = [];
     this.selectedAnswer = null;
+    // 添加选择状态跟踪
+    this.questionStates = {}; // 记录每题的选择状态和结果
+    this.hasAnswered = false; // 当前题目是否已回答
   }
 
   init() {
@@ -170,7 +173,15 @@ export class QuizMode {
           <div class="quiz-progress">
             题目 <span class="current">${this.currentIndex + 1}</span> / ${this.questions.length}
           </div>
-          <div class="quiz-score">得分: <span class="score">${this.score}</span></div>
+          <div class="quiz-points">每题${this.getPointsPerQuestion()}分</div>
+          <div class="quiz-score">本轮得分: <span class="score">${this.score}</span></div>
+        </div>
+
+        <div class="daily-progress-bar">
+          <div class="progress-stats">
+            <div class="progress-item">📊 今日总得分: <span class="total-score">${window.getTodayPoints ? window.getTodayPoints() : 0}</span>分</div>
+            <div class="progress-item">⏰ 今日学习: <span class="study-time">${window.getStudyTime ? window.getStudyTime() : 0}</span>分钟</div>
+          </div>
         </div>
 
         <div class="quiz-question">
@@ -302,11 +313,24 @@ export class QuizMode {
   }
 
   selectOption(index) {
+    // 如果当前题目已经回答过，不允许再次选择
+    if (this.hasAnswered) {
+      return;
+    }
+
     this.selectedAnswer = index;
+    this.hasAnswered = true;
     const currentQuestion = this.questions[this.currentIndex];
     const options = this.container.querySelectorAll('.quiz-option');
     const selectedOption = options[index];
     const isCorrect = currentQuestion.options[index].english === currentQuestion.correctAnswer.english;
+
+    // 保存当前题目的选择状态
+    this.questionStates[this.currentIndex] = {
+      selectedAnswer: index,
+      isCorrect: isCorrect,
+      hasAnswered: true
+    };
 
     // 播放音效
     this.playSoundEffect(isCorrect);
@@ -399,7 +423,7 @@ export class QuizMode {
 
   getPointsPerQuestion() {
     const pointsMap = {
-      'listening-to-chinese': 0.5,
+      'listening-to-chinese': 1,
       'english-to-chinese': 1,
       'chinese-to-english': 1,
       'english-dialogue': 2
@@ -412,6 +436,15 @@ export class QuizMode {
 
     this.currentIndex = index;
     this.selectedAnswer = null;
+    this.hasAnswered = false;
+
+    // 恢复当前题目的选择状态
+    const state = this.questionStates[index];
+    if (state && state.hasAnswered) {
+      this.selectedAnswer = state.selectedAnswer;
+      this.hasAnswered = true;
+    }
+
     this.renderQuiz();
     this.bindEvents();
 
@@ -424,7 +457,43 @@ export class QuizMode {
     }
 
     if (nextButton) {
-      nextButton.disabled = true; // 初始状态下禁用，需要选择答案后启用
+      // 如果已回答或下一题已有答案，启用下一题按钮
+      const hasNextState = this.questionStates[index + 1]?.hasAnswered;
+      nextButton.disabled = !this.hasAnswered && !hasNextState;
+    }
+
+    // 如果有保存的状态，恢复视觉显示
+    if (state && state.hasAnswered) {
+      this.restoreQuestionState(state);
+    }
+  }
+
+  restoreQuestionState(state) {
+    const options = this.container.querySelectorAll('.quiz-option');
+    const selectedOption = options[state.selectedAnswer];
+
+    if (selectedOption) {
+      // 移除所有选项的事件监听器，防止重复选择
+      options.forEach(option => {
+        option.style.pointerEvents = 'none'; // 禁用点击
+      });
+
+      // 恢复选择状态样式
+      selectedOption.classList.add('selected');
+
+      if (state.isCorrect) {
+        selectedOption.classList.add('correct');
+      } else {
+        selectedOption.classList.add('incorrect');
+
+        // 如果答错了，高亮正确答案
+        const currentQuestion = this.questions[this.currentIndex];
+        options.forEach((option, index) => {
+          if (currentQuestion.options[index].english === currentQuestion.correctAnswer.english) {
+            option.classList.add('correct');
+          }
+        });
+      }
     }
   }
 
@@ -435,7 +504,7 @@ export class QuizMode {
     }
   }
 
-  playQuestionAudio() {
+  async playQuestionAudio() {
     const currentQuestion = this.questions[this.currentIndex];
     let textToPlay;
 
@@ -443,14 +512,17 @@ export class QuizMode {
       textToPlay = currentQuestion.correctAnswer.english;
     } else if (this.mode === 'english-dialogue') {
       textToPlay = currentQuestion.question.english;
+
+      // 英文对话模式：1.2倍速读题目
+      await this.playDialogueAudioThreeTimes(textToPlay);
+      return; // 直接返回，不执行下面的通用逻辑
     } else {
       textToPlay = currentQuestion.question.english || '';
     }
 
     if (textToPlay) {
-      // 对于句子（英文对话模式）使用speakSentence，对于单词使用speakWord
-      const audioMethod = this.mode === 'english-dialogue' ? audioPlayer.speakSentence : audioPlayer.speakWord;
-      audioMethod.call(audioPlayer, textToPlay).then(() => {
+      // 统一使用speak方法
+      audioPlayer.speak(textToPlay).then(() => {
         console.log('Question audio played successfully');
       }).catch(error => {
         console.error('Error playing question audio:', error);
@@ -458,9 +530,25 @@ export class QuizMode {
     }
   }
 
+  // 英文对话模式：三遍不同语速读题目
+  async playDialogueAudioThreeTimes(text) {
+    try {
+      console.log('开始读题目:', text);
+
+      // 1.2倍速读一遍
+      console.log('1.2倍速读题');
+      await audioPlayer.speak(text, { speed: 1.2 });
+
+      console.log('读题完成');
+
+    } catch (error) {
+      console.error('三遍读题失败:', error);
+    }
+  }
+
   playWordAudio(word) {
     if (word) {
-      audioPlayer.speakWord(word).then(() => {
+      audioPlayer.speak(word).then(() => {
         console.log('Word audio played successfully');
       }).catch(error => {
         console.error('Error playing word audio:', error);
@@ -473,6 +561,8 @@ export class QuizMode {
     this.score = 0;
     this.answers = [];
     this.selectedAnswer = null;
+    this.questionStates = {}; // 清空选择状态
+    this.hasAnswered = false;
     this.generateQuestions();
     this.renderQuiz();
     this.bindEvents();

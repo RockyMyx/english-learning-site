@@ -10,6 +10,9 @@ export class WordToSentenceMode {
     this.score = 0;
     this.answers = [];
     this.selectedAnswer = null;
+    // 添加选择状态跟踪
+    this.questionStates = {}; // 记录每题的选择状态
+    this.hasAnswered = false; // 当前题目是否已回答
   }
 
   init() {
@@ -1580,28 +1583,42 @@ export class WordToSentenceMode {
     correctButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
+
+        // 如果当前题目已经回答过，不允许再次选择
+        if (this.hasAnswered) {
+          return;
+        }
+
         // 禁用按钮，确保只能点击一次
         button.disabled = true;
         button.classList.add('disabled');
-        
+        this.hasAnswered = true;
+
+        // 保存当前题目的选择状态
+        this.questionStates[this.currentIndex] = {
+          hasAnswered: true,
+          isCorrect: true,
+          answeredButton: 'correct'
+        };
+
         // 播放答对音效
         this.playSoundEffect(true);
-        
+
         // 加5分
         const points = 5;
         this.score += points;
         this.container.querySelector('.score').textContent = this.score;
-        
+
         // 添加积分
         if (window.router && window.router.addPoints) {
           window.router.addPoints(points);
         }
-        
+
         // 显示反馈
         const feedback = document.getElementById('quiz-feedback');
         feedback.textContent = `✅ 答对了！+${points}分`;
         feedback.className = 'quiz-feedback correct';
-        
+
         // 清除反馈
         setTimeout(() => {
           feedback.textContent = '';
@@ -1678,14 +1695,39 @@ export class WordToSentenceMode {
     if (index < 0 || index >= this.questions.length) return;
 
     this.currentIndex = index;
+    this.hasAnswered = false;
+
+    // 恢复当前题目的选择状态
+    const state = this.questionStates[index];
+    if (state && state.hasAnswered) {
+      this.hasAnswered = true;
+    }
+
     this.renderQuiz();
     this.bindEvents();
+
+    // 如果有保存的状态，恢复视觉显示
+    if (state && state.hasAnswered) {
+      this.restoreQuestionState(state);
+    }
+  }
+
+  restoreQuestionState(state) {
+    if (state.answeredButton === 'correct') {
+      const correctButtons = document.querySelectorAll('.sentence-correct-btn');
+      correctButtons.forEach(button => {
+        button.disabled = true;
+        button.classList.add('disabled');
+      });
+    }
   }
 
   restart() {
     this.currentIndex = 0;
     this.score = 0;
     this.answers = [];
+    this.questionStates = {}; // 清空选择状态
+    this.hasAnswered = false;
     this.generateQuestions();
     this.renderQuiz();
     this.bindEvents();
