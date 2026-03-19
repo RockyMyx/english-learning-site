@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学英语学习</title>
+    <link rel="stylesheet" href="./src/assets/styles.css">
+</head>
+<body>
+    <div id="app">
+        <div class="app-header">
+            <h1>📚 小学英语学习</h1>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="hero">
+                    <h2>🌟 开始你的英语学习之旅</h2>
+                    <p>从小学生基础单词和句型开始，轻松掌握英语</p>
+
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-number" id="visit-time">0分钟</span>
+                            <span class="stat-label">今日已学习</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="today-points">0</span>
+                            <span class="stat-label">今日积分</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>选择学习模式</h3>
+                <div class="learning-modes">
+                    <div class="mode-card" data-mode="listening-to-chinese">
+                        <div class="mode-points-badge">每题0.5分</div>
+                        <div class="mode-icon">👂</div>
+                        <h4>听读音选中文</h4>
+                        <p>听到英文发音，选择对应的中文意思</p>
+                    </div>
+
+                    <div class="mode-card" data-mode="word-to-sentence">
+                        <div class="mode-points-badge">每题5分</div>
+                        <div class="mode-icon">✍️</div>
+                        <h4>单词造句</h4>
+                        <p>通过句子练习掌握单词的实际用法</p>
+                    </div>
+
+                    <div class="mode-card" data-mode="english-to-chinese">
+                        <div class="mode-points-badge">每题1分</div>
+                        <div class="mode-icon">🔤</div>
+                        <h4>看英文选中文</h4>
+                        <p>看到英文单词，选择对应的中文意思</p>
+                    </div>
+
+                    <div class="mode-card" data-mode="chinese-to-english">
+                        <div class="mode-points-badge">每题1分</div>
+                        <div class="mode-icon">📝</div>
+                        <h4>看中文选英文</h4>
+                        <p>看到中文意思，选择正确的英文单词</p>
+                    </div>
+
+                    <div class="mode-card" data-mode="english-dialogue">
+                        <div class="mode-points-badge">每题2分</div>
+                        <div class="mode-icon">💬</div>
+                        <h4>英文对话</h4>
+                        <p>听到英文句子，选择符合对话内容的英文回答</p>
+                    </div>
+
+                    <div class="mode-card" data-mode="listening">
+                        <div class="mode-points-badge">每题2分</div>
+                        <div class="mode-icon">🎧</div>
+                        <h4>单词听写</h4>
+                        <p>家长播放音频，孩子进行听写练习</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listening Mode Page -->
+            <div id="listening-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>🎧 单词听写</h2>
+                </div>
+                <div id="listening-content" class="mode-content"></div>
+            </div>
+
+            <!-- English to Chinese Mode Page -->
+            <div id="english-to-chinese-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>🔤 看英文选中文</h2>
+                </div>
+                <div id="english-to-chinese-content" class="mode-content"></div>
+            </div>
+
+            <!-- Chinese to English Mode Page -->
+            <div id="chinese-to-english-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>📝 看中文选英文</h2>
+                </div>
+                <div id="chinese-to-english-content" class="mode-content"></div>
+            </div>
+
+            <!-- Listening to Chinese Mode Page -->
+            <div id="listening-to-chinese-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>👂 听读音选中文</h2>
+                </div>
+                <div id="listening-to-chinese-content" class="mode-content"></div>
+            </div>
+
+            <!-- English Dialogue Mode Page -->
+            <div id="english-dialogue-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>💬 英文对话练习</h2>
+                    <p style="color: #666; font-size: 0.9rem;">听到英文句子，选择符合对话内容的英文回答</p>
+                </div>
+
+                <div id="english-dialogue-content" class="mode-content"></div>
+            </div>
+
+            <!-- Word to Sentence Mode Page -->
+            <div id="word-to-sentence-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="router.navigate('/')">← 返回</button>
+                    <h2>✍️ 单词造句练习</h2>
+                    <p style="color: #666; font-size: 0.9rem;">通过句子练习掌握单词的实际用法，翻译中文句子为英文</p>
+                </div>
+
+                <div id="word-to-sentence-content" class="mode-content"></div>
+            </div>
+
+            <!-- Playlist Page -->
+            <div id="playlist-page" class="page">
+                <div class="page-header">
+                    <h2>🎵 我的播放列表</h2>
+                </div>
+                <div id="playlist-content"></div>
+            </div>
+
+            <!-- Progress Page -->
+            <div id="progress-page" class="page">
+                <div class="page-header">
+                    <h2>📊 学习进度</h2>
+                </div>
+                <div id="progress-content"></div>
+            </div>
+        </main>
+
+        <!-- Audio Player (Hidden) -->
+        <audio id="audio-player" preload="auto"></audio>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

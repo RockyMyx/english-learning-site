@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学英语学习 - 测试页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .nav-brand h1 {
+            font-size: 1.5rem;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .hero {
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .learning-modes h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .learning-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .mode-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-card h4 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mode-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .mode-features {
+            list-style: none;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .mode-features li {
+            padding: 0.3rem 0;
+        }
+
+        .mode-features li::before {
+            content: "• ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .mode-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-wrap: wrap;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .learning-modes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>📚 小学英语学习</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">首页</a></li>
+                <li><a href="#playlist" class="nav-link">我的播放列表</a></li>
+                <li><a href="#progress" class="nav-link">学习进度</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2>🌟 开始你的英语学习之旅</h2>
+            <p>从小学生基础单词和句型开始，轻松掌握英语</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number" id="visit-time">0分钟</span>
+                    <span class="stat-label">今日已学习</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="today-points">0</span>
+                    <span class="stat-label">今日积分</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>选择学习模式</h3>
+        <div class="learning-modes">
+            <div class="mode-card">
+                <div class="mode-icon">🎧</div>
+                <h4>随身听模式</h4>
+                <p>通勤路上、运动时的最佳伙伴，轻松磨耳朵</p>
+                <ul class="mode-features">
+                    <li>后台播放</li>
+                    <li>锁屏继续</li>
+                    <li>自由组合播放列表</li>
+                </ul>
+                <span class="mode-badge">推荐</span>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🏃</div>
+                <h4>训练模式</h4>
+                <p>专注跟读练习，提升发音和语感</p>
+                <ul class="mode-features">
+                    <li>可配置跟读间隔</li>
+                    <li>自动重复播放</li>
+                    <li>完整学习内容</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🔤</div>
+                <h4>看英文选中文</h4>
+                <p>看到英文单词，选择对应的中文意思</p>
+                <ul class="mode-features">
+                    <li>英文发音按钮</li>
+                    <li>4个中文选项</li>
+                    <li>每轮10道题</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">📝</div>
+                <h4>看中文选英文</h4>
+                <p>看到中文意思，选择正确的英文单词</p>
+                <ul class="mode-features">
+                    <li>英文发音按钮</li>
+                    <li>4个英文选项</li>
+                    <li>每轮10道题</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">👂</div>
+                <h4>听读音选中文</h4>
+                <p>听到英文发音，选择对应的中文意思</p>
+                <ul class="mode-features">
+                    <li>声音播放按钮</li>
+                    <li>4个中文选项</li>
+                    <li>每轮10道题</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">💬</div>
+                <h4>英文对话</h4>
+                <p>听到英文句子，选择符合对话内容的英文回答</p>
+                <ul class="mode-features">
+                    <li>英文发音按钮</li>
+                    <li>4个英文选项</li>
+                    <li>每轮10道题</li>
+                    <li>题目和答案都是有意义的对话组合</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 访问时间计时
+        let visitTime = parseInt(localStorage.getItem('visitTime') || '0');
+        let lastVisitTime = parseInt(localStorage.getItem('lastVisitTime') || Date.now());
+
+        // 计算上次访问的时长
+        const timeDiff = Math.floor((Date.now() - lastVisitTime) / 1000 / 60);
+        if (timeDiff < 60) {
+            visitTime += timeDiff;
+        } else {
+            visitTime = 0;
+        }
+
+        // 更新显示
+        function updateVisitTimeDisplay(minutes) {
+            const visitTimeElement = document.getElementById('visit-time');
+            if (visitTimeElement) {
+                if (minutes < 60) {
+                    visitTimeElement.textContent = minutes + '分钟';
+                } else {
+                    const hours = Math.floor(minutes / 60);
+                    const mins = minutes % 60;
+                    visitTimeElement.textContent = `${hours}小时${mins}分钟`;
+                }
+            }
+        }
+
+        updateVisitTimeDisplay(visitTime);
+
+        // 开始计时器
+        setInterval(() => {
+            visitTime++;
+            localStorage.setItem('visitTime', visitTime.toString());
+            localStorage.setItem('lastVisitTime', Date.now().toString());
+            updateVisitTimeDisplay(visitTime);
+        }, 60000);
+
+        // 保存当前时间
+        localStorage.setItem('lastVisitTime', Date.now().toString());
+
+        // 今日积分显示
+        const today = new Date().toISOString().split('T')[0];
+        const pointsData = JSON.parse(localStorage.getItem('pointsData') || '{}');
+        document.getElementById('today-points').textContent = pointsData[today] || 0;
+
+        // 简单的交互效果
+
+        // 导航效果
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // 学习模式卡片效果
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const mode = card.querySelector('h4').textContent;
+                alert(`你选择了：${mode}\n这个功能在完整版本中可用！`);
+            });
+        });
+    </script>
+</body>
+</html>

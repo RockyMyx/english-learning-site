@@ -1,0 +1,14 @@
+{
+  "name": "elementary-english-learning",
+  "version": "1.0.0",
+  "description": "小学英语学习 - 小学生英语单词和句型学习网站",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

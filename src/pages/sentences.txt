@@ -1,0 +1,1029 @@
+单词：one
+中文：我有一只猫。它是一只黑色的猫。
+英文：I've got one cat. It's a black cat.
+
+中文：看！一个红色的玩具在椅子上。
+英文：Look! One red toy is on the chair.
+
+中文：你有多少只猫？我有一只。
+英文：How many cats have you got? I've got one.
+
+单词：two
+中文：我有两只黑色的眼睛。
+英文：I've got two black eyes.
+
+中文：桌子上有两个土豆。
+英文：Two potatoes are on the table.
+
+中文：看那只狗！它有两条短腿。
+英文：The dog has two short legs.
+
+单词：three
+中文：我有三个绿色的玩具汽车。
+英文：I've got three green toy cars.
+
+中文：沙发上坐着三个洋娃娃。
+英文：Three dolls are on the sofa.
+
+中文：厨房里有多少个鸡蛋？三个。
+英文：How many eggs are in the kitchen? Three.
+
+单词：four
+中文：椅子上有四本书。
+英文：Four books are on the chair.
+
+中文：看那只青蛙！它有四条腿。
+英文：Look at the frog! It's got four legs.
+
+中文：我家有四口人。他们是我的妈妈、爸爸、妹妹和我。
+英文：Our family has four people. They are my mother, father, sister and me.
+
+单词：five
+中文：我有五个手指。
+英文：I've got five fingers on my hand.
+
+中文：请给我五个红色的西红柿。
+英文：Pass me the five red tomatoes, please.
+
+中文：看那只蜘蛛！它有八条腿，不是五条。
+英文：Look at the spider! It's got eight legs, but it hasn't got five legs.
+
+单词：six
+中文：我有六个黄色的橡皮。
+英文：I've got six yellow erasers.
+
+中文：床下有多少个球？六个。
+英文：How many balls are under the bed? Six.
+
+中文：那个机器人有六只手臂。
+英文：That robot has got six arms.
+
+单词：seven
+中文：看！七只粉色的鸟在房子上。
+英文：Look! Seven pink birds are on the house.
+
+中文：我的爷爷七十一岁。他很老，但是很快乐。
+英文：My grandfather is seventy-one. He is old, but he is happy.
+
+中文：你有多少个橙色的玩具？我有七个。
+英文：How many orange toys have you got? I've got seven.
+
+单词：eight
+中文：蜘蛛有八条腿。
+英文：A spider has got eight legs.
+
+中文：我的书包里有八支铅笔。
+英文：I've got eight pencils in my bag.
+
+中文：看那些鱼！八条鱼会游泳。
+英文：Look at the fish! Eight fish can swim.
+
+单词：nine
+中文：我有九个白色的橡皮。
+英文：I've got nine white erasers.
+
+中文：你几岁了？我九岁。
+英文：How old are you? I'm nine.
+
+中文：桌上有九块蛋糕。我喜欢蛋糕！
+英文：Nine cakes are on the table. I like cake!
+
+单词：ten
+中文：我有十根手指。
+英文：I've got ten fingers.
+
+中文：看！十辆玩具汽车在地板上。
+英文：Look! Ten toy cars are on the floor.
+
+中文：多少个紫色的玩具在椅子上？十个。
+英文：How many purple toys are on the chair? Ten.
+
+单词：red
+中文：我最喜欢的颜色是红色。
+英文：My favourite color is red.
+
+中文：我有一个红色的苹果。它在桌子上。
+英文：I've got a red apple. It's on the table.
+
+中文：请把那个红色的铅笔给我。
+英文：Pass me the red pencil, please.
+
+单词：white
+中文：看那只白色的鸟！它会飞。
+英文：Look at the white bird! It can fly.
+
+中文：我有一只白色的猫和一只黑色的狗。
+英文：I've got a white cat and a black dog.
+
+中文：鸡蛋是白色的。我喜欢鸡蛋。
+英文：An egg is white. I like eggs.
+
+单词：black
+中文：我的爸爸有一辆黑色的车。
+英文：My father has got a black car.
+
+中文：那只黑色的蜘蛛很小。
+英文：The black spider is small.
+
+中文：我喜欢黑色和白色。
+英文：I like black and white.
+
+单词：blue
+中文：我的眼睛是蓝色的。
+英文：My eyes are blue.
+
+中文：我的橡皮是蓝色的。
+英文：My eraser is blue.
+
+中文：你最喜欢的颜色是什么？我最喜欢的颜色是蓝色。
+英文：What's your favourite color? My favourite color is blue.
+
+单词：yellow
+中文：我有一辆黄色的玩具汽车。
+英文：I've got a yellow toy car.
+
+中文：香蕉是黄色的。它们是水果。
+英文：Bananas are yellow. They are fruit.
+
+中文：把那个黄色的书包涂成蓝色。
+英文：Color the yellow bag blue.
+
+单词：green
+中文：看那只绿色的青蛙！它会跳。
+英文：Look at the green frog! It can jump.
+
+中文：我的铅笔是绿色的。
+英文：My pencil is green.
+
+中文：我有一个绿色的苹果。它在椅子下面。
+英文：I've got a green apple. It's under the chair.
+
+单词：pink
+中文：我有一个粉色的洋娃娃。她很漂亮。
+英文：I've got a pink doll. She's beautiful.
+
+中文：我的妹妹喜欢粉色。
+英文：My sister likes pink.
+
+中文：请把那支粉色的铅笔给我。
+英文：Pass me the pink pencil, please.
+
+单词：orange
+中文：橙子是橙色的。
+英文：Oranges are orange.
+
+中文：看那个橙色的书包！它很大。
+英文：Look at the orange bag! It's big.
+
+中文：我有一只橙色的猫。它很漂亮。
+英文：I've got an orange cat. It's beautiful.
+
+单词：purple
+中文：我有一个紫色的机器人。它很小。
+英文：I've got a purple robot. It's small.
+
+中文：葡萄是紫色的。我喜欢葡萄。
+英文：Grapes are purple. I like grapes.
+
+中文：把那个紫色的椅子涂成黑色。
+英文：Color the purple chair black.
+
+单词：color
+中文：你最喜欢的颜色是什么？
+英文：What's your favourite color?
+
+中文：把那只鸟涂成黄色。
+英文：Color the bird yellow.
+
+中文：看这些玩具！它们是什么颜色？
+英文：Look at the toys! What color are they?
+
+单词：listen
+中文：听你妈妈的话。
+英文：Listen to your mother.
+
+中文：听，并指着你的头。
+英文：Listen, and point to your head.
+
+中文：听，指着书。
+英文：Listen, and point to the book.
+
+单词：look
+中文：看！那只猫在沙发上。
+英文：Look! The cat is on the sofa.
+
+中文：看！那只老虎很大。
+英文：Look! That tiger is big.
+
+中文：看着书。
+英文：Look at the book.
+
+单词：point
+中文：指着你的眼睛。
+英文：Point to your eyes.
+
+中文：指着那辆红色的玩具汽车。
+英文：Point to the red toy car.
+
+中文：听，并指着门。
+英文：Listen, and point to the door.
+
+单词：sit down
+中文：请坐在椅子上。
+英文：Sit down on the chair, please.
+
+中文：老师说：“坐下”。
+英文：The teacher says, "Sit down."
+
+中文：坐下，并看着书。
+英文：Sit down and look at the book.
+
+单词：stand up
+中文：请站起来。
+英文：Stand up, please.
+
+中文：老师说：“站起来”。
+英文：The teacher says, "Stand up."
+
+中文：站起来，并指着门。
+英文：Stand up and point to the door.
+
+单词：open
+中文：请打开你的书。
+英文：Open your book, please.
+
+中文：打开门。
+英文：Open the door.
+
+中文：看！那个男孩在打开他的书包。
+英文：Look! That boy is opening his bag.
+
+单词：close
+中文：请关上你的书。
+英文：Close your book, please.
+
+中文：关上门。
+英文：Close the door.
+
+中文：看！那个女孩在关门。
+英文：Look! That girl is closing the door.
+
+单词：hello
+中文：你好，妈妈！
+英文：Hello, mother!
+
+中文：对你的朋友说“你好”。
+英文：Say "hello" to your friend.
+
+中文：你好！你叫什么名字？
+英文：Hello! What's your name?
+
+单词：talk
+中文：请不要在课堂上讲话。
+英文：Please don't talk in class.
+
+中文：看！那两个女孩在说话。
+英文：Look! Those two girls are talking.
+
+中文：我的鸟会说话。
+英文：My bird can talk.
+
+单词：jump
+中文：看那只青蛙！它会跳。
+英文：Look at the frog! It can jump.
+
+中文：我会跳，但我不会飞。
+英文：I can jump, but I can't fly.
+
+中文：那只狗会跳。
+英文：That dog can jump.
+
+单词：fly
+中文：看那只鸟！它会飞。
+英文：Look at the bird! It can fly.
+
+中文：蜘蛛不会飞，但鸟会飞。
+英文：Spiders can't fly, but birds can fly.
+
+中文：我有一个风筝。它是红色的。它会飞。
+英文：I've got a kite. It's red. It can fly.
+
+单词：swim
+中文：鱼会游泳。
+英文：Fish can swim.
+
+中文：我会游泳，但我不会飞。
+英文：I can swim, but I can't fly.
+
+中文：看那只鸭子！它会游泳。
+英文：Look at the duck! It can swim.
+
+单词：food
+中文：我喜欢食物。蛋糕是我的最爱。
+英文：I like food. Cake is my favourite.
+
+中文：厨房里有食物。
+英文：Food is in the kitchen.
+
+中文：你最喜欢的食物是什么？是薯条。
+英文：What's your favourite food? It's chips.
+
+单词：cake
+中文：我喜欢蛋糕。它是食物。
+英文：I like cake. It's food.
+
+中文：桌子上有一个大蛋糕。
+英文：A big cake is on the table.
+
+中文：给你一个蛋糕。谢谢。
+英文：Here's a cake for you. Thank you.
+
+单词：potato
+中文：土豆是食物。我喜欢土豆。
+英文：Potatoes are food. I like potatoes.
+
+中文：看那些土豆！它们在桌子上。
+英文：Look at the potatoes! They are on the table.
+
+中文：我有多少土豆？我有五个。
+英文：How many potatoes have I got? I've got five.
+
+单词：tomato
+中文：西红柿是红色的。
+英文：Tomatoes are red.
+
+中文：我不喜欢西红柿。
+英文：I don't like tomatoes.
+
+中文：桌子上有多少个西红柿？六个。
+英文：How many tomatoes are on the table? Six.
+
+单词：chips
+中文：我喜欢薯条。它们是食物。
+英文：I like chips. They are food.
+
+中文：请给我一些薯条。
+英文：Pass me the chips, please.
+
+中文：看！薯条在桌子上。
+英文：Look! The chips are on the table.
+
+单词：fruit
+中文：我喜欢水果。苹果是我的最爱。
+英文：I like fruit. Apples are my favourite.
+
+中文：看这些水果！它们是苹果和香蕉。
+英文：Look at the fruit! They are apples and bananas.
+
+中文：你最喜欢的食物是什么？是水果。
+英文：What's your favourite food? It's fruit.
+
+单词：milk
+中文：我喜欢牛奶。
+英文：I like milk.
+
+中文：牛奶在厨房里。
+英文：Milk is in the kitchen.
+
+中文：看那只白色的猫！它喜欢牛奶。
+英文：Look at the white cat! It likes milk.
+
+单词：egg
+中文：鸡蛋是白色的。
+英文：Eggs are white.
+
+中文：我不喜欢鸡蛋。
+英文：I don't like eggs.
+
+中文：桌上有多少个鸡蛋？三个。
+英文：How many eggs are on the table? Three.
+
+单词：in
+中文：我的铅笔在书包里。
+英文：My pencil is in my bag.
+
+中文：鱼在水里游泳。（水不在列表，可改为“鱼在厨房里”？但鱼通常不在厨房。可改为“鱼在鱼缸里”，但鱼缸不在。最好用“in the water”但water不在。所以换个句子，比如“我的玩具在盒子里”，但盒子不在。我们可以用“in the house”等。例如：我的猫在房子里。但原句是“鱼在水里”，我们可以说“鱼在厨房里”不合理。或许用“in the bedroom”？鱼不能进卧室。我们只能放弃“水”，用其他地点。比如：我的洋娃娃在卧室里。但这是另一个词。我们可以为“in”造三个句子，每个都用in，且所有名词都在列表。
+
+我的铅笔在书包里。My pencil is in my bag.
+我的猫在房子里。My cat is in the house.
+书在书包里。The book is in the bag.
+这样没问题。
+单词：on
+中文：书在桌子上。
+英文：The book is on the table.
+
+中文：看那只鸟！它在房子上。
+英文：Look at the bird! It's on the house.
+
+中文：我的玩具汽车在地板上。（地板不在列表，可用“on the bed”等）
+改为：我的玩具汽车在床上。My toy car is on the bed.
+
+单词：under
+中文：我的猫在椅子下面。
+英文：My cat is under the chair.
+
+中文：看！那个球在床下面。
+英文：Look! The ball is under the bed.
+
+中文：我的铅笔在哪里？它在书下面。
+英文：Where's my pencil? It's under the book.
+
+单词：body
+中文：我有头、手臂和腿。这是我的身体。
+英文：I've got a head, arms, and legs. This is my body.
+
+中文：指着你的身体。
+英文：Point to your body.
+
+中文：我的身体很大。
+英文：My body is big.
+
+单词：eye
+中文：我有两只蓝色的眼睛。
+英文：I've got two blue eyes.
+
+中文：指着你的眼睛。
+英文：Point to your eyes.
+
+中文：看那只猫！它有绿色的眼睛。
+英文：Look at the cat! It's got green eyes.
+
+单词：mouth
+中文：指着你的嘴巴。
+英文：Point to your mouth.
+
+中文：张开你的嘴巴。
+英文：Open your mouth.
+
+中文：看那只狗！它的嘴巴很大。
+英文：Look at the dog! Its mouth is big.
+
+单词：hand
+中文：我有两只手。
+英文：I've got two hands.
+
+中文：举起你的手。（“举起”不在列表，可用“指着你的手”）
+改为：指着你的手。Point to your hand.
+
+中文：我的手很小。
+英文：My hand is small.
+
+单词：leg
+中文：我有两条腿。
+英文：I've got two legs.
+
+中文：指着你的腿。
+英文：Point to your legs.
+
+中文：那只蜘蛛有八条腿。
+英文：That spider has got eight legs.
+
+单词：arm
+中文：我有两条手臂。
+英文：I've got two arms.
+
+中文：指着你的手臂。
+英文：Point to your arms.
+
+中文：那个机器人有长的金属手臂。（金属不在，删掉）
+改为：那个机器人有长手臂。That robot has got long arms.
+
+单词：head
+中文：指着你的头。
+英文：Point to your head.
+
+中文：我的头很大。
+英文：My head is big.
+
+中文：看那只老虎！它的头很大。
+英文：Look at the tiger! Its head is big.
+
+单词：house
+中文：看我的房子！它是红色的。
+英文：Look at my house! It's red.
+
+中文：我的房子很大。
+英文：My house is big.
+
+中文：那只猫在房子上。
+英文：That cat is on the house.
+
+单词：sofa
+中文：猫在沙发上。
+英文：The cat is on the sofa.
+
+中文：看那个沙发！它很大。
+英文：Look at the sofa! It's big.
+
+中文：我的洋娃娃在沙发下面。
+英文：My doll is under the sofa.
+
+单词：door
+中文：门是棕色的。（棕色不在列表，可用黑色）
+改为：门是黑色的。The door is black.
+
+中文：请关上门。
+英文：Close the door, please.
+
+中文：看！一只黑色的蜘蛛在门上。
+英文：Look! A black spider is on the door.
+
+单词：bed
+中文：我的床是蓝色的。
+英文：My bed is blue.
+
+中文：猫在床下面。
+英文：The cat is under the bed.
+
+中文：我的卧室里有一张大床。
+英文：A big bed is in my bedroom.
+
+单词：living room
+中文：客厅里有沙发和电视。（电视不在列表，可用“椅子”）
+改为：客厅里有沙发和椅子。A sofa and a chair are in the living room.
+
+中文：我的家人在客厅里。
+英文：My family are in the living room.
+
+中文：看那只猫！它在客厅里。
+英文：Look at the cat! It's in the living room.
+
+单词：bedroom
+中文：这是我的卧室。它很小。
+英文：This is my bedroom. It's small.
+
+中文：床在卧室里。
+英文：The bed is in the bedroom.
+
+中文：看我的卧室！它很漂亮。
+英文：Look at my bedroom! It's beautiful.
+
+单词：kitchen
+中文：食物在厨房里。
+英文：Food is in the kitchen.
+
+中文：我的妈妈在厨房里。
+英文：My mother is in the kitchen.
+
+中文：看那个厨房！它很大。
+英文：Look at the kitchen! It's big.
+
+单词：animal
+中文：我喜欢动物。猫是我的最爱。
+英文：I like animals. Cats are my favourite.
+
+中文：看那些动物！它们是老虎、鸭子和鱼。
+英文：Look at the animals! They are tigers, ducks, and fish.
+
+中文：你最喜欢的动物是什么？是狗。
+英文：What's your favourite animal? It's a dog.
+
+单词：cat
+中文：我有一只白色的猫。
+英文：I've got a white cat.
+
+中文：看那只猫！它在沙发上。
+英文：Look at the cat! It's on the sofa.
+
+中文：我喜欢猫。它们很漂亮。
+英文：I like cats. They are beautiful.
+
+单词：fish
+中文：看那些鱼！它们会游泳。
+英文：Look at the fish! They can swim.
+
+中文：我有一只猫。它喜欢鱼。
+英文：I've got a cat. It likes fish.
+
+中文：鱼是动物。
+英文：Fish are animals.
+
+单词：bird
+中文：看那只鸟！它是红色的。
+英文：Look at the bird! It's red.
+
+中文：鸟会飞。
+英文：Birds can fly.
+
+中文：我有一只鸟。它很漂亮。
+英文：I've got a bird. It's beautiful.
+
+单词：duck
+中文：看那只鸭子！它是黄色的。
+英文：Look at the duck! It's yellow.
+
+中文：鸭子会游泳。
+英文：Ducks can swim.
+
+中文：鸭子有两条腿。
+英文：Ducks have got two legs.
+
+单词：tiger
+中文：看那只老虎！它很大。
+英文：Look at the tiger! It's big.
+
+中文：老虎是橙色的。
+英文：Tigers are orange.
+
+中文：我不喜欢老虎。它们很丑。
+英文：I don't like tigers. They are ugly.
+
+单词：dog
+中文：我有一只黑色的狗。
+英文：I've got a black dog.
+
+中文：看那只狗！它有四条短腿。
+英文：Look at the dog! It's got four short legs.
+
+中文：我喜欢狗。
+英文：I like dogs.
+
+单词：frog
+中文：看那只绿色的青蛙！它会跳。
+英文：Look at the green frog! It can jump.
+
+中文：青蛙有两条长腿。
+英文：Frogs have got two long legs.
+
+中文：我喜欢青蛙。
+英文：I like frogs.
+
+单词：spider
+中文：看那只蜘蛛！它有八条腿。
+英文：Look at the spider! It's got eight legs.
+
+中文：我不喜欢蜘蛛。它们很丑。
+英文：I don't like spiders. They are ugly.
+
+中文：一只黑色的蜘蛛在门上。
+英文：A black spider is on the door.
+
+单词：bag
+中文：我的书包是蓝色的。
+英文：My bag is blue.
+
+中文：看！那个包在椅子下面。
+英文：Look! The bag is under the chair.
+
+中文：我的书包里有什么？一支铅笔和一个橡皮。
+英文：What's in my bag? A pencil and an eraser.
+
+单词：table
+中文：书在桌子上。
+英文：The book is on the table.
+
+中文：看那张桌子！它很大。
+英文：Look at the table! It's big.
+
+中文：我的玩具汽车在桌子下面。
+英文：My toy car is under the table.
+
+单词：eraser
+中文：我有一个白色的橡皮。
+英文：I've got a white eraser.
+
+中文：我的橡皮在书包里。
+英文：My eraser is in my bag.
+
+中文：请给我那个橡皮。
+英文：Pass me the eraser, please.
+
+单词：pencil
+中文：我有一支黄色的铅笔。
+英文：I've got a yellow pencil.
+
+中文：我的铅笔在书下面。
+英文：My pencil is under the book.
+
+中文：你有多少支铅笔？我有五支。
+英文：How many pencils have you got? I've got five.
+
+单词：book
+中文：看我的书！它是红色的。
+英文：Look at my book! It's red.
+
+中文：书在桌子上。
+英文：The book is on the table.
+
+中文：请打开你的书。
+英文：Open your book, please.
+
+单词：chair
+中文：椅子是棕色的。（棕色不在，用黑色）
+改为：椅子是黑色的。The chair is black.
+
+中文：猫在椅子上。
+英文：The cat is on the chair.
+
+中文：请坐在椅子上。
+英文：Sit down on the chair, please.
+
+单词：toy
+中文：我有很多玩具。它们在我的房间里。
+英文：I've got many toys. They are in my bedroom.
+
+中文：看那些玩具！它们是汽车、洋娃娃和一个球。
+英文：Look at the toys! They are cars, a doll, and a ball.
+
+中文：你最喜欢的玩具是什么？是机器人。
+英文：What's your favourite toy? It's a robot.
+
+单词：kite
+中文：我有一个风筝。它是蓝色的。
+英文：I've got a kite. It's blue.
+
+中文：看那只风筝！它会飞。
+英文：Look at the kite! It can fly.
+
+中文：我的风筝在哪里？它在房子上。
+英文：Where's my kite? It's on the house.
+
+单词：ball
+中文：我有一个红色的球。
+英文：I've got a red ball.
+
+中文：球在椅子下面。
+英文：The ball is under the chair.
+
+中文：看那个球！它很大。
+英文：Look at the ball! It's big.
+
+单词：car
+中文：我有一辆蓝色的玩具汽车。
+英文：I've got a blue toy car.
+
+中文：看那辆汽车！它是红色的。
+英文：Look at the car! It's red.
+
+中文：我的玩具汽车在桌子下面。
+英文：My toy car is under the table.
+
+单词：doll
+中文：我有一个漂亮的洋娃娃。她很漂亮。
+英文：I've got a beautiful doll. She's beautiful.
+
+中文：我的洋娃娃在沙发上。
+英文：My doll is on the sofa.
+
+中文：看那个洋娃娃！她有大大的眼睛。
+英文：Look at the doll! She's got big eyes.
+
+单词：bike
+中文：我有一辆蓝色的自行车。
+英文：I've got a blue bike.
+
+中文：看那辆自行车！它很小。
+英文：Look at the bike! It's small.
+
+中文：我的自行车在哪里？它在房子旁边。
+英文：Where's my bike? It's next to the house.
+
+单词：robot
+中文：我有一个玩具机器人。它很小。
+英文：I've got a toy robot. It's small.
+
+中文：看那个机器人！它有一条长长的金属手臂。
+改为：Look at the robot! It's got a long arm.
+
+中文：你最喜欢的玩具是什么？是机器人。
+英文：What's your favourite toy? It's a robot.
+
+单词：mother
+中文：那是谁？她是我妈妈。
+英文：Who's that? She's my mother.
+
+中文：我的妈妈在厨房里。
+英文：My mother is in the kitchen.
+
+中文：我爱我的妈妈。
+英文：I love my mother.
+
+单词：father
+中文：那是谁？他是我爸爸。
+英文：Who's that? He's my father.
+
+中文：我的爸爸有一辆黑色的汽车。
+英文：My father has got a black car.
+
+中文：我爱我的爸爸。
+英文：I love my father.
+
+单词：grandmother
+中文：那是谁？她是我奶奶。
+英文：Who's that? She's my grandmother.
+
+中文：我的奶奶很老了，但是她很快乐。
+英文：My grandmother is old, but she is happy.
+
+中文：我爱我的奶奶。
+英文：I love my grandmother.
+
+单词：grandfather
+中文：那是谁？他是我爷爷。
+英文：Who's that? He's my grandfather.
+
+中文：我的爷爷七十一岁。他很老。
+英文：My grandfather is seventy-one. He is old.
+
+中文：我爱我的爷爷。
+英文：I love my grandfather.
+
+单词：sister
+中文：那是谁？她是我姐姐。
+英文：Who's that? She's my sister.
+
+中文：我的妹妹很小。她两岁。
+英文：My sister is young. She is two.
+
+中文：我爱我的妹妹。
+英文：I love my sister.
+
+单词：brother
+中文：那是谁？他是我哥哥。
+英文：Who's that? He's my brother.
+
+中文：我的哥哥有一个红色的机器人。
+英文：My brother has got a red robot.
+
+中文：我爱我的哥哥。
+英文：I love my brother.
+
+单词：horse
+中文：看那匹马！它很大。
+英文：Look at the horse! It's big.
+
+中文：马有长长的腿。
+英文：Horses have got long legs.
+
+中文：我喜欢马。它们很漂亮。
+英文：I like horses. They are beautiful.
+
+单词：clean
+中文：看我的手！它们是干净的。
+英文：Look at my hands! They are clean.
+
+中文：那个桌子是干净的。
+改为：That table is clean.
+
+中文：我的房间是干净的。
+英文：My bedroom is clean.
+
+单词：dirty
+中文：看那只狗！它是脏的。
+英文：Look at the dog! It's dirty.
+
+中文：我的手是脏的。
+英文：My hands are dirty.
+
+中文：那个凳子是脏的。
+改为：That chair is dirty.
+
+单词：small
+中文：看那只蜘蛛！它很小。
+英文：Look at the spider! It's small.
+
+中文：我的手很小。
+改为：My hands are small.
+
+中文：那个紫色的机器人很小。
+英文：The purple robot is small.
+
+单词：big
+中文：看那只老虎！它很大。
+英文：Look at the tiger! It's big.
+
+中文：我的头很大。
+英文：My head is big.
+
+中文：那个机器人很大。
+改为：The robot is big.
+
+单词：long
+中文：看那只狗！它有长长的腿。
+英文：Look at the dog! It's got long legs.
+
+中文：我的铅笔很长。
+英文：My pencil is long.
+
+中文：那个机器人有长长的手臂。
+改为：That robot has long arms.
+
+单词：short
+中文：看那只狗！它有短短的腿。
+英文：Look at the dog! It's got short legs.
+
+中文：我的铅笔很短。
+英文：My pencil is short.
+
+中文：那个男人很矮。（男人不在，用“我的爷爷”）
+改为：我的爷爷很矮。My grandfather is short.
+
+单词：our
+中文：这是我们的房子。
+英文：This is our house.
+
+中文：我们的卧室很大
+改为：Our bedroom is big.
+
+中文：我们的猫是黑色的。
+英文：Our cat is black.
+
+单词：they
+中文：看那些鸟！它们是红色的。
+英文：Look at the birds! They are red.
+
+中文：我的爷爷和奶奶。他们很老。
+英文：My grandfather and grandmother. They are old.
+
+中文：那些是玩具。它们在我的房间里。
+英文：Those are toys. They are in my bedroom.
+
+单词：computer
+中文：看那台电脑！它很小。
+英文：Look at the computer! It's small.
+
+中文：电脑在桌子上。
+英文：The computer is on the table.
+
+中文：我的爸爸有一台电脑。
+英文：My father has got a computer.
+
+单词：train
+中文：我有一辆玩具火车。它是蓝色的。
+英文：I've got a toy train. It's blue.
+
+中文：看那辆火车！它很长。
+英文：Look at the train! It's long.
+
+中文：你最喜欢的玩具是什么？是火车。
+英文：What's your favourite toy? It's a train.
+
+单词：beautiful
+中文：看那个洋娃娃！她很漂亮。
+英文：Look at the doll! She's beautiful.
+
+中文：我的妈妈很漂亮。
+英文：My mother is beautiful.
+
+中文：那个风筝是漂亮的。
+英文：That kite is beautiful.
+
+单词：ugly
+中文：我不喜欢那只蜘蛛。它很丑。
+英文：I don't like that spider. It's ugly.
+
+中文：看那个丑陋的玩具！我不喜欢它。
+英文：Look at the ugly toy! I don't like it.
+
+中文：那只狗很丑，但是很快乐。
+英文：That dog is ugly, but it's happy.
+
+单词：happy
+中文：我今天很快乐。
+英文：I am happy today.
+
+中文：看那只快乐的狗！
+英文：Look at the happy dog!
+
+中文：我的爷爷很快乐。
+英文：My grandfather is happy.
+
+单词：sad
+中文：我的猫不在这里。我很伤心。
+改为：My cat isn't here. I am sad.
+
+中文：这只猫看起来很伤心。
+英文：The cat looks sad. 
+
+中文：别伤心，没事的。
+改为：Don't be sad. It's ok.
+
+单词：old
+中文：我的爷爷很老。
+英文：My grandfather is old.
+
+中文：看那辆老汽车！它很小。
+英文：Look at the old car! It's small.
+
+中文：那个房子很老。
+英文：That house is old.
+
+单词：young
+中文：我的妹妹很年轻。她两岁。
+英文：My sister is young. She is two.
+
+中文：小猫很年轻。
+改为：The cat is young. 
+
+中文：我的妈妈很年轻。
+英文：My mother is young.
+
+单词：mouse
+中文：老鼠很小。
+英文：The mouse is small.
+
+中文：猫喜欢老鼠。
+英文：Cats like mice.
+
+中文：一只黑色的老鼠在椅子下面。
+英文：A black mouse is under the chair.

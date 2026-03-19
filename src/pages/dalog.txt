@@ -1,0 +1,349 @@
+What's your name?
+A. I'm Tom.
+B. I'm seven.
+C. It's a cat.
+D. It's red.
+正确答案：A
+
+How old are you?
+A. I'm fine.
+B. I'm nine.
+C. My name is Lily.
+D. It's a book.
+正确答案：B
+
+What color is the apple?
+A. It's a fruit.
+B. It's red.
+C. It's on the table.
+D. I like apples.
+正确答案：B
+
+Where is my pencil?
+A. It's a pencil.
+B. It's under the chair.
+C. It's blue.
+D. I've got a pencil.
+正确答案：B
+
+How many cats do you have?
+A. I've got two cats.
+B. They are black.
+C. It's a cat.
+D. I like cats.
+正确答案：A
+
+What's your favourite animal?
+A. My favourite color is blue.
+B. I like dogs.
+C. It's a dog.
+D. I've got a dog.
+正确答案：B
+
+Can a bird fly?
+A. Yes, it can.
+B. No, it can't.
+C. It can swim.
+D. It's a bird.
+正确答案：A
+
+Have you got a sister?
+A. Yes, I have.
+B. I've got a dog.
+C. She is my mother.
+D. It's a girl.
+正确答案：A
+
+What's this? (pointing to a book)
+A. It's a book.
+B. It's red.
+C. It's on the chair.
+D. I like books.
+正确答案：A
+
+Is the cat on the sofa?
+A. Yes, it is.
+B. It's a cat.
+C. It's black.
+D. I like cats.
+正确答案：A
+
+What's your favourite color?
+A. My favourite color is red.
+B. I like apples.
+C. It's a book.
+D. I'm seven.
+正确答案：A
+
+Where's my bag?
+A. It's here.
+B. It's a bag.
+C. I've got a bag.
+D. It's blue.
+正确答案：A
+
+How many legs does a spider have?
+A. It's got eight legs.
+B. It's small.
+C. It's a spider.
+D. I don't like spiders.
+正确答案：A
+
+Who's that? (pointing to your mother)
+A. She's my mother.
+B. He's my father.
+C. It's a woman.
+D. I'm a girl.
+正确答案：A
+
+What can a bird do?
+A. It can fly.
+B. It can swim.
+C. It can jump.
+D. It can talk.
+正确答案：A
+
+Do you like chips?
+A. I like chips.
+B. They are food.
+C. I've got chips.
+D. Yes, I like.
+正确答案：A
+
+How many books are on the table?
+A. One book.
+B. It's a book.
+C. They are on the table.
+D. I like books.
+正确答案：A
+
+I'm sorry.
+A. That's ok.
+B. I'm sorry too.
+C. Thank you.
+D. Here you are.
+正确答案：A
+
+Pass me the pencil, please.
+A. Here you are.
+B. Thank you.
+C. I'm sorry.
+D. It's a pencil.
+正确答案：A
+
+Here's a cake for you.
+A. Thank you.
+B. I like cake.
+C. It's a cake.
+D. Here you are.
+正确答案：A
+
+The tomato is ( ).
+A. red
+B. yellow
+C. green
+D. purple
+正确答案：A
+
+Which one is your toy?
+A. The red one.
+B. It's a toy.
+C. I like toys.
+D. It's on the chair.
+正确答案：A
+
+Tell me your name.
+A. I'm Tom.
+B. I'm ten.
+C. It's Tom.
+D. I'm a boy.
+正确答案：A
+
+Who's that boy?
+A. He's my brother.
+B. She's my sister.
+C. It's a boy.
+D. I'm a boy.
+正确答案：A
+
+Is the book on the table?
+A. No, it's under the chair.
+B. Yes, it's a book.
+C. It's red.
+D. I see a book.
+正确答案：A
+
+What can you do?
+A. I can jump.
+B. I like swimming.
+C. I've got a ball.
+D. I'm happy.
+正确答案：A
+
+Have you got a pet?
+A. Yes, I've got a cat.
+B. I like dogs.
+C. It's a fish.
+D. They are animals.
+正确答案：A
+
+How many chairs are in the living room?
+A. Four.
+B. They are chairs.
+C. It's a chair.
+D. I see chairs.
+正确答案：A
+
+What's your mother's name?
+A. She's Mary.
+B. She's my mother.
+C. My name is Mary.
+D. I'm Mary.
+正确答案：A
+
+Where is the cat? It isn't here.
+A. It's under the bed.
+B. It's here.
+C. It's a cat.
+D. I like cats.
+正确答案：A
+
+What's this? It's a ( ).
+A. red book
+B. book red
+C. red book is
+D. book is red
+正确答案：A
+
+Look at the dog. It's very ( ).
+A. big
+B. a dog
+C. run
+D. on the bed
+正确答案：A
+
+I've got two ( ) in my bag.
+A. books
+B. book
+C. a book
+D. red
+正确答案：A
+
+She's my ( ). She is old.
+A. sister
+B. mother
+C. grandmother
+D. brother
+正确答案：C
+
+He's my ( ). He is young.
+A. father
+B. grandfather
+C. brother
+D. sister
+正确答案：C
+
+I am a fish. I can ( ) but I can't fly.
+A. swim
+B. jump
+C. run
+D. fly
+正确答案：A
+
+The milk is ( ).
+A. white
+B. black
+C. red
+D. blue
+正确答案：A
+
+My hands are dirty. I need to ( ) them.
+A. clean
+B. dirty
+C. look
+D. point
+正确答案：A
+
+It's cold. Please ( ) the door.
+A. open
+B. close
+C. look
+D. point
+正确答案：B
+
+What's your favourite food?
+A. I like cake.
+B. It's a cake.
+C. Cake is food.
+D. I've got cake.
+正确答案：A
+
+How many eggs are in the fridge?
+A. Ten.
+B. They are white.
+C. I like eggs.
+D. It's an egg.
+正确答案：A
+
+Where is my toy car? I can't find it.
+A. It's under the sofa.
+B. It's a car.
+C. I've got a car.
+D. It's red.
+正确答案：A
+
+What color is your new bike?
+A. It's pink.
+B. It's a bike.
+C. I like pink.
+D. It's on the table.
+正确答案：A
+
+Who is that woman?
+A. She's my mother.
+B. He's my father.
+C. It's a woman.
+D. I'm a girl.
+正确答案：A
+
+Can a fish swim?
+A. Yes, it can.
+B. No, it can't.
+C. It can fly.
+D. It's a fish.
+正确答案：A
+
+I'm happy. But my sister is ( ).
+A. sad
+B. happy
+C. big
+D. young
+正确答案：A
+
+The elephant is ( ) but the mouse is small.
+A. big
+B. long
+C. short
+D. dirty
+正确答案：A
+
+I put my pencil on the book. Now it's ( ) the book.
+A. on
+B. under
+C. in
+D. next to
+正确答案：A
+
+I've got a ( ). It's red and I can ride it.
+A. bike
+B. car
+C. doll
+D. kite
+正确答案：A
+
+This is our ( ). We sleep in it.
+A. bedroom
+B. kitchen
+C. living room
+D. house
+正确答案：A
