@@ -7,16 +7,8 @@ class LearningProgressManager {
 
   loadProgress() {
     try {
-      // 清除旧数据用于测试
-      localStorage.removeItem(this.storageKey);
-      localStorage.removeItem('pointsData');
-      localStorage.removeItem('studyProgress');
-
       const today = new Date().toDateString();
       const savedData = localStorage.getItem(this.storageKey);
-
-      // 强制重置用于测试
-      this.resetDailyProgress();
 
       if (savedData) {
         const data = JSON.parse(savedData);

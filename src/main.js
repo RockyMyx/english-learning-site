@@ -136,8 +136,8 @@ class Router {
     // 初始化首页统计
     this.updateHomeStats();
 
-    // 开始访问时间计时
-    this.startVisitTimer();
+    // 开始学习时间计时（使用统一的 learningProgress 数据）
+    this.startStudyTimer();
 
     // 延迟设置学习模式卡片点击事件，确保DOM完全渲染
     setTimeout(() => {
@@ -152,41 +152,24 @@ class Router {
     }, 100);
   }
 
-  startVisitTimer() {
-    // 清除旧的访问时间数据用于测试
-    localStorage.removeItem('visitTime');
-    localStorage.removeItem('lastVisitTime');
+  startStudyTimer() {
+    // 立即更新一次显示（使用 learningProgress 的数据）
+    this.updateStudyTimeDisplay();
 
-    // 初始化访问时间
-    let visitTime = 0; // 强制从0开始
-    let lastVisitTime = Date.now();
-
-    // 计算上次访问的时长
-    const timeDiff = Math.floor((Date.now() - lastVisitTime) / 1000 / 60); // 转换为分钟
-    if (timeDiff < 60) { // 如果上次访问在1小时内，累计时间
-      visitTime += timeDiff;
-    } else {
-      visitTime = 0; // 超过1小时，重新开始计时
-    }
-
-    // 更新显示
-    this.updateVisitTimeDisplay(visitTime);
-
-    // 开始计时器
+    // 每分钟更新一次显示
     setInterval(() => {
-      visitTime++;
-      localStorage.setItem('visitTime', visitTime.toString());
-      localStorage.setItem('lastVisitTime', Date.now().toString());
-      this.updateVisitTimeDisplay(visitTime);
-    }, 60000); // 每分钟更新一次
-
-    // 保存当前时间
-    localStorage.setItem('lastVisitTime', Date.now().toString());
+      // 通过 learningProgress 添加学习时间
+      if (window.learningProgress) {
+        window.learningProgress.addStudyTime(1);
+      }
+      this.updateStudyTimeDisplay();
+    }, 60000);
   }
 
-  updateVisitTimeDisplay(minutes) {
+  updateStudyTimeDisplay() {
     const visitTimeElement = document.getElementById('visit-time');
-    if (visitTimeElement) {
+    if (visitTimeElement && window.learningProgress) {
+      const minutes = window.learningProgress.getStudyTime();
       if (minutes < 60) {
         visitTimeElement.textContent = minutes + '分钟';
       } else {
@@ -312,29 +295,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // 添加全局样式补充
   addGlobalStyles();
 
-  console.log('🎓 小学英语学习应用已启动！');
+  // console.log('🎓 小学英语学习应用已启动！');
 });
 
 // 全局样式补充
 function addGlobalStyles() {
   const style = document.createElement('style');
   style.textContent = `
-    /* 额外的全局样式 */
+    /* 额外的全局样式 - Linear Style */
     .audio-button {
-      background: #667eea;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white;
       border: none;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       cursor: pointer;
       font-size: 0.9rem;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .audio-button:hover {
-      background: #764ba2;
       transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
     }
 
     .audio-option-button {
@@ -354,55 +341,85 @@ function addGlobalStyles() {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
+      padding: 1.25rem;
       background: white;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .dark .quiz-header {
+      background: #1e293b;
+      border-color: rgba(255, 255, 255, 0.05);
     }
 
     .quiz-progress {
       font-size: 1rem;
-      color: #666;
-      font-weight: 500;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .dark .quiz-progress {
+      color: #94a3b8;
     }
 
     .quiz-points {
       font-size: 1rem;
-      color: #667eea;
-      font-weight: bold;
-      background: #f0f4ff;
+      color: #2563eb;
+      font-weight: 700;
+      background: #eff6ff;
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: 0.75rem;
+    }
+
+    .dark .quiz-points {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
     }
 
     .quiz-score {
       font-size: 1rem;
-      color: #28a745;
-      font-weight: bold;
+      color: #22c55e;
+      font-weight: 700;
     }
 
     .quiz-feedback {
       text-align: center;
-      font-weight: bold;
-      padding: 0.5rem;
-      border-radius: 4px;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
     }
 
     .quiz-feedback.correct {
-      color: #28a745;
-      background: #d4edda;
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .dark .quiz-feedback.correct {
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.15);
     }
 
     .quiz-feedback.incorrect {
-      color: #dc3545;
-      background: #f8d7da;
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .dark .quiz-feedback.incorrect {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.15);
     }
 
     /* 播放列表样式补充 */
     .playlist-item.active {
-      background: #f0f4ff;
-      border-left: 3px solid #667eea;
+      background: #eff6ff;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .dark .playlist-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-left-color: #60a5fa;
     }
 
     /* 响应式补充 */
@@ -450,12 +467,20 @@ function addGlobalStyles() {
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #667eea;
+      background: #cbd5e1;
       border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #764ba2;
+      background: #94a3b8;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
     }
 
     /* 每日学习进度条样式 */

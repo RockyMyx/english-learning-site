@@ -168,50 +168,57 @@ export class QuizMode {
   renderQuiz() {
     const currentQuestion = this.questions[this.currentIndex];
     this.container.innerHTML = `
-      <div class="quiz-container">
-        <div class="quiz-header">
-          <div class="quiz-progress">
-            题目 <span class="current">${this.currentIndex + 1}</span> / ${this.questions.length}
+      <div class="quiz-practice-container">
+        <!-- 题目卡片 -->
+        <div class="question-card">
+          <div class="question-content">
+            <div class="question-header">
+              <span class="question-number">${this.currentIndex + 1}</span>
+              ${this.renderQuestionContent(currentQuestion)}
+            </div>
           </div>
-          <div class="quiz-points">每题${this.getPointsPerQuestion()}分</div>
-          <div class="quiz-score">本轮得分: <span class="score">${this.score}</span></div>
-        </div>
-
-        <div class="daily-progress-bar">
-          <div class="progress-stats">
-            <div class="progress-item">📊 今日总得分: <span class="total-score">${window.getTodayPoints ? window.getTodayPoints() : 0}</span>分</div>
-            <div class="progress-item">⏰ 今日学习: <span class="study-time">${window.getStudyTime ? window.getStudyTime() : 0}</span>分钟</div>
+          <div class="question-progress">
+            <span class="progress-text">${this.currentIndex + 1} / ${this.questions.length}</span>
           </div>
-        </div>
-
-        <div class="quiz-question">
-          ${this.renderQuestionContent(currentQuestion)}
         </div>
 
         <div class="quiz-options">
           ${currentQuestion.options.map((option, index) => `
             <div class="quiz-option" data-index="${index}">
-              ${this.renderOptionContent(option)}
+              <span class="option-number">${String.fromCharCode(65 + index)}</span>
+              <span class="option-text">${this.renderOptionText(option)}</span>
             </div>
           `).join('')}
         </div>
 
         <div class="quiz-navigation">
-          <button class="quiz-nav-btn" id="prev-question" ${this.currentIndex === 0 ? 'disabled' : ''}>
-            ← 上一题
+          <button class="nav-btn prev-btn" id="prev-question" ${this.currentIndex === 0 ? 'disabled' : ''}>
+            <i class="fas fa-arrow-left"></i>
+            <span>上一题</span>
           </button>
           <div class="quiz-feedback" id="quiz-feedback"></div>
-          <button class="quiz-nav-btn" id="next-question" disabled>
-            下一题 →
+          <button class="nav-btn next-btn" id="next-question" disabled>
+            <span>下一题</span>
+            <i class="fas fa-arrow-right"></i>
           </button>
         </div>
 
         ${this.currentIndex === this.questions.length - 1 ? `
           <div class="quiz-summary" id="quiz-summary" style="display: none;">
-            <h3>📊 测试完成！</h3>
-            <p>最终得分: <span class="final-score">${this.score}</span> / ${this.questions.length}</p>
-            <p>正确率: <span class="accuracy">${Math.round((this.score / this.questions.length) * 100)}%</span></p>
-            <button class="quiz-nav-btn" id="restart-quiz">重新开始</button>
+            <div class="summary-content">
+              <div class="summary-icon">🎉</div>
+              <h3>练习完成！</h3>
+              <div class="summary-stats">
+                <div class="stat-box">
+                  <span class="stat-value">${Math.round((this.score / this.questions.length) * 100)}%</span>
+                  <span class="stat-label">正确率</span>
+                </div>
+              </div>
+              <button class="restart-btn" id="restart-quiz">
+                <i class="fas fa-redo"></i>
+                再练一次
+              </button>
+            </div>
           </div>
         ` : ''}
       </div>
@@ -222,21 +229,30 @@ export class QuizMode {
     if (this.mode === 'listening-to-chinese') {
       return `
         <div class="audio-question">
-          <button class="audio-button" id="play-question-audio">🔊</button>
+          <button class="question-audio-btn" id="play-question-audio">
+            <i class="fas fa-volume-up"></i>
+            <span>点击播放</span>
+          </button>
         </div>
       `;
     } else if (this.mode === 'english-dialogue') {
       return `
-        <div class="dialogue-question">
-          <p class="english-sentence">${question.question.english}</p>
-          <button class="audio-button" id="play-question-audio">🔊</button>
+        <div class="text-question">
+          <p class="question-text">${question.question.english}</p>
+          <button class="question-audio-btn" id="play-question-audio">
+            <i class="fas fa-volume-up"></i>
+          </button>
         </div>
       `;
     } else if (question.question.english) {
       return `
         <div class="text-question">
           <span class="question-text">${question.question.english}</span>
-          ${question.question.showAudio ? '<button class="audio-button" id="play-question-audio">🔊</button>' : ''}
+          ${question.question.showAudio ? `
+            <button class="question-audio-btn" id="play-question-audio">
+              <i class="fas fa-volume-up"></i>
+            </button>
+          ` : ''}
         </div>
       `;
     } else {
@@ -249,24 +265,8 @@ export class QuizMode {
   }
 
   renderOptionContent(option) {
-    switch (this.mode) {
-      case 'english-to-chinese':
-        return `<span class="option-text">${option.chinese}</span>`;
-      case 'chinese-to-english':
-        return `
-          <span class="option-text">${option.english}</span>
-          <button class="audio-option-button" data-word="${option.english}">🔊</button>
-        `;
-      case 'listening-to-chinese':
-        return `<span class="option-text">${option.chinese}</span>`;
-      case 'english-dialogue':
-        return `
-          <span class="option-text">${option.english}</span>
-          <button class="audio-option-button" data-sentence="${option.english}">🔊</button>
-        `;
-      default:
-        return `<span class="option-text">${option.english}</span>`;
-    }
+    // 这个方法在新UI中不再使用，保留以兼容旧代码
+    return this.renderOptionText(option);
   }
 
   bindEvents() {
@@ -431,6 +431,24 @@ export class QuizMode {
     return pointsMap[this.mode] || 1;
   }
 
+  getQuestionTypeLabel() {
+    const labelMap = {
+      'listening-to-chinese': '听音选中文',
+      'english-to-chinese': '看英选中',
+      'chinese-to-english': '看中选英',
+      'english-dialogue': '对话练习'
+    };
+    return labelMap[this.mode] || '练习';
+  }
+
+  renderOptionText(option) {
+    if (typeof option === 'string') return option;
+    if (this.mode === 'english-to-chinese' || this.mode === 'listening-to-chinese') {
+      return option.chinese || option.english || option;
+    }
+    return option.english || option.chinese || option;
+  }
+
   goToQuestion(index) {
     if (index < 0 || index >= this.questions.length) return;
 
@@ -523,7 +541,7 @@ export class QuizMode {
     if (textToPlay) {
       // 统一使用speak方法
       audioPlayer.speak(textToPlay).then(() => {
-        console.log('Question audio played successfully');
+        // console.log('Question audio played successfully');
       }).catch(error => {
         console.error('Error playing question audio:', error);
       });
@@ -533,13 +551,13 @@ export class QuizMode {
   // 英文对话模式：三遍不同语速读题目
   async playDialogueAudioThreeTimes(text) {
     try {
-      console.log('开始读题目:', text);
+      // console.log('开始读题目:', text);
 
       // 1.2倍速读一遍
-      console.log('1.2倍速读题');
+      // console.log('1.2倍速读题');
       await audioPlayer.speak(text, { speed: 1.2 });
 
-      console.log('读题完成');
+      // console.log('读题完成');
 
     } catch (error) {
       console.error('三遍读题失败:', error);
@@ -549,7 +567,7 @@ export class QuizMode {
   playWordAudio(word) {
     if (word) {
       audioPlayer.speak(word).then(() => {
-        console.log('Word audio played successfully');
+        // console.log('Word audio played successfully');
       }).catch(error => {
         console.error('Error playing word audio:', error);
       });

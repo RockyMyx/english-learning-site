@@ -18,12 +18,12 @@ export function initListeningMode() {
   content.innerHTML = `
     <div class="dictation-selection">
       <div class="selection-header">
-        <h3>📝 选择听写单词</h3>
+        <h3>选择听写单词</h3>
         <p>选择10个单词进行听写练习</p>
       </div>
 
       <div class="selection-controls">
-        <button class="primary-btn" id="random-select-btn">🎲 随机选择10个单词</button>
+        <button class="primary-btn" id="random-select-btn">随机选择</button>
       </div>
 
       <div class="words-grid">
@@ -35,13 +35,20 @@ export function initListeningMode() {
         `).join('')}
       </div>
 
-      <div class="selected-summary">
-        <h4>已选择单词 (${selectedWords.length}/10)</h4>
-        <div class="selected-words" id="selected-words"></div>
-        <button class="primary-btn ${selectedWords.length === 10 ? '' : 'disabled'}" id="start-dictation-btn"
-                ${selectedWords.length === 10 ? '' : 'disabled'}>
-          开始听写 (${selectedWords.length}/10)
-        </button>
+      <!-- 底部固定操作栏 -->
+      <div class="dictation-sticky-bar">
+        <div class="sticky-bar-content">
+          <div class="selected-info">
+            <span class="selected-label">已选择</span>
+            <span class="selected-count" id="sticky-selected-count">${selectedWords.length}</span>
+            <span class="selected-total">/ 10</span>
+          </div>
+          <div class="selected-preview" id="selected-preview"></div>
+          <button class="sticky-start-btn ${selectedWords.length === 10 ? '' : 'disabled'}" id="start-dictation-btn"
+                  ${selectedWords.length === 10 ? '' : 'disabled'}>
+            开始听写
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -119,25 +126,32 @@ function updateWordBlockSelections() {
 }
 
 function updateSelectedWords() {
-  const selectedWordsContainer = document.getElementById('selected-words');
+  const stickyCount = document.getElementById('sticky-selected-count');
   const startBtn = document.getElementById('start-dictation-btn');
+  const preview = document.getElementById('selected-preview');
 
-  // 更新选中的单词显示
-  selectedWordsContainer.innerHTML = selectedWords.map(word => `
-    <div class="selected-word">
-      <span class="word-english">${word.english}</span>
-      <span class="word-chinese">${word.chinese}</span>
-    </div>
-  `).join('');
+  // 更新底部栏计数
+  if (stickyCount) {
+    stickyCount.textContent = selectedWords.length;
+  }
+
+  // 更新预览文字（显示前3个单词）
+  if (preview) {
+    if (selectedWords.length === 0) {
+      preview.textContent = '请点击上方单词进行选择';
+    } else {
+      const previewWords = selectedWords.slice(0, 3).map(w => w.english).join(', ');
+      const more = selectedWords.length > 3 ? ` 等${selectedWords.length}个` : '';
+      preview.textContent = previewWords + more;
+    }
+  }
 
   // 更新按钮状态
   if (selectedWords.length === 10) {
     startBtn.disabled = false;
-    startBtn.textContent = `开始听写 (${selectedWords.length}/10)`;
     startBtn.classList.remove('disabled');
   } else {
     startBtn.disabled = true;
-    startBtn.textContent = `开始听写 (${selectedWords.length}/10)`;
     startBtn.classList.add('disabled');
   }
 }
@@ -154,38 +168,31 @@ function startDictation() {
   content.innerHTML = `
     <div class="dictation-practice">
       <div class="practice-header">
-        <h3>🎧 单词听写练习</h3>
-        <p>点击音频图标播放单词，根据孩子听写情况进行批改</p>
+        <h3>单词听写练习</h3>
+        <p>点击音频播放单词，听写后点击"答对"</p>
         <div class="progress-info">
           <span id="current-progress">0/10</span>
-          <span>已批改：<span id="correct-count">0</span>题，<span id="wrong-count">0</span>题</span>
         </div>
       </div>
 
-      <div class="practice-grid">
+      <div class="practice-list">
         ${selectedWords.map((word, index) => `
           <div class="dictation-item" data-index="${index}">
-            <div class="dictation-header">
-              <span class="dictation-number">题目 ${index + 1}</span>
-              <span class="dictation-word" style="display: none;">${word.english}</span>
-            </div>
-            <div class="dictation-controls">
-              <button class="audio-btn" data-word="${word.english}" data-index="${index}">
-                🔊 播放
-              </button>
-            </div>
+            <span class="dictation-number">${index + 1}</span>
+            <button class="audio-btn" data-word="${word.english}" data-index="${index}">
+              <i class="fas fa-volume-up"></i>
+              <span>播放</span>
+            </button>
             <div class="dictation-result" id="result-${index}">
-              <div class="result-buttons" id="buttons-${index}">
-                <button class="result-btn correct-btn" data-index="${index}">✓ 答对</button>
-              </div>
+              <button class="result-btn correct-btn" data-index="${index}">答对</button>
             </div>
           </div>
         `).join('')}
       </div>
 
       <div class="practice-controls">
-        <button class="secondary-btn" id="back-to-selection-btn">返回选择</button>
-        <button class="primary-btn" id="finish-dictation-btn">完成听写</button>
+        <button class="nav-btn secondary-btn" id="back-to-selection-btn">返回</button>
+        <button class="nav-btn primary-btn" id="finish-dictation-btn">完成</button>
       </div>
     </div>
   `;
@@ -291,7 +298,7 @@ function playFeedbackSound(isCorrect) {
     oscillator.start();
     oscillator.stop(audioContext.currentTime + 0.3);
   } catch (error) {
-    console.log('无法播放反馈音效:', error);
+    // console.log('无法播放反馈音效:', error);
   }
 }
 
@@ -316,30 +323,20 @@ function finishDictation() {
   const content = document.getElementById('listening-content');
 
   content.innerHTML = `
-    <div class="dictation-result-summary">
-      <div class="result-header">
-        <h3>🎉 听写完成！</h3>
-        <p>恭喜完成10个单词的听写练习</p>
-      </div>
-
-      <div class="result-stats">
-        <div class="stat-item">
-          <div class="stat-number">${correct}</div>
-          <div class="stat-label">答对</div>
+    <div class="quiz-summary" style="position: static; background: transparent; backdrop-filter: none;">
+      <div class="summary-content">
+        <div class="summary-icon">🎉</div>
+        <h3>听写完成！</h3>
+        <div class="summary-stats">
+          <div class="stat-box">
+            <span class="stat-value">${correct}</span>
+            <span class="stat-label">答对</span>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">${wrong}</div>
-          <div class="stat-label">答错</div>
+        <div class="result-actions">
+          <button class="restart-btn" onclick="initListeningMode()">返回选择</button>
+          <button class="restart-btn secondary" onclick="location.reload()">再练一次</button>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">${totalScore}</div>
-          <div class="stat-label">总得分</div>
-        </div>
-      </div>
-
-      <div class="result-actions">
-        <button class="primary-btn" onclick="initListeningMode()">返回选择</button>
-        <button class="secondary-btn" onclick="location.reload()">再次练习</button>
       </div>
     </div>
   `;

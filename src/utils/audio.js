@@ -12,7 +12,7 @@ class AudioPlayer {
   cleanText(text) {
     if (!text) return '';
 
-    console.log('原始文本:', text);
+    // console.log('原始文本:', text);
 
     // 移除各种类型的括号及其内容
     let cleaned = text
@@ -41,7 +41,7 @@ class AudioPlayer {
       .replace(/[,\.\?!]$/, '')      // 移除句尾的逗号、句号、问号、感叹号
       .trim();                       // 移除首尾空格
 
-    console.log('清理后文本:', cleaned);
+    // console.log('清理后文本:', cleaned);
 
     return cleaned;
   }
@@ -86,8 +86,8 @@ class AudioPlayer {
         return;
       }
 
-      console.log('原始文本:', text);
-      console.log('最终处理文本:', finalText);
+      // console.log('原始文本:', text);
+      // console.log('最终处理文本:', finalText);
 
       // 将请求加入队列，支持自定义语速
       this.speakQueue.push({
@@ -135,7 +135,7 @@ class AudioPlayer {
       // 停止当前播放
       this.stop();
 
-      console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
+      // console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
 
       // 调用智谱AI API，传入语速参数
       this.callZhipuAPI(cleanText, options.speed || 1.2)
@@ -147,7 +147,7 @@ class AudioPlayer {
           this.audio.src = audioUrl;
           this.audio.volume = 1; // 设置音量为1
 
-          console.log('设置音量为:', this.audio.volume);
+          // console.log('设置音量为:', this.audio.volume);
 
           // 设置超时
           const timeout = setTimeout(() => {
@@ -159,13 +159,13 @@ class AudioPlayer {
 
           this.audio.onloadeddata = () => {
             clearTimeout(timeout);
-            console.log('智谱AI音频数据加载完成:', cleanText);
+            // console.log('智谱AI音频数据加载完成:', cleanText);
           };
 
           this.audio.onended = () => {
             clearTimeout(timeout);
             this.isSpeaking = false;
-            console.log('智谱AI发音播放完成:', cleanText);
+            // console.log('智谱AI发音播放完成:', cleanText);
             URL.revokeObjectURL(audioUrl);
             resolve();
           };
@@ -182,7 +182,7 @@ class AudioPlayer {
 
           this.audio.addEventListener('canplaythrough', () => {
             this.audio.play().then(() => {
-              console.log('智谱AI发音播放成功:', cleanText);
+              // console.log('智谱AI发音播放成功:', cleanText);
             }).catch(err => {
               clearTimeout(timeout);
               this.isSpeaking = false;
@@ -207,7 +207,7 @@ class AudioPlayer {
   // 调用智谱AI TTS API
   async callZhipuAPI(text, speed = 1.2) {
     try {
-      console.log('发送智谱AI请求:', text);
+      // console.log('发送智谱AI请求:', text);
 
       const requestBody = {
         model: 'glm-tts',
@@ -215,10 +215,11 @@ class AudioPlayer {
         voice: 'chuichui',
         response_format: 'wav', // 改回wav格式
         stream: false,
+        volume: 3,
         speed: speed // 使用传入的语速参数
       };
 
-      console.log('请求参数:', JSON.stringify(requestBody, null, 2));
+      // console.log('请求参数:', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch(this.zhipuApiUrl, {
         method: 'POST',
@@ -229,7 +230,7 @@ class AudioPlayer {
         body: JSON.stringify(requestBody)
       });
 
-      console.log('智谱AI响应状态:', response.status, response.statusText);
+      // console.log('智谱AI响应状态:', response.status, response.statusText);
 
       if (!response.ok) {
         // 尝试读取错误信息
@@ -246,11 +247,11 @@ class AudioPlayer {
 
       // 检查响应类型
       const contentType = response.headers.get('content-type');
-      console.log('智谱AI响应类型:', contentType);
+      // console.log('智谱AI响应类型:', contentType);
 
       // 获取音频blob
       const audioBlob = await response.blob();
-      console.log('音频blob大小:', audioBlob.size, 'bytes');
+      // console.log('音频blob大小:', audioBlob.size, 'bytes');
 
       // 检查是否是有效的音频
       if (audioBlob.size === 0) {
@@ -278,7 +279,7 @@ class AudioPlayer {
       const sampleRate = audioBuffer.sampleRate;
       const samplesToRemove = Math.floor(sampleRate * 1.8); // 1.8秒
 
-      console.log(`去除音频前${(samplesToRemove/sampleRate).toFixed(2)}秒的提示音`);
+      // console.log(`去除音频前${(samplesToRemove/sampleRate).toFixed(2)}秒的提示音`);
 
       if (audioBuffer.length > samplesToRemove) {
         // 创建新的音频缓冲区，去除前面的提示音

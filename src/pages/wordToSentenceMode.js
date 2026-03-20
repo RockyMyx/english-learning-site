@@ -72,7 +72,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Four books are on the chair.",
           "Look at the frog! It's got four legs.",
-          "Our family has four people. They are my mother, father, sister and me."
+          "There are has four people. They are my mother, father, sister and me."
         ],
         chineseSentences: [
           "椅子上有四本书。",
@@ -561,7 +561,7 @@ export class WordToSentenceMode {
         wordChinese: "牛奶",
         englishSentences: [
           "I like milk.",
-          "Milk is in the kitchen.",
+          "The milk is in the kitchen.",
           "Look at the white cat! It likes milk."
         ],
         chineseSentences: [
@@ -1477,57 +1477,95 @@ export class WordToSentenceMode {
     const currentQuestion = this.questions[this.currentIndex];
 
     this.container.innerHTML = `
-      <div class="quiz-container word-to-sentence-container">
-        <div class="quiz-header">
-          <div class="quiz-progress">
-            题目 <span class="current">${this.currentIndex + 1}</span> / ${this.questions.length}
+      <div class="sentence-practice-container">
+        <!-- 单词卡片 -->
+        <div class="word-card">
+          <div class="word-content">
+            <div class="word-header">
+              <span class="word-number">${this.currentIndex + 1}</span>
+              <h2 class="word-title">${currentQuestion.word}</h2>
+            </div>
+            <p class="word-pronunciation">${currentQuestion.wordChinese}</p>
           </div>
-          <div class="quiz-score">得分: <span class="score">${this.score}</span></div>
-        </div>
-
-        <div class="word-display">
-          <div class="word-main">
-            <h2 class="word-text">${currentQuestion.word}</h2>
-            <button class="audio-button word-audio" id="play-word-audio">🔊</button>
+          <div class="word-actions">
+            <span class="word-progress">${this.currentIndex + 1} / ${this.questions.length}</span>
+            <button class="word-audio-btn" id="play-word-audio" title="播放发音">
+              <i class="fas fa-volume-up"></i>
+            </button>
           </div>
-          <p class="word-chinese">${currentQuestion.wordChinese}</p>
         </div>
 
-        <div class="sentence-options">
-          ${currentQuestion.chineseSentences.map((chineseSentence, index) => {
-            const englishSentence = currentQuestion.englishSentences[index];
-            return `
-              <div class="sentence-card">
-                <p class="sentence-chinese">${chineseSentence}</p>
-                <div class="sentence-buttons">
-                  <button class="sentence-check-btn" data-sentence-index="${index}" data-translation="${englishSentence}">查看英文</button>
-                  <button class="sentence-hide-btn" data-sentence-index="${index}" style="display: none;">隐藏英文</button>
-                  <button class="sentence-correct-btn" data-sentence-index="${index}">答对了</button>
+        <!-- 句子练习区 -->
+        <div class="sentences-area">
+          <h3 class="sentences-title">
+            <i class="fas fa-language"></i>
+            选择一句中文，说出对应的英文
+          </h3>
+          
+          <div class="sentences-list">
+            ${currentQuestion.chineseSentences.map((chineseSentence, index) => {
+              const englishSentence = currentQuestion.englishSentences[index];
+              return `
+                <div class="sentence-item" data-index="${index}">
+                  <div class="sentence-content">
+                    <p class="sentence-chinese-text"><span class="sentence-num">${index + 1}.</span>${chineseSentence}</p>
+                    <div class="sentence-translation-panel" id="translation-panel-${index}" style="display: none;">
+                      <div class="english-answer">
+                        <span class="sentence-english-text">${englishSentence}</span>
+                        <button class="sentence-audio-btn" data-sentence="${englishSentence}" title="朗读句子">
+                          <i class="fas fa-volume-up"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sentence-actions">
+                    <button class="action-btn reveal-btn" data-sentence-index="${index}" title="查看英文">
+                      <span>看答案</span>
+                    </button>
+                    <button class="action-btn hide-btn" data-sentence-index="${index}" style="display: none;" title="隐藏英文">
+                      <span>隐藏</span>
+                    </button>
+                    <button class="action-btn correct-btn-check" data-sentence-index="${index}" title="答对了">
+                      <span>答对</span>
+                    </button>
+                  </div>
                 </div>
-                <div class="sentence-translation" id="translation-${index}" style="display: none;">
-                  <p class="sentence-english">${englishSentence}</p>
-                </div>
-              </div>
-            `;
-          }).join('')}
+              `;
+            }).join('')}
+          </div>
         </div>
 
-        <div class="quiz-navigation">
-          <button class="quiz-nav-btn" id="prev-question" ${this.currentIndex === 0 ? 'disabled' : ''}>
-            ← 上一题
+        <!-- 反馈区域 -->
+        <div class="sentence-feedback" id="sentence-feedback"></div>
+
+        <!-- 导航按钮 -->
+        <div class="sentence-navigation">
+          <button class="nav-btn prev-btn" id="prev-question" ${this.currentIndex === 0 ? 'disabled' : ''}>
+            <i class="fas fa-arrow-left"></i>
+            <span>上一题</span>
           </button>
-          <div class="quiz-feedback" id="quiz-feedback"></div>
-          <button class="quiz-nav-btn" id="next-question">
-            下一题 →
+          <button class="nav-btn next-btn" id="next-question">
+            <span>下一题</span>
+            <i class="fas fa-arrow-right"></i>
           </button>
         </div>
 
         ${this.currentIndex === this.questions.length - 1 ? `
           <div class="quiz-summary" id="quiz-summary" style="display: none;">
-            <h3>📊 测试完成！</h3>
-            <p>最终得分: <span class="final-score">${this.score}</span> / ${this.questions.length}</p>
-            <p>正确率: <span class="accuracy">${Math.round((this.score / this.questions.length) * 100)}%</span></p>
-            <button class="quiz-nav-btn" id="restart-quiz">重新开始</button>
+            <div class="summary-content">
+              <div class="summary-icon">🎉</div>
+              <h3>练习完成！</h3>
+              <div class="summary-stats">
+                <div class="stat-box">
+                  <span class="stat-value">${Math.round((this.score / (this.questions.length * 5)) * 100)}%</span>
+                  <span class="stat-label">正确率</span>
+                </div>
+              </div>
+              <button class="restart-btn" id="restart-quiz">
+                <i class="fas fa-redo"></i>
+                再练一次
+              </button>
+            </div>
           </div>
         ` : ''}
       </div>
@@ -1545,41 +1583,51 @@ export class WordToSentenceMode {
     }
 
     // 查看英文翻译按钮
-    const checkButtons = document.querySelectorAll('.sentence-check-btn');
-    checkButtons.forEach(button => {
+    const revealButtons = document.querySelectorAll('.reveal-btn');
+    revealButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
         const sentenceIndex = button.dataset.sentenceIndex;
-        const translationDiv = document.getElementById(`translation-${sentenceIndex}`);
-        const hideButton = button.parentElement.querySelector('.sentence-hide-btn');
+        const panel = document.getElementById(`translation-panel-${sentenceIndex}`);
+        const hideButton = button.parentElement.querySelector('.hide-btn');
         
-        if (translationDiv && hideButton) {
-          translationDiv.style.display = 'block';
+        if (panel && hideButton) {
+          panel.style.display = 'block';
           button.style.display = 'none';
-          hideButton.style.display = 'inline-block';
+          hideButton.style.display = 'inline-flex';
         }
       });
     });
 
     // 隐藏英文翻译按钮
-    const hideButtons = document.querySelectorAll('.sentence-hide-btn');
+    const hideButtons = document.querySelectorAll('.hide-btn');
     hideButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
         const sentenceIndex = button.dataset.sentenceIndex;
-        const translationDiv = document.getElementById(`translation-${sentenceIndex}`);
-        const checkButton = button.parentElement.querySelector('.sentence-check-btn');
+        const panel = document.getElementById(`translation-panel-${sentenceIndex}`);
+        const revealButton = button.parentElement.querySelector('.reveal-btn');
         
-        if (translationDiv && checkButton) {
-          translationDiv.style.display = 'none';
+        if (panel && revealButton) {
+          panel.style.display = 'none';
           button.style.display = 'none';
-          checkButton.style.display = 'inline-block';
+          revealButton.style.display = 'inline-flex';
         }
       });
     });
 
+    // 句子发音按钮
+    const sentenceAudioButtons = document.querySelectorAll('.sentence-audio-btn');
+    sentenceAudioButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sentence = button.dataset.sentence;
+        this.playSentenceAudio(sentence);
+      });
+    });
+
     // 答对了按钮
-    const correctButtons = document.querySelectorAll('.sentence-correct-btn');
+    const correctButtons = document.querySelectorAll('.correct-btn-check');
     correctButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1607,7 +1655,10 @@ export class WordToSentenceMode {
         // 加5分
         const points = 5;
         this.score += points;
-        this.container.querySelector('.score').textContent = this.score;
+        const scoreElement = this.container.querySelector('.sentence-score span');
+        if (scoreElement) {
+          scoreElement.textContent = this.score;
+        }
 
         // 添加积分
         if (window.router && window.router.addPoints) {
@@ -1615,15 +1666,19 @@ export class WordToSentenceMode {
         }
 
         // 显示反馈
-        const feedback = document.getElementById('quiz-feedback');
-        feedback.textContent = `✅ 答对了！+${points}分`;
-        feedback.className = 'quiz-feedback correct';
+        const feedback = document.getElementById('sentence-feedback');
+        feedback.innerHTML = `
+          <div class="feedback-content correct">
+            <i class="fas fa-check-circle"></i>
+            <span>答对了！+${points}分</span>
+          </div>
+        `;
+        feedback.className = 'sentence-feedback show';
 
-        // 清除反馈
+        // 3秒后清除反馈
         setTimeout(() => {
-          feedback.textContent = '';
-          feedback.className = 'quiz-feedback';
-        }, 2000);
+          feedback.className = 'sentence-feedback';
+        }, 3000);
       });
     });
 
@@ -1650,9 +1705,19 @@ export class WordToSentenceMode {
     const currentQuestion = this.questions[this.currentIndex];
     if (currentQuestion && currentQuestion.word) {
       audioPlayer.speakWord(currentQuestion.word).then(() => {
-        console.log('Word audio played successfully');
+        // console.log('Word audio played successfully');
       }).catch(error => {
         console.error('Error playing word audio:', error);
+      });
+    }
+  }
+
+  playSentenceAudio(sentence) {
+    if (sentence) {
+      audioPlayer.speakWord(sentence).then(() => {
+        // console.log('Sentence audio played successfully');
+      }).catch(error => {
+        console.error('Error playing sentence audio:', error);
       });
     }
   }
@@ -1714,7 +1779,7 @@ export class WordToSentenceMode {
 
   restoreQuestionState(state) {
     if (state.answeredButton === 'correct') {
-      const correctButtons = document.querySelectorAll('.sentence-correct-btn');
+      const correctButtons = document.querySelectorAll('.correct-btn-check');
       correctButtons.forEach(button => {
         button.disabled = true;
         button.classList.add('disabled');

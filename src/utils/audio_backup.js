@@ -14,7 +14,7 @@ class AudioPlayer {
       return;
     }
 
-    console.log('✅ AudioPlayer initialized, loading voices...');
+    // console.log('✅ AudioPlayer initialized, loading voices...');
 
     // 立即尝试加载声音
     this.loadVoices();
@@ -22,7 +22,7 @@ class AudioPlayer {
     // 监听声音变化事件（Chrome需要）
     if (this.synth.onvoiceschanged !== undefined) {
       this.synth.onvoiceschanged = () => {
-        console.log('🔊 Voices changed, reloading...');
+        // console.log('🔊 Voices changed, reloading...');
         this.loadVoices();
       };
     }
@@ -31,7 +31,7 @@ class AudioPlayer {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.synth.cancel();
-        console.log('⏸️ Page hidden, speech cancelled');
+        // console.log('⏸️ Page hidden, speech cancelled');
       }
     });
   }
@@ -43,11 +43,11 @@ class AudioPlayer {
       if (this.voices.length > 0) {
         this.voicesLoaded = true;
         const englishVoices = this.voices.filter(voice => voice.lang.startsWith('en'));
-        console.log(`✅ ${this.voices.length} voices loaded, ${englishVoices.length} English voices available`);
+        // console.log(`✅ ${this.voices.length} voices loaded, ${englishVoices.length} English voices available`);
 
         // 显示可用的英语声音
         englishVoices.slice(0, 5).forEach(voice => {
-          console.log(`   - ${voice.name} (${voice.lang})`);
+          // console.log(`   - ${voice.name} (${voice.lang})`);
         });
 
         if (englishVoices.length === 0) {
@@ -101,7 +101,7 @@ class AudioPlayer {
           for (const preferred of preferredVoices) {
             selectedVoice = this.voices.find(voice => voice.name.includes(preferred));
             if (selectedVoice) {
-              console.log(`🎯 Selected preferred voice: ${selectedVoice.name}`);
+              // console.log(`🎯 Selected preferred voice: ${selectedVoice.name}`);
               break;
             }
           }
@@ -119,7 +119,7 @@ class AudioPlayer {
 
           if (selectedVoice) {
             utterance.voice = selectedVoice;
-            console.log(`🔊 Using voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+            // console.log(`🔊 Using voice: ${selectedVoice.name} (${selectedVoice.lang})`);
           }
         } else {
           console.warn('⚠️ No voices loaded yet, using browser default');
@@ -128,12 +128,12 @@ class AudioPlayer {
         // 设置事件处理器
         utterance.onstart = () => {
           this.isSpeaking = true;
-          console.log(`▶️ Started speaking: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`);
+          // console.log(`▶️ Started speaking: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`);
         };
 
         utterance.onend = () => {
           this.isSpeaking = false;
-          console.log('✅ Speech completed successfully');
+          // console.log('✅ Speech completed successfully');
           resolve();
         };
 
@@ -157,25 +157,25 @@ class AudioPlayer {
         };
 
         utterance.onpause = () => {
-          console.log('⏸️ Speech paused');
+          // console.log('⏸️ Speech paused');
         };
 
         utterance.onresume = () => {
-          console.log('▶️ Speech resumed');
+          // console.log('▶️ Speech resumed');
         };
 
         // 开始播放
-        console.log(`🚀 Attempting to speak: "${text}"`);
+        // console.log(`🚀 Attempting to speak: "${text}"`);
         this.synth.speak(utterance);
         this.isSpeaking = true;
 
         // 检查播放状态（延迟检查以处理初始化延迟）
         const checkInterval = setInterval(() => {
           if (this.synth.speaking) {
-            console.log('✅ Audio is actively playing');
+            // console.log('✅ Audio is actively playing');
             clearInterval(checkInterval);
           } else if (this.synth.pending) {
-            console.log('⏳ Audio is pending (waiting to start)');
+            // console.log('⏳ Audio is pending (waiting to start)');
           } else if (!this.isSpeaking) {
             // 如果已经结束了，停止检查
             clearInterval(checkInterval);
@@ -212,7 +212,7 @@ class AudioPlayer {
     if (this.synth) {
       this.synth.cancel();
       this.isSpeaking = false;
-      console.log('🛑 Speech stopped');
+      // console.log('🛑 Speech stopped');
     }
   }
 
@@ -237,11 +237,11 @@ class AudioPlayer {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`🔄 Attempt ${attempt}/${maxRetries} to speak: "${text}"`);
+        // console.log(`🔄 Attempt ${attempt}/${maxRetries} to speak: "${text}"`);
 
         // 等待声音加载
         if (!this.voicesLoaded) {
-          console.log('⏳ Waiting for voices to load...');
+          // console.log('⏳ Waiting for voices to load...');
           await this.waitForVoices(3000);
         }
 
@@ -255,7 +255,7 @@ class AudioPlayer {
         // 如果不是最后一次尝试，等待后重试
         if (attempt < maxRetries) {
           const waitTime = attempt * 1000; // 递增等待时间
-          console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+          // console.log(`⏳ Waiting ${waitTime}ms before retry...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));
 
           // 重新加载声音
@@ -306,7 +306,7 @@ class AudioPlayer {
       englishVoicesAvailable: this.getEnglishVoices().length > 0
     };
 
-    console.log('🔍 Audio support check:', support);
+    // console.log('🔍 Audio support check:', support);
     return support;
   }
 }
