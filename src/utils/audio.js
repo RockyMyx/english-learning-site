@@ -99,7 +99,7 @@ class AudioPlayer {
         text: finalText,
         options: {
           ...options,
-          speed: options.speed || 1.0 // 默认语速1.2倍
+          speed: options.speed || 1.0 // 默认语速1.0倍
         },
         resolve: resolve,
         reject: reject

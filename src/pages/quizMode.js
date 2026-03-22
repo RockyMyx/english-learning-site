@@ -189,7 +189,7 @@ export class QuizMode {
             <div class="quiz-option" data-index="${index}">
               <span class="option-number">${String.fromCharCode(65 + index)}</span>
               <span class="option-text">${this.renderOptionText(option)}</span>
-              ${this.mode === 'chinese-to-english' ? `
+              ${this.mode === 'chinese-to-english' || this.mode === 'english-dialogue' ? `
                 <button class="audio-option-button" data-word="${this.getEnglishText(option)}" aria-label="播放发音">
                   <i class="fas fa-volume-up"></i>
                 </button>
@@ -674,14 +674,14 @@ export class QuizMode {
     }
   }
 
-  // 英文对话模式：1.2倍速读题目
+  // 英文对话模式：1倍速读题目
   async playDialogueAudioThreeTimes(text) {
     try {
       console.log('英文对话模式开始读题目:', text);
 
-      // 1.2倍速读一遍
-      console.log('调用音频播放器，语速1.2');
-      await audioPlayer.speak(text, { speed: 1.2 });
+      // 1倍速读一遍
+      console.log('调用音频播放器，语速1.0');
+      await audioPlayer.speak(text, { speed: 1.0 });
 
       console.log('英文对话模式读题完成');
 
