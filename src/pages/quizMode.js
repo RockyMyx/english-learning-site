@@ -273,30 +273,33 @@ export class QuizMode {
       option.addEventListener('click', () => this.selectOption(parseInt(option.dataset.index)));
     });
 
-    // 导航按钮
-    document.getElementById('prev-question')?.addEventListener('click', () => {
+    // 导航按钮 - 使用 this.container.querySelector 确保只获取当前模式的按钮
+    const prevButton = this.container.querySelector('#prev-question');
+    const nextButton = this.container.querySelector('#next-question');
+    
+    prevButton?.addEventListener('click', () => {
       if (this.currentIndex > 0) {
         this.goToQuestion(this.currentIndex - 1);
       }
     });
 
-    document.getElementById('next-question')?.addEventListener('click', () => {
+    nextButton?.addEventListener('click', () => {
       // 选择答案后，且还有下一题时允许点击
       if (this.hasAnswered && this.currentIndex < this.questions.length - 1) {
         this.goToQuestion(this.currentIndex + 1);
       }
     });
 
-    document.getElementById('restart-quiz')?.addEventListener('click', () => this.restart());
+    this.container.querySelector('#restart-quiz')?.addEventListener('click', () => this.restart());
 
-    document.getElementById('back-to-home')?.addEventListener('click', () => {
+    this.container.querySelector('#back-to-home')?.addEventListener('click', () => {
       if (window.router && window.router.navigate) {
         window.router.navigate('/');
       }
     });
 
     // 音频播放按钮
-    const playAudioButton = document.getElementById('play-question-audio');
+    const playAudioButton = this.container.querySelector('#play-question-audio');
     if (playAudioButton) {
       playAudioButton.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -417,15 +420,17 @@ export class QuizMode {
   }
 
   showFeedback(isCorrect) {
-    const feedback = document.getElementById('quiz-feedback');
+    const feedback = this.container.querySelector('#quiz-feedback');
+    if (!feedback) return;
     const pointsPerQuestion = this.getPointsPerQuestion();
     feedback.textContent = isCorrect ? `✅ 正确！+${pointsPerQuestion}分` : '❌ 错误！';
     feedback.className = `quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
   }
 
   updateNavigationButtons() {
-    const prevButton = document.getElementById('prev-question');
-    const nextButton = document.getElementById('next-question');
+    // 使用 this.container.querySelector 确保只获取当前模式的按钮
+    const prevButton = this.container.querySelector('#prev-question');
+    const nextButton = this.container.querySelector('#next-question');
 
     if (prevButton) {
       // 第一题禁用上一题按钮
@@ -612,21 +617,28 @@ export class QuizMode {
       }
     }
 
-    // 绑定事件
-    document.getElementById('restart-quiz').addEventListener('click', () => this.restart());
+    // 绑定事件 - 使用 document.getElementById 因为弹框是动态创建在 body 中的
+    const restartBtn = document.getElementById('restart-quiz');
+    const backToHomeBtn = document.getElementById('back-to-home');
+    
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => this.restart());
+    }
 
-    document.getElementById('back-to-home').addEventListener('click', () => {
-      // 移除弹框
-      const summary = document.getElementById('quiz-summary');
-      if (summary) {
-        summary.remove();
-      }
+    if (backToHomeBtn) {
+      backToHomeBtn.addEventListener('click', () => {
+        // 移除弹框
+        const summary = document.getElementById('quiz-summary');
+        if (summary) {
+          summary.remove();
+        }
 
-      // 导航回首页
-      if (window.router && window.router.navigate) {
-        window.router.navigate('/');
-      }
-    });
+        // 导航回首页
+        if (window.router && window.router.navigate) {
+          window.router.navigate('/');
+        }
+      });
+    }
   }
 
   async playQuestionAudio() {

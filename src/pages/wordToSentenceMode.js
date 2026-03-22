@@ -1598,14 +1598,17 @@ export class WordToSentenceMode {
       });
     });
 
-    // 导航按钮
-    document.getElementById('prev-question')?.addEventListener('click', () => {
+    // 导航按钮 - 使用 this.container.querySelector 确保只获取当前模式的按钮
+    const prevButton = this.container.querySelector('#prev-question');
+    const nextButton = this.container.querySelector('#next-question');
+    
+    prevButton?.addEventListener('click', () => {
       if (this.currentIndex > 0) {
         this.goToQuestion(this.currentIndex - 1);
       }
     });
 
-    document.getElementById('next-question')?.addEventListener('click', () => {
+    nextButton?.addEventListener('click', () => {
       if (this.currentIndex < this.questions.length - 1) {
         const nextIndex = this.currentIndex + 1;
         this.currentIndex = nextIndex;
@@ -1614,7 +1617,7 @@ export class WordToSentenceMode {
       }
     });
 
-    document.getElementById('restart-quiz')?.addEventListener('click', () => this.restart());
+    this.container.querySelector('#restart-quiz')?.addEventListener('click', () => this.restart());
   }
 
   playWordAudio() {

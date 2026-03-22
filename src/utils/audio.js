@@ -144,8 +144,14 @@ class AudioPlayer {
 
   playAudio(cleanText, options = {}) {
     return new Promise((resolve, reject) => {
-      // 停止当前播放
-      this.stop();
+      // 注意：不要在这里调用 stop()，因为 processQueue 已经处理了队列逻辑
+      // 停止当前音频播放，但不清空队列
+      if (this.audio) {
+        this.audio.pause();
+        this.audio.src = '';
+        this.audio = null;
+      }
+      this.isSpeaking = false;
 
       // console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
 
@@ -244,6 +250,7 @@ class AudioPlayer {
       });
 
       console.log('智谱AI响应状态:', response.status, response.statusText);
+      console.log('智谱AI响应headers:', [...response.headers.entries()]);
 
       if (!response.ok) {
         // 尝试读取错误信息
@@ -269,6 +276,14 @@ class AudioPlayer {
       // 检查是否是有效的音频
       if (audioBlob.size === 0) {
         throw new Error('智谱AI返回了空的音频数据');
+      }
+
+      // 检查响应类型是否为音频
+      if (!contentType || !contentType.includes('audio')) {
+        // 如果不是音频类型，可能是错误信息
+        const textResponse = await audioBlob.text();
+        console.error('智谱AI返回非音频数据:', textResponse);
+        throw new Error(`智谱AI返回错误: ${textResponse}`);
       }
 
       // 尝试去除音频前面的提示音
@@ -327,7 +342,11 @@ class AudioPlayer {
       return audioBlob;
 
     } catch (error) {
-      // console.warn('音频处理失败，返回原音频:', error);
+      console.warn('音频处理失败，返回原音频:', error);
+      // 确保关闭音频上下文
+      if (audioContext && audioContext.state !== 'closed') {
+        audioContext.close().catch(() => {});
+      }
       return audioBlob;
     }
   }
