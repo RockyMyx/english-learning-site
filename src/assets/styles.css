@@ -1495,6 +1495,32 @@ body {
     margin: 0 auto;
 }
 
+/* 单词造句页面：上一题按钮可点击时样式和下一题一致 */
+.sentence-practice-container .prev-btn {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.dark .sentence-practice-container .prev-btn {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    color: white;
+}
+
+.sentence-practice-container .prev-btn:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.sentence-practice-container .next-btn {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.sentence-practice-container .next-btn:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
 /* Word Card - Simplified */
 .word-card {
     display: flex;
@@ -1786,6 +1812,13 @@ body {
     border-color: #ea580c;
 }
 
+.sentence-answer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
 .sentence-answer-text {
     margin: 0;
     font-size: 0.95rem;
@@ -1794,10 +1827,17 @@ body {
     line-height: 1.5;
     word-wrap: break-word;
     white-space: normal;
+    flex: 1;
 }
 
 .dark .sentence-answer-text {
     color: #fbbf24;
+}
+
+/* 答案面板中的发音按钮 */
+.sentence-answer-panel .sentence-audio-btn {
+    width: 32px;
+    height: 32px;
 }
 
 @keyframes slideDown {

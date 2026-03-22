@@ -99,7 +99,7 @@ class AudioPlayer {
         text: finalText,
         options: {
           ...options,
-          speed: options.speed || 1.2 // 默认语速1.2倍
+          speed: options.speed || 1.0 // 默认语速1.2倍
         },
         resolve: resolve,
         reject: reject
@@ -156,7 +156,7 @@ class AudioPlayer {
       // console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
 
       // 调用智谱AI API，传入语速参数
-      this.callZhipuAPI(cleanText, options.speed || 1.2)
+      this.callZhipuAPI(cleanText, options.speed || 1.0)
         .then(audioBlob => {
           // 创建本地URL
           const audioUrl = URL.createObjectURL(audioBlob);
@@ -224,7 +224,7 @@ class AudioPlayer {
   }
 
   // 调用智谱AI TTS API
-  async callZhipuAPI(text, speed = 1.2) {
+  async callZhipuAPI(text, speed = 1.0) {
     try {
       console.log('发送智谱AI TTS请求:', text, '语速:', speed);
 

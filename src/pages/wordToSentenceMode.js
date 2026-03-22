@@ -1522,7 +1522,12 @@ export class WordToSentenceMode {
                     </div>
                   </div>
                   <div class="sentence-answer-panel" id="answer-panel-${index}" style="display: none;">
-                    <p class="sentence-answer-text">${englishSentence}</p>
+                    <div class="sentence-answer-content">
+                      <p class="sentence-answer-text">${englishSentence}</p>
+                      <button class="sentence-audio-btn" data-sentence="${englishSentence}" title="播放发音">
+                        <i class="fas fa-volume-up"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               `;
@@ -1539,30 +1544,12 @@ export class WordToSentenceMode {
             <i class="fas fa-arrow-left"></i>
             <span>上一题</span>
           </button>
-          <button class="nav-btn next-btn" id="next-question">
-            <span>下一题</span>
+          <button class="nav-btn next-btn" id="next-question" ${this.currentIndex === this.questions.length - 1 ? 'data-finish="true"' : ''}>
+            <span>${this.currentIndex === this.questions.length - 1 ? '完成' : '下一题'}</span>
             <i class="fas fa-arrow-right"></i>
           </button>
         </div>
 
-        ${this.currentIndex === this.questions.length - 1 ? `
-          <div class="quiz-summary" id="quiz-summary" style="display: none;">
-            <div class="summary-content">
-              <div class="summary-icon">🎉</div>
-              <h3>练习完成！</h3>
-              <div class="summary-stats">
-                <div class="stat-box">
-                  <span class="stat-value">${Math.round((this.score / (this.questions.length * 5)) * 100)}%</span>
-                  <span class="stat-label">正确率</span>
-                </div>
-              </div>
-              <button class="restart-btn" id="restart-quiz">
-                <i class="fas fa-redo"></i>
-                再练一次
-              </button>
-            </div>
-          </div>
-        ` : ''}
       </div>
     `;
   }
@@ -1598,6 +1585,16 @@ export class WordToSentenceMode {
       });
     });
 
+    // 句子发音按钮（在答案面板中）
+    const sentenceAudioButtons = this.container.querySelectorAll('.sentence-audio-btn');
+    sentenceAudioButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sentence = button.dataset.sentence;
+        this.playSentenceAudio(sentence);
+      });
+    });
+
     // 导航按钮 - 使用 this.container.querySelector 确保只获取当前模式的按钮
     const prevButton = this.container.querySelector('#prev-question');
     const nextButton = this.container.querySelector('#next-question');
@@ -1610,10 +1607,14 @@ export class WordToSentenceMode {
 
     nextButton?.addEventListener('click', () => {
       if (this.currentIndex < this.questions.length - 1) {
+        // 不是最后一题，正常下一题
         const nextIndex = this.currentIndex + 1;
         this.currentIndex = nextIndex;
         this.renderQuiz();
         this.bindEvents();
+      } else {
+        // 最后一题，点击完成按钮
+        this.showQuizSummary();
       }
     });
 
@@ -1767,6 +1768,12 @@ export class WordToSentenceMode {
   }
 
   restart() {
+    // 清理弹框
+    const summary = document.getElementById('quiz-summary');
+    if (summary) {
+      summary.remove();
+    }
+
     this.currentIndex = 0;
     this.score = 0;
     this.answers = [];
@@ -1775,6 +1782,98 @@ export class WordToSentenceMode {
     this.generateQuestions();
     this.renderQuiz();
     this.bindEvents();
+  }
+
+  showQuizSummary() {
+    // 创建弹框DOM
+    const summary = document.createElement('div');
+    summary.className = 'quiz-summary';
+    summary.id = 'quiz-summary';
+
+    const percentage = Math.round((this.score / (this.questions.length * 15)) * 100); // 每题最多15分（3个句子*5分）
+
+    summary.innerHTML = `
+      <div class="summary-content">
+        <div class="summary-icon">🎉</div>
+        <h3>练习完成！</h3>
+        <div class="summary-stats">
+          <div class="stat-box stat-box-accuracy">
+            <span class="stat-value">${percentage}%</span>
+            <span class="stat-label">正确率</span>
+          </div>
+          <div class="stat-box stat-box-score">
+            <span class="stat-value">${this.score}</span>
+            <span class="stat-label">本轮得分</span>
+          </div>
+        </div>
+        <div class="goal-message" id="goal-message">
+          <!-- 动态插入目标提示信息 -->
+        </div>
+        <div class="result-actions">
+          <button class="restart-btn" id="restart-quiz">
+            <i class="fas fa-redo"></i>
+            再练一次
+          </button>
+          <button class="restart-btn secondary" id="back-to-home">
+            <i class="fas fa-home"></i>
+            回到首页
+          </button>
+        </div>
+      </div>
+    `;
+
+    // 添加到body中
+    document.body.appendChild(summary);
+
+    // 设置目标提示信息
+    const goalMessage = summary.querySelector('#goal-message');
+    if (goalMessage) {
+      try {
+        let message = '';
+
+        if (window.router && typeof window.router.getGoalProgress === 'function') {
+          const progress = window.router.getGoalProgress();
+          if (progress && typeof progress.current !== 'undefined' && typeof progress.goal !== 'undefined') {
+            const remaining = Math.max(0, progress.goal - progress.current);
+
+            if (remaining > 0) {
+              message = `💪 加油，还差${remaining}分就完成了！`;
+            } else {
+              message = `🎊 太棒了！你已经完成今日目标！`;
+            }
+          } else {
+            message = '🎯 继续加油学习吧！';
+          }
+        } else {
+          message = '🎯 继续加油学习吧！';
+        }
+
+        goalMessage.innerHTML = `<p class="goal-text">${message}</p>`;
+      } catch (error) {
+        console.error('生成目标提示失败:', error);
+        goalMessage.innerHTML = `<p class="goal-text">🎯 继续加油学习吧！</p>`;
+      }
+    }
+
+    // 绑定事件
+    const restartBtn = summary.querySelector('#restart-quiz');
+    const backToHomeBtn = summary.querySelector('#back-to-home');
+    
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => this.restart());
+    }
+
+    if (backToHomeBtn) {
+      backToHomeBtn.addEventListener('click', () => {
+        // 移除弹框
+        summary.remove();
+        
+        // 导航回首页
+        if (window.router && window.router.navigate) {
+          window.router.navigate('/');
+        }
+      });
+    }
   }
 
   cleanup() {
