@@ -26,7 +26,7 @@ export function initListeningMode() {
         <button class="primary-btn" id="random-select-btn">随机选择</button>
       </div>
 
-      <div class="words-grid">
+      <div class="words-grid responsive-grid">
         ${allWords.map((word, index) => `
           <div class="word-block" data-index="${index}" data-word='${JSON.stringify(word)}'>
             <div class="word-english">${word.english}</div>

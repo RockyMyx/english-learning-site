@@ -8,9 +8,49 @@
     box-sizing: border-box;
 }
 
+/* 强制响应式网格 - 最高优先级 */
+.words-grid,
+.responsive-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+@media (max-width: 640px) {
+    .words-grid,
+    .responsive-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .words-grid,
+    .responsive-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.35rem !important;
+    }
+    
+    .word-block {
+        min-width: 0 !important;
+        padding: 0.5rem 0.25rem !important;
+    }
+    
+    .word-english {
+        font-size: 0.8rem !important;
+    }
+    
+    .word-chinese {
+        font-size: 0.7rem !important;
+    }
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* ============================================
@@ -650,17 +690,18 @@ body {
 
 .words-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.5rem;
     margin: 0 auto 1.5rem auto;
     max-width: 100%;
     justify-content: center;
+    width: 100%;
 }
 
 /* 小屏幕适配 */
 @media (max-width: 640px) {
     .words-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         gap: 0.4rem;
     }
 }
@@ -670,6 +711,14 @@ body {
     .words-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 0.35rem;
+    }
+}
+
+/* 极小屏幕适配 */
+@media (max-width: 360px) {
+    .words-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.3rem;
     }
 }
 
@@ -1193,25 +1242,6 @@ body {
    Responsive - Dictation
    ============================================ */
 @media (max-width: 640px) {
-    .words-grid {
-        grid-template-columns: repeat(3, minmax(110px, 1fr));
-        gap: 0.4rem;
-    }
-
-    .word-block {
-        padding: 0.5rem 0.3rem;
-        min-width: 110px;
-    }
-
-    .word-english {
-        font-size: 0.85rem;
-        word-break: break-word;
-    }
-
-    .word-chinese {
-        font-size: 0.75rem;
-    }
-
     .dictation-item {
         padding: 0.75rem;
     }
