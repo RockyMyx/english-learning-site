@@ -36,23 +36,8 @@ class Router {
     window.addPoints = (points) => this.addPoints(points);
     window.getGoalProgress = () => learningProgress.getGoalProgress();
 
-    // 启动学习时间跟踪
-    this.startStudyTimeTracking();
-
-    // 监听页面可见性变化，准确跟踪学习时间
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        this.pageHiddenTime = Date.now();
-      } else {
-        if (this.pageHiddenTime) {
-          const hiddenDuration = Math.floor((Date.now() - this.pageHiddenTime) / 1000 / 60);
-          if (hiddenDuration > 0) {
-            learningProgress.addStudyTime(hiddenDuration);
-          }
-          this.pageHiddenTime = null;
-        }
-      }
-    });
+    // 启动全局学习时间计时器（秒级精度，页面不可见时暂停）
+    this.startStudyTimer();
 
     // 定义路由
     this.routes = {
@@ -153,9 +138,6 @@ class Router {
     // 初始化首页统计
     this.updateHomeStats();
 
-    // 开始学习时间计时（使用统一的 learningProgress 数据）
-    this.startStudyTimer();
-
     // 延迟设置学习模式卡片点击事件，确保DOM完全渲染
     setTimeout(() => {
       document.querySelectorAll('.mode-card').forEach(card => {
@@ -170,30 +152,84 @@ class Router {
   }
 
   startStudyTimer() {
-    // 立即更新一次显示（使用 learningProgress 的数据）
+    // 防止重复启动计时器
+    if (this.studyTimerStarted) {
+      return;
+    }
+    this.studyTimerStarted = true;
+
+    // 存储已学习的秒数（用于当前会话的实时显示）
+    this.sessionStudySeconds = 0;
+    this.lastTickTime = Date.now();
+    this.isTimerRunning = false;
+
+    // 立即更新一次显示
     this.updateStudyTimeDisplay();
 
-    // 每分钟更新一次显示
-    setInterval(() => {
-      // 通过 learningProgress 添加学习时间
-      if (window.learningProgress) {
-        window.learningProgress.addStudyTime(1);
+    // 每秒更新显示（使用秒级精度）
+    this.studyTimerInterval = setInterval(() => {
+      // 只在页面可见时计时
+      if (!document.hidden && this.isTimerRunning) {
+        const now = Date.now();
+        const deltaSeconds = Math.floor((now - this.lastTickTime) / 1000);
+        
+        if (deltaSeconds > 0) {
+          this.sessionStudySeconds += deltaSeconds;
+          this.lastTickTime = now;
+          
+          // 每满60秒，保存到 learningProgress
+          if (this.sessionStudySeconds >= 60) {
+            const minutesToAdd = Math.floor(this.sessionStudySeconds / 60);
+            if (window.learningProgress) {
+              window.learningProgress.addStudyTime(minutesToAdd);
+            }
+            this.sessionStudySeconds = this.sessionStudySeconds % 60;
+          }
+          
+          this.updateStudyTimeDisplay();
+        }
+      } else {
+        // 如果计时器暂停，更新时间基准
+        this.lastTickTime = Date.now();
       }
-      this.updateStudyTimeDisplay();
-    }, 60000);
+    }, 1000);
+
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // 页面隐藏时暂停计时
+        this.isTimerRunning = false;
+      } else {
+        // 页面显示时恢复计时
+        this.isTimerRunning = true;
+        this.lastTickTime = Date.now();
+      }
+    });
+
+    // 默认开始计时（如果页面可见）
+    if (!document.hidden) {
+      this.isTimerRunning = true;
+      this.lastTickTime = Date.now();
+    }
   }
 
   updateStudyTimeDisplay() {
     const visitTimeElement = document.getElementById('visit-time');
     if (visitTimeElement && window.learningProgress) {
-      const minutes = window.learningProgress.getStudyTime();
-      if (minutes < 60) {
-        visitTimeElement.textContent = minutes + '分钟';
-      } else {
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        visitTimeElement.textContent = `${hours}小时${mins}分钟`;
-      }
+      const savedMinutes = window.learningProgress.getStudyTime();
+      const totalSeconds = savedMinutes * 60 + this.sessionStudySeconds;
+      
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      
+      // 格式化显示：HH:MM:SS
+      const formattedTime = 
+        (hours > 0 ? String(hours).padStart(2, '0') + ':' : '') +
+        String(minutes).padStart(2, '0') + ':' +
+        String(seconds).padStart(2, '0');
+      
+      visitTimeElement.textContent = formattedTime;
     }
   }
 
@@ -277,11 +313,6 @@ class Router {
   }
 
   startStudyTimeTracking() {
-    // 每分钟更新一次学习时间
-    setInterval(() => {
-      learningProgress.addStudyTime(1);
-    }, 60000); // 每分钟更新一次
-
     // 初始化时检查一次成就
     setTimeout(() => {
       learningProgress.checkAchievements();

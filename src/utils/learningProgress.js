@@ -70,20 +70,14 @@ class LearningProgressManager {
   }
 
   checkAchievements() {
-    const scoreAchieved = this.progress.totalScore >= 50;
-    const timeAchieved = this.progress.studyTime >= 30;
+    // 每日学习目标：仅分数达到50分
+    const scoreAchieved = this.progress.totalScore >= this.progress.dailyGoal;
 
     // 检查是否已经庆祝过
     if (scoreAchieved && !this.progress.achievements.includes('score_50')) {
       this.progress.achievements.push('score_50');
       this.saveProgress();
       this.showAchievement('score');
-    }
-
-    if (timeAchieved && !this.progress.achievements.includes('time_30')) {
-      this.progress.achievements.push('time_30');
-      this.saveProgress();
-      this.showAchievement('time');
     }
   }
 
@@ -108,9 +102,18 @@ class LearningProgressManager {
       display.textContent = this.getCurrentScore();
     });
 
+    // 更新学习时间显示（格式化为时分秒）
     const studyTimeDisplays = document.querySelectorAll('.study-time');
     studyTimeDisplays.forEach(display => {
-      display.textContent = this.getStudyTime();
+      const minutes = this.getStudyTime();
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      
+      if (hours > 0) {
+        display.textContent = `${hours}:${String(mins).padStart(2, '0')}`;
+      } else {
+        display.textContent = `${mins}:00`;
+      }
     });
   }
 
@@ -118,8 +121,7 @@ class LearningProgressManager {
     return {
       score: this.progress.totalScore,
       time: this.progress.studyTime,
-      scoreAchieved: this.progress.totalScore >= 50,
-      timeAchieved: this.progress.studyTime >= 30,
+      scoreAchieved: this.progress.totalScore >= this.progress.dailyGoal,
       achievements: this.progress.achievements
     };
   }

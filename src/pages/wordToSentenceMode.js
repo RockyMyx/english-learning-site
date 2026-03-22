@@ -1713,7 +1713,10 @@ export class WordToSentenceMode {
     // 播放答对音效
     this.playSoundEffect(true);
 
-    // 加分
+    // 增加本轮得分
+    this.score += 5;
+
+    // 加分到全局积分
     if (window.router && window.router.addPoints) {
       window.router.addPoints(5);
     }
@@ -1790,17 +1793,11 @@ export class WordToSentenceMode {
     summary.className = 'quiz-summary';
     summary.id = 'quiz-summary';
 
-    const percentage = Math.round((this.score / (this.questions.length * 15)) * 100); // 每题最多15分（3个句子*5分）
-
     summary.innerHTML = `
       <div class="summary-content">
         <div class="summary-icon">🎉</div>
         <h3>练习完成！</h3>
         <div class="summary-stats">
-          <div class="stat-box stat-box-accuracy">
-            <span class="stat-value">${percentage}%</span>
-            <span class="stat-label">正确率</span>
-          </div>
           <div class="stat-box stat-box-score">
             <span class="stat-value">${this.score}</span>
             <span class="stat-label">本轮得分</span>

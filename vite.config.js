@@ -4,6 +4,7 @@ import { resolve } from 'path'
 export default defineConfig({
   base: '/',
   server: {
+    port: 5173,
     proxy: {
       '/dictvoice': {
         target: 'https://dict.youdao.com',
