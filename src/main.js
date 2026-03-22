@@ -3,7 +3,7 @@ import { getAllWords } from './utils/vocabulary.js';
 import learningProgress from './utils/learningProgress.js';
 
 // 导入各个页面模块
-import { initListeningMode } from './pages/listeningMode.js';
+import { initListeningMode, cleanupListeningMode } from './pages/listeningMode.js';
 import { initWordToSentenceMode } from './pages/wordToSentenceMode.js';
 import {
   initEnglishToChineseMode,
@@ -34,6 +34,7 @@ class Router {
     window.getTodayPoints = () => this.getTodayPoints();
     window.getStudyTime = () => this.getStudyTime();
     window.addPoints = (points) => this.addPoints(points);
+    window.getGoalProgress = () => learningProgress.getGoalProgress();
 
     // 启动学习时间跟踪
     this.startStudyTimeTracking();
@@ -85,6 +86,17 @@ class Router {
     const route = this.routes[path] || 'home';
     this.currentRoute = route;
 
+    // 清理所有quiz模式实例
+    if (this.currentQuizInstance && typeof this.currentQuizInstance.cleanup === 'function') {
+      this.currentQuizInstance.cleanup();
+      this.currentQuizInstance = null;
+    }
+
+    // 清理听力模式
+    if (typeof cleanupListeningMode === 'function') {
+      cleanupListeningMode();
+    }
+
     // 隐藏所有页面
     document.querySelectorAll('.page').forEach(page => {
       page.classList.remove('active');
@@ -98,6 +110,11 @@ class Router {
     } else {
       console.error('未找到页面:', route);
     }
+
+    // 停止任何正在播放的音频
+    if (window.audioPlayer) {
+      window.audioPlayer.stop();
+    }
   }
 
   initPage(route) {
@@ -109,19 +126,19 @@ class Router {
         initListeningMode();
         break;
       case 'english-to-chinese':
-        initEnglishToChineseMode();
+        this.currentQuizInstance = initEnglishToChineseMode();
         break;
       case 'chinese-to-english':
-        initChineseToEnglishMode();
+        this.currentQuizInstance = initChineseToEnglishMode();
         break;
       case 'listening-to-chinese':
-        initListeningToChineseMode();
+        this.currentQuizInstance = initListeningToChineseMode();
         break;
       case 'english-dialogue':
-        initEnglishDialogueMode();
+        this.currentQuizInstance = initEnglishDialogueMode();
         break;
       case 'word-to-sentence':
-        initWordToSentenceMode();
+        this.currentQuizInstance = initWordToSentenceMode();
         break;
       case 'playlist':
         initPlaylistPage();
@@ -295,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 添加全局样式补充
   addGlobalStyles();
 
-  // console.log('🎓 小学英语学习应用已启动！');
+  // console.log('🎓 英语学习应用已启动！');
 });
 
 // 全局样式补充
@@ -325,16 +342,25 @@ function addGlobalStyles() {
     }
 
     .audio-option-button {
-      background: none;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       border: none;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
       cursor: pointer;
-      font-size: 1rem;
-      padding: 0.25rem;
-      transition: transform 0.2s ease;
+      font-size: 0.8rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+      transition: none;
     }
 
-    .audio-option-button:hover {
-      transform: scale(1.2);
+    .audio-option-button i {
+      font-size: 0.8rem;
+      color: white;
     }
 
     .quiz-header {
@@ -588,6 +614,52 @@ function addGlobalStyles() {
       color: #888;
       font-weight: bold;
       z-index: 1;
+    }
+
+    /* 防止学习时间显示换行 */
+    #visit-time {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: keep-all;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    /* 防止今日积分显示换行 */
+    #today-points {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: keep-all;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    /* 在小屏幕上调整统计卡片样式 */
+    @media (max-width: 640px) {
+      .hero-stat-card {
+        min-width: 140px;
+        padding: 1rem;
+      }
+
+      #visit-time, #today-points {
+        font-size: 1.25rem; /* 在小屏幕上适当减小字体 */
+        min-width: 100px;
+      }
+    }
+
+    /* 在更小屏幕上进一步调整 */
+    @media (max-width: 480px) {
+      .hero-stat-card {
+        min-width: 120px;
+        padding: 0.75rem;
+      }
+
+      #visit-time, #today-points {
+        font-size: 1.1rem;
+        min-width: 90px;
+      }
     }
   `;
   document.head.appendChild(style);

@@ -33,7 +33,8 @@ class LearningProgressManager {
       totalScore: 0,
       studyTime: 0,
       lastStudyTime: Date.now(),
-      achievements: []
+      achievements: [],
+      dailyGoal: 50 // 默认每日目标为50分
     };
     this.saveProgress();
   }
@@ -120,6 +121,21 @@ class LearningProgressManager {
       scoreAchieved: this.progress.totalScore >= 50,
       timeAchieved: this.progress.studyTime >= 30,
       achievements: this.progress.achievements
+    };
+  }
+
+  getGoalProgress() {
+    const goal = this.progress.dailyGoal || 50;
+    const current = this.progress.totalScore;
+    const remaining = Math.max(0, goal - current);
+    const percentage = Math.min(100, Math.round((current / goal) * 100));
+
+    return {
+      goal: goal,
+      current: current,
+      remaining: remaining,
+      percentage: percentage,
+      achieved: current >= goal
     };
   }
 }
@@ -428,6 +444,10 @@ export function getDailySummary() {
 
 export function updateScoreDisplay() {
   learningProgress.updateDisplay();
+}
+
+export function getGoalProgress() {
+  return learningProgress.getGoalProgress();
 }
 
 export default learningProgress;

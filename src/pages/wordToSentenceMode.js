@@ -28,9 +28,9 @@ export class WordToSentenceMode {
         word: "one",
         wordChinese: "一",
         englishSentences: [
-          "I've got one cat. It's a black cat.",
+          "I have one cat. It's a black cat.",
           "Look! One red toy is on the chair.",
-          "How many cats have you got? I've got one."
+          "How many cats have you got? I have one."
         ],
         chineseSentences: [
           "我有一只猫。它是一只黑色的猫。",
@@ -42,7 +42,7 @@ export class WordToSentenceMode {
         word: "two",
         wordChinese: "二",
         englishSentences: [
-          "I've got two black eyes.",
+          "I have two black eyes.",
           "Two potatoes are on the table.",
           "The dog has two short legs."
         ],
@@ -56,7 +56,7 @@ export class WordToSentenceMode {
         word: "three",
         wordChinese: "三",
         englishSentences: [
-          "I've got three green toy cars.",
+          "I have three green toy cars.",
           "Three dolls are on the sofa.",
           "How many eggs are in the kitchen? Three."
         ],
@@ -84,7 +84,7 @@ export class WordToSentenceMode {
         word: "five",
         wordChinese: "五",
         englishSentences: [
-          "I've got five fingers on my hand.",
+          "I have five fingers on my hand.",
           "Pass me the five red tomatoes, please.",
           "Look at the spider! It's got eight legs, but it hasn't got five legs."
         ],
@@ -98,7 +98,7 @@ export class WordToSentenceMode {
         word: "six",
         wordChinese: "六",
         englishSentences: [
-          "I've got six yellow erasers.",
+          "I have six yellow erasers.",
           "How many balls are under the bed? Six.",
           "That robot has got six arms."
         ],
@@ -114,7 +114,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Look! Seven pink birds are on the house.",
           "My grandfather is seventy-one. He is old, but he is happy.",
-          "How many orange toys have you got? I've got seven."
+          "How many orange toys have you got? I have seven."
         ],
         chineseSentences: [
           "看！七只粉色的鸟在房子上。",
@@ -127,7 +127,7 @@ export class WordToSentenceMode {
         wordChinese: "八",
         englishSentences: [
           "A spider has got eight legs.",
-          "I've got eight pencils in my bag.",
+          "I have eight pencils in my bag.",
           "Look at the fish! Eight fish can swim."
         ],
         chineseSentences: [
@@ -140,7 +140,7 @@ export class WordToSentenceMode {
         word: "nine",
         wordChinese: "九",
         englishSentences: [
-          "I've got nine white erasers.",
+          "I have nine white erasers.",
           "How old are you? I'm nine.",
           "Nine cakes are on the table. I like cake!"
         ],
@@ -154,7 +154,7 @@ export class WordToSentenceMode {
         word: "ten",
         wordChinese: "十",
         englishSentences: [
-          "I've got ten fingers.",
+          "I have ten fingers.",
           "Look! Ten toy cars are on the floor.",
           "How many purple toys are on the chair? Ten."
         ],
@@ -169,7 +169,7 @@ export class WordToSentenceMode {
         wordChinese: "红色",
         englishSentences: [
           "My favourite color is red.",
-          "I've got a red apple. It's on the table.",
+          "I have a red apple. It's on the table.",
           "Pass me the red pencil, please."
         ],
         chineseSentences: [
@@ -183,7 +183,7 @@ export class WordToSentenceMode {
         wordChinese: "白色",
         englishSentences: [
           "Look at the white bird! It can fly.",
-          "I've got a white cat and a black dog.",
+          "I have a white cat and a black dog.",
           "An egg is white. I like eggs."
         ],
         chineseSentences: [
@@ -224,7 +224,7 @@ export class WordToSentenceMode {
         word: "yellow",
         wordChinese: "黄色",
         englishSentences: [
-          "I've got a yellow toy car.",
+          "I have a yellow toy car.",
           "Bananas are yellow. They are fruit.",
           "Color the yellow bag blue."
         ],
@@ -240,7 +240,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Look at the green frog! It can jump.",
           "My pencil is green.",
-          "I've got a green apple. It's under the chair."
+          "I have a green apple. It's under the chair."
         ],
         chineseSentences: [
           "看那只绿色的青蛙！它会跳。",
@@ -252,7 +252,7 @@ export class WordToSentenceMode {
         word: "pink",
         wordChinese: "粉色",
         englishSentences: [
-          "I've got a pink doll. She's beautiful.",
+          "I have a pink doll. She's beautiful.",
           "My sister likes pink.",
           "Pass me the pink pencil, please."
         ],
@@ -268,7 +268,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Oranges are orange.",
           "Look at the orange bag! It's big.",
-          "I've got an orange cat. It's beautiful."
+          "I have an orange cat. It's beautiful."
         ],
         chineseSentences: [
           "橙子是橙色的。",
@@ -280,7 +280,7 @@ export class WordToSentenceMode {
         word: "purple",
         wordChinese: "紫色",
         englishSentences: [
-          "I've got a purple robot. It's small.",
+          "I have a purple robot. It's small.",
           "Grapes are purple. I like grapes.",
           "Color the purple chair black."
         ],
@@ -450,7 +450,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Look at the bird! It can fly.",
           "Spiders can't fly, but birds can fly.",
-          "I've got a kite. It's red. It can fly."
+          "I have a kite. It's red. It can fly."
         ],
         chineseSentences: [
           "看那只鸟！它会飞。",
@@ -506,7 +506,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Potatoes are food. I like potatoes.",
           "Look at the potatoes! They are on the table.",
-          "How many potatoes have I got? I've got five."
+          "How many potatoes have I got? I have five."
         ],
         chineseSentences: [
           "土豆是食物。我喜欢土豆。",
@@ -630,7 +630,7 @@ export class WordToSentenceMode {
         word: "body",
         wordChinese: "身体",
         englishSentences: [
-          "I've got a head, arms, and legs. This is my body.",
+          "I have a head, arms, and legs. This is my body.",
           "Point to your body.",
           "My body is big."
         ],
@@ -644,7 +644,7 @@ export class WordToSentenceMode {
         word: "eye",
         wordChinese: "眼睛",
         englishSentences: [
-          "I've got two blue eyes.",
+          "I have two blue eyes.",
           "Point to your eyes.",
           "Look at the cat! It's got green eyes."
         ],
@@ -672,7 +672,7 @@ export class WordToSentenceMode {
         word: "hand",
         wordChinese: "手",
         englishSentences: [
-          "I've got two hands.",
+          "I have two hands.",
           "Point to your hand.",
           "My hand is small."
         ],
@@ -686,7 +686,7 @@ export class WordToSentenceMode {
         word: "leg",
         wordChinese: "腿",
         englishSentences: [
-          "I've got two legs.",
+          "I have two legs.",
           "Point to your legs.",
           "That spider has got eight legs."
         ],
@@ -700,7 +700,7 @@ export class WordToSentenceMode {
         word: "arm",
         wordChinese: "胳膊",
         englishSentences: [
-          "I've got two arms.",
+          "I have two arms.",
           "Point to your arms.",
           "That robot has got long arms."
         ],
@@ -840,7 +840,7 @@ export class WordToSentenceMode {
         word: "cat",
         wordChinese: "猫",
         englishSentences: [
-          "I've got a white cat.",
+          "I have a white cat.",
           "Look at the cat! It's on the sofa.",
           "I like cats. They are beautiful."
         ],
@@ -855,7 +855,7 @@ export class WordToSentenceMode {
         wordChinese: "鱼",
         englishSentences: [
           "Look at the fish! They can swim.",
-          "I've got a cat. It likes fish.",
+          "I have a cat. It likes fish.",
           "Fish are animals."
         ],
         chineseSentences: [
@@ -870,7 +870,7 @@ export class WordToSentenceMode {
         englishSentences: [
           "Look at the bird! It's red.",
           "Birds can fly.",
-          "I've got a bird. It's beautiful."
+          "I have a bird. It's beautiful."
         ],
         chineseSentences: [
           "看那只鸟！它是红色的。",
@@ -910,7 +910,7 @@ export class WordToSentenceMode {
         word: "dog",
         wordChinese: "狗",
         englishSentences: [
-          "I've got a black dog.",
+          "I have a black dog.",
           "Look at the dog! It's got four short legs.",
           "I like dogs."
         ],
@@ -980,7 +980,7 @@ export class WordToSentenceMode {
         word: "eraser",
         wordChinese: "橡皮",
         englishSentences: [
-          "I've got a white eraser.",
+          "I have a white eraser.",
           "My eraser is in my bag.",
           "Pass me the eraser, please."
         ],
@@ -994,9 +994,9 @@ export class WordToSentenceMode {
         word: "pencil",
         wordChinese: "铅笔",
         englishSentences: [
-          "I've got a yellow pencil.",
+          "I have a yellow pencil.",
           "My pencil is under the book.",
-          "How many pencils have you got? I've got five."
+          "How many pencils have you got? I have five."
         ],
         chineseSentences: [
           "我有一支黄色的铅笔。",
@@ -1036,7 +1036,7 @@ export class WordToSentenceMode {
         word: "toy",
         wordChinese: "玩具",
         englishSentences: [
-          "I've got many toys. They are in my bedroom.",
+          "I have many toys. They are in my bedroom.",
           "Look at the toys! They are cars, a doll, and a ball.",
           "What's your favourite toy? It's a robot."
         ],
@@ -1050,7 +1050,7 @@ export class WordToSentenceMode {
         word: "kite",
         wordChinese: "风筝",
         englishSentences: [
-          "I've got a kite. It's blue.",
+          "I have a kite. It's blue.",
           "Look at the kite! It can fly.",
           "Where's my kite? It's on the house."
         ],
@@ -1064,7 +1064,7 @@ export class WordToSentenceMode {
         word: "ball",
         wordChinese: "球",
         englishSentences: [
-          "I've got a red ball.",
+          "I have a red ball.",
           "The ball is under the chair.",
           "Look at the ball! It's big."
         ],
@@ -1078,7 +1078,7 @@ export class WordToSentenceMode {
         word: "car",
         wordChinese: "汽车",
         englishSentences: [
-          "I've got a blue toy car.",
+          "I have a blue toy car.",
           "Look at the car! It's red.",
           "My toy car is under the table."
         ],
@@ -1092,7 +1092,7 @@ export class WordToSentenceMode {
         word: "doll",
         wordChinese: "洋娃娃",
         englishSentences: [
-          "I've got a beautiful doll. She's beautiful.",
+          "I have a beautiful doll. She's beautiful.",
           "My doll is on the sofa.",
           "Look at the doll! She's got big eyes."
         ],
@@ -1106,7 +1106,7 @@ export class WordToSentenceMode {
         word: "bike",
         wordChinese: "自行车",
         englishSentences: [
-          "I've got a blue bike.",
+          "I have a blue bike.",
           "Look at the bike! It's small.",
           "Where's my bike? It's next to the house."
         ],
@@ -1120,7 +1120,7 @@ export class WordToSentenceMode {
         word: "robot",
         wordChinese: "机器人",
         englishSentences: [
-          "I've got a toy robot. It's small.",
+          "I have a toy robot. It's small.",
           "Look at the robot! It's got a long arm.",
           "What's your favourite toy? It's a robot."
         ],
@@ -1358,7 +1358,7 @@ export class WordToSentenceMode {
         word: "train",
         wordChinese: "火车",
         englishSentences: [
-          "I've got a toy train. It's blue.",
+          "I have a toy train. It's blue.",
           "Look at the train! It's long.",
           "What's your favourite toy? It's a train."
         ],
@@ -1507,27 +1507,22 @@ export class WordToSentenceMode {
               const englishSentence = currentQuestion.englishSentences[index];
               return `
                 <div class="sentence-item" data-index="${index}">
-                  <div class="sentence-content">
-                    <p class="sentence-chinese-text"><span class="sentence-num">${index + 1}.</span>${chineseSentence}</p>
-                    <div class="sentence-translation-panel" id="translation-panel-${index}" style="display: none;">
-                      <div class="english-answer">
-                        <span class="sentence-english-text">${englishSentence}</span>
-                        <button class="sentence-audio-btn" data-sentence="${englishSentence}" title="朗读句子">
-                          <i class="fas fa-volume-up"></i>
-                        </button>
-                      </div>
+                  <div class="sentence-row">
+                    <div class="sentence-content">
+                      <p class="sentence-chinese-text"><span class="sentence-num">${index + 1}.</span>${chineseSentence}</p>
+                    </div>
+                    <div class="sentence-actions">
+                      <button class="result-btn answer-btn" data-sentence-index="${index}" data-sentence="${englishSentence}">
+                        <i class="fas fa-eye"></i>
+                        <span>查看答案</span>
+                      </button>
+                      <button class="result-btn correct-btn" data-sentence-index="${index}">
+                        <span>答对</span>
+                      </button>
                     </div>
                   </div>
-                  <div class="sentence-actions">
-                    <button class="action-btn reveal-btn" data-sentence-index="${index}" title="查看英文">
-                      <span>看答案</span>
-                    </button>
-                    <button class="action-btn hide-btn" data-sentence-index="${index}" style="display: none;" title="隐藏英文">
-                      <span>隐藏</span>
-                    </button>
-                    <button class="action-btn correct-btn-check" data-sentence-index="${index}" title="答对了">
-                      <span>答对</span>
-                    </button>
+                  <div class="sentence-answer-panel" id="answer-panel-${index}" style="display: none;">
+                    <p class="sentence-answer-text">${englishSentence}</p>
                   </div>
                 </div>
               `;
@@ -1582,103 +1577,24 @@ export class WordToSentenceMode {
       });
     }
 
-    // 查看英文翻译按钮
-    const revealButtons = document.querySelectorAll('.reveal-btn');
-    revealButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const sentenceIndex = button.dataset.sentenceIndex;
-        const panel = document.getElementById(`translation-panel-${sentenceIndex}`);
-        const hideButton = button.parentElement.querySelector('.hide-btn');
-        
-        if (panel && hideButton) {
-          panel.style.display = 'block';
-          button.style.display = 'none';
-          hideButton.style.display = 'inline-flex';
-        }
-      });
-    });
-
-    // 隐藏英文翻译按钮
-    const hideButtons = document.querySelectorAll('.hide-btn');
-    hideButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const sentenceIndex = button.dataset.sentenceIndex;
-        const panel = document.getElementById(`translation-panel-${sentenceIndex}`);
-        const revealButton = button.parentElement.querySelector('.reveal-btn');
-        
-        if (panel && revealButton) {
-          panel.style.display = 'none';
-          button.style.display = 'none';
-          revealButton.style.display = 'inline-flex';
-        }
-      });
-    });
-
-    // 句子发音按钮
-    const sentenceAudioButtons = document.querySelectorAll('.sentence-audio-btn');
-    sentenceAudioButtons.forEach(button => {
+    // 查看答案按钮（与听写页面一致）
+    const answerButtons = this.container.querySelectorAll('.result-btn.answer-btn');
+    answerButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
         const sentence = button.dataset.sentence;
-        this.playSentenceAudio(sentence);
+        const sentenceIndex = button.dataset.sentenceIndex;
+        this.showSentenceAnswer(sentenceIndex, sentence, button);
       });
     });
 
-    // 答对了按钮
-    const correctButtons = document.querySelectorAll('.correct-btn-check');
+    // 答对按钮（与听写页面一致）
+    const correctButtons = this.container.querySelectorAll('.result-btn.correct-btn');
     correctButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
-
-        // 如果当前题目已经回答过，不允许再次选择
-        if (this.hasAnswered) {
-          return;
-        }
-
-        // 禁用按钮，确保只能点击一次
-        button.disabled = true;
-        button.classList.add('disabled');
-        this.hasAnswered = true;
-
-        // 保存当前题目的选择状态
-        this.questionStates[this.currentIndex] = {
-          hasAnswered: true,
-          isCorrect: true,
-          answeredButton: 'correct'
-        };
-
-        // 播放答对音效
-        this.playSoundEffect(true);
-
-        // 加5分
-        const points = 5;
-        this.score += points;
-        const scoreElement = this.container.querySelector('.sentence-score span');
-        if (scoreElement) {
-          scoreElement.textContent = this.score;
-        }
-
-        // 添加积分
-        if (window.router && window.router.addPoints) {
-          window.router.addPoints(points);
-        }
-
-        // 显示反馈
-        const feedback = document.getElementById('sentence-feedback');
-        feedback.innerHTML = `
-          <div class="feedback-content correct">
-            <i class="fas fa-check-circle"></i>
-            <span>答对了！+${points}分</span>
-          </div>
-        `;
-        feedback.className = 'sentence-feedback show';
-
-        // 3秒后清除反馈
-        setTimeout(() => {
-          feedback.className = 'sentence-feedback';
-        }, 3000);
+        const sentenceIndex = button.dataset.sentenceIndex;
+        this.markSentenceResult(sentenceIndex, button);
       });
     });
 
@@ -1756,6 +1672,66 @@ export class WordToSentenceMode {
     }
   }
 
+  // 显示句子答案（支持显示/隐藏切换）
+  showSentenceAnswer(sentenceIndex, sentence, button) {
+    const answerPanel = document.getElementById(`answer-panel-${sentenceIndex}`);
+    const buttonSpan = button.querySelector('span');
+    const buttonIcon = button.querySelector('i');
+
+    if (answerPanel.style.display === 'none') {
+      // 显示答案
+      answerPanel.style.display = 'block';
+      buttonSpan.textContent = '隐藏答案';
+      buttonIcon.className = 'fas fa-eye-slash';
+    } else {
+      // 隐藏答案
+      answerPanel.style.display = 'none';
+      buttonSpan.textContent = '查看答案';
+      buttonIcon.className = 'fas fa-eye';
+    }
+  }
+
+  // 标记句子结果（与听写页面一致）
+  markSentenceResult(sentenceIndex, button) {
+    // 如果按钮已被禁用，直接返回
+    if (button.disabled) return;
+
+    // 修改按钮状态而不是替换整个内容
+    button.disabled = true;
+    button.classList.add('clicked', 'correct-clicked');
+
+    // 更新按钮内容，添加勾选标记
+    button.innerHTML = `
+      <i class="fas fa-check"></i>
+      <span>答对</span>
+    `;
+
+    // 播放答对音效
+    this.playSoundEffect(true);
+
+    // 加分
+    if (window.router && window.router.addPoints) {
+      window.router.addPoints(5);
+    }
+
+    // 显示反馈
+    const feedback = document.getElementById('sentence-feedback');
+    if (feedback) {
+      feedback.innerHTML = `
+        <div class="feedback-content correct">
+          <i class="fas fa-check-circle"></i>
+          <span>答对了！+5分</span>
+        </div>
+      `;
+      feedback.className = 'sentence-feedback show';
+
+      // 3秒后清除反馈
+      setTimeout(() => {
+        feedback.className = 'sentence-feedback';
+      }, 3000);
+    }
+  }
+
   goToQuestion(index) {
     if (index < 0 || index >= this.questions.length) return;
 
@@ -1797,8 +1773,52 @@ export class WordToSentenceMode {
     this.renderQuiz();
     this.bindEvents();
   }
+
+  cleanup() {
+    // 清理弹框
+    const summary = document.getElementById('quiz-summary');
+    if (summary) {
+      summary.remove();
+    }
+
+    // 只清理当前容器的DOM状态，避免影响其他页面
+    if (this.container) {
+      const options = this.container.querySelectorAll('.quiz-option');
+      options.forEach(option => {
+        option.classList.remove('selected', 'correct', 'incorrect');
+        option.style.pointerEvents = 'auto';
+      });
+
+      // 重置导航按钮状态
+      const prevButton = this.container.querySelector('#prev-question');
+      const nextButton = this.container.querySelector('#next-question');
+      const feedback = this.container.querySelector('#quiz-feedback');
+
+      if (prevButton) prevButton.disabled = true;
+      if (nextButton) nextButton.disabled = true;
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'quiz-feedback';
+      }
+    }
+
+    // 停止音频播放
+    audioPlayer.stop();
+
+    // 清理状态
+    this.currentIndex = 0;
+    this.score = 0;
+    this.answers = [];
+    this.selectedAnswer = null;
+    this.questionStates = {};
+    this.hasAnswered = false;
+
+    console.log('单词造句模式已清理，当前实例状态已重置');
+  }
 }
 
 export function initWordToSentenceMode() {
-  new WordToSentenceMode('word-to-sentence-content').init();
+  const wordToSentence = new WordToSentenceMode('word-to-sentence-content');
+  wordToSentence.init();
+  return wordToSentence;
 }

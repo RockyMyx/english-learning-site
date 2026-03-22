@@ -168,11 +168,12 @@ function startDictation() {
   content.innerHTML = `
     <div class="dictation-practice">
       <div class="practice-header">
-        <h3>单词听写练习</h3>
-        <p>点击音频播放单词，听写后点击"答对"</p>
-        <div class="progress-info">
-          <span id="current-progress">0/10</span>
-        </div>
+        <h3>点击音频播放单词，听写正确后点击"答对"</h3>
+      </div>
+
+      <div class="stats-info-center">
+        <span>答对: <strong id="correct-count">0</strong></span>
+        <span>答错: <strong id="wrong-count">0</strong></span>
       </div>
 
       <div class="practice-list">
@@ -184,6 +185,10 @@ function startDictation() {
               <span>播放</span>
             </button>
             <div class="dictation-result" id="result-${index}">
+              <button class="result-btn answer-btn" data-word="${word.english}" data-index="${index}">
+                <i class="fas fa-eye"></i>
+                <span>查看答案</span>
+              </button>
               <button class="result-btn correct-btn" data-index="${index}">答对</button>
             </div>
           </div>
@@ -220,6 +225,15 @@ function startDictation() {
     });
   });
 
+  // 绑定查看答案按钮事件
+  document.querySelectorAll('.result-btn.answer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const word = btn.dataset.word;
+      const index = parseInt(btn.dataset.index);
+      showAnswer(index, word, btn);
+    });
+  });
+
   // 绑定返回按钮
   document.getElementById('back-to-selection-btn').addEventListener('click', () => {
     selectedWords = [];
@@ -233,41 +247,46 @@ function startDictation() {
 }
 
 function markResult(index, isCorrect) {
-  const buttonsDiv = document.getElementById(`buttons-${index}`);
-  const correctBtn = buttonsDiv.querySelector('.correct-btn');
-  
+  const resultDiv = document.getElementById(`result-${index}`);
+  const correctBtn = resultDiv.querySelector('.correct-btn');
+
   // 如果按钮已被禁用，直接返回
   if (correctBtn && correctBtn.disabled) return;
-  
+
   dictationResults[index] = true;
 
-  // 禁用按钮，确保只能点击一次
-  if (correctBtn) {
-    correctBtn.disabled = true;
-    correctBtn.classList.add('disabled');
-  }
+  // 修改按钮状态而不是替换整个内容
+  correctBtn.disabled = true;
+  correctBtn.classList.add('clicked', 'correct-clicked');
+
+  // 更新按钮内容，添加勾选标记
+  correctBtn.innerHTML = `
+    <i class="fas fa-check"></i>
+    <span>答对</span>
+  `;
 
   // 播放答对音效
   playFeedbackSound(true);
 
-  // 显示答对结果
-  buttonsDiv.innerHTML = `
-    <div class="result-display correct">
-      <span class="result-icon">✓</span>
-      <span class="result-text">答对！</span>
-      <div class="result-score">
-        得分：<span class="score-value">2</span>
-      </div>
-    </div>
-  `;
-  buttonsDiv.classList.add('correct');
-  
-  // 加1分
+  // 加2分
   if (window.router) {
-    window.router.addPoints(1);
+    window.router.addPoints(2);
   }
 
   updateDictationProgress();
+}
+
+function showAnswer(index, word, button) {
+  // 直接替换按钮内容为单词显示（小写）
+  button.className = 'result-btn answer-display';
+  button.innerHTML = `
+    <span class="answer-word">${word.toLowerCase()}</span>
+  `;
+  button.disabled = true;
+
+  // 移除事件监听器，防止重复点击
+  const newButton = button.cloneNode(true);
+  button.parentNode.replaceChild(newButton, button);
 }
 
 function playFeedbackSound(isCorrect) {
@@ -334,8 +353,8 @@ function finishDictation() {
           </div>
         </div>
         <div class="result-actions">
-          <button class="restart-btn" onclick="initListeningMode()">返回选择</button>
           <button class="restart-btn secondary" onclick="location.reload()">再练一次</button>
+          <button class="restart-btn" onclick="window.router.navigate('/')">返回首页</button>
         </div>
       </div>
     </div>
@@ -368,4 +387,48 @@ function saveDictationResult(correct, wrong, score) {
 function getRandomWords(words, count) {
   const shuffled = [...words].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
+}
+
+// 清理函数：用于页面切换时重置状态
+export function cleanupListeningMode() {
+  // 清理弹框
+  const summary = document.getElementById('quiz-summary');
+  if (summary) {
+    summary.remove();
+  }
+
+  // 只清理听力模式相关的DOM状态
+  const listeningContainer = document.getElementById('listening-content');
+  if (listeningContainer) {
+    const buttons = listeningContainer.querySelectorAll('button');
+    buttons.forEach(button => {
+      button.disabled = false;
+      button.classList.remove('clicked', 'correct-clicked', 'disabled');
+    });
+
+    // 重置所有输入框
+    const inputs = listeningContainer.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.value = '';
+      input.disabled = false;
+    });
+
+    // 重置进度显示
+    const progressElements = listeningContainer.querySelectorAll('[id*="progress"], [id*="count"]');
+    progressElements.forEach(element => {
+      if (element.id === 'current-progress') element.textContent = '0/10';
+      if (element.id === 'correct-count') element.textContent = '0';
+      if (element.id === 'wrong-count') element.textContent = '0';
+    });
+  }
+
+  // 停止音频播放
+  audioPlayer.stop();
+
+  // 重置全局变量
+  selectedWords = [];
+  dictationResults = [];
+  currentDictationIndex = 0;
+
+  console.log('听力模式已清理，相关状态已重置');
 }

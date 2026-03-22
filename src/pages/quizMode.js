@@ -21,6 +21,8 @@ export class QuizMode {
     this.generateQuestions();
     this.renderQuiz();
     this.bindEvents();
+    // 初始化导航按钮状态
+    this.updateNavigationButtons();
   }
 
   generateQuestions() {
@@ -187,6 +189,11 @@ export class QuizMode {
             <div class="quiz-option" data-index="${index}">
               <span class="option-number">${String.fromCharCode(65 + index)}</span>
               <span class="option-text">${this.renderOptionText(option)}</span>
+              ${this.mode === 'chinese-to-english' ? `
+                <button class="audio-option-button" data-word="${this.getEnglishText(option)}" aria-label="播放发音">
+                  <i class="fas fa-volume-up"></i>
+                </button>
+              ` : ''}
             </div>
           `).join('')}
         </div>
@@ -202,25 +209,6 @@ export class QuizMode {
             <i class="fas fa-arrow-right"></i>
           </button>
         </div>
-
-        ${this.currentIndex === this.questions.length - 1 ? `
-          <div class="quiz-summary" id="quiz-summary" style="display: none;">
-            <div class="summary-content">
-              <div class="summary-icon">🎉</div>
-              <h3>练习完成！</h3>
-              <div class="summary-stats">
-                <div class="stat-box">
-                  <span class="stat-value">${Math.round((this.score / this.questions.length) * 100)}%</span>
-                  <span class="stat-label">正确率</span>
-                </div>
-              </div>
-              <button class="restart-btn" id="restart-quiz">
-                <i class="fas fa-redo"></i>
-                再练一次
-              </button>
-            </div>
-          </div>
-        ` : ''}
       </div>
     `;
   }
@@ -270,6 +258,15 @@ export class QuizMode {
   }
 
   bindEvents() {
+    // 克隆节点来移除所有旧的事件监听器
+    const oldContainer = this.container;
+    const newContainer = oldContainer.cloneNode(false);
+    oldContainer.parentNode.replaceChild(newContainer, oldContainer);
+    this.container = newContainer;
+
+    // 重新获取内容
+    this.container.innerHTML = oldContainer.innerHTML;
+
     // 选项点击事件
     const options = this.container.querySelectorAll('.quiz-option');
     options.forEach(option => {
@@ -284,20 +281,27 @@ export class QuizMode {
     });
 
     document.getElementById('next-question')?.addEventListener('click', () => {
-      // 只有在选择答案后，且还有下一题时才允许点击
-      if (this.selectedAnswer !== null && this.currentIndex < this.questions.length - 1) {
+      // 选择答案后，且还有下一题时允许点击
+      if (this.hasAnswered && this.currentIndex < this.questions.length - 1) {
         this.goToQuestion(this.currentIndex + 1);
       }
     });
 
     document.getElementById('restart-quiz')?.addEventListener('click', () => this.restart());
 
+    document.getElementById('back-to-home')?.addEventListener('click', () => {
+      if (window.router && window.router.navigate) {
+        window.router.navigate('/');
+      }
+    });
+
     // 音频播放按钮
     const playAudioButton = document.getElementById('play-question-audio');
     if (playAudioButton) {
-      playAudioButton.addEventListener('click', (e) => {
+      playAudioButton.addEventListener('click', async (e) => {
         e.stopPropagation();
-        this.playQuestionAudio();
+        // console.log('点击题目音频按钮，模式:', this.mode);
+        await this.playQuestionAudio();
       });
     }
 
@@ -306,7 +310,9 @@ export class QuizMode {
     audioButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault(); // 防止事件冒泡和重复触发
         const word = button.dataset.word || button.dataset.sentence;
+        // console.log('播放单词音频:', word);
         this.playWordAudio(word);
       });
     });
@@ -350,7 +356,6 @@ export class QuizMode {
     if (isCorrect) {
       const pointsPerQuestion = this.getPointsPerQuestion();
       this.score += pointsPerQuestion;
-      this.container.querySelector('.score').textContent = this.score;
 
       // 添加积分
       if (window.router && window.router.addPoints) {
@@ -368,11 +373,8 @@ export class QuizMode {
     // 显示反馈
     this.showFeedback(isCorrect);
 
-    // 立即启用下一题按钮
-    const nextButton = document.getElementById('next-question');
-    if (nextButton) {
-      nextButton.disabled = false;
-    }
+    // 更新导航按钮状态
+    this.updateNavigationButtons();
 
     // 如果是最后一题，显示总结
     if (this.currentIndex === this.questions.length - 1) {
@@ -421,6 +423,23 @@ export class QuizMode {
     feedback.className = `quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
   }
 
+  updateNavigationButtons() {
+    const prevButton = document.getElementById('prev-question');
+    const nextButton = document.getElementById('next-question');
+
+    if (prevButton) {
+      // 第一题禁用上一题按钮
+      prevButton.disabled = this.currentIndex === 0;
+    }
+
+    if (nextButton) {
+      // 最后一题禁用下一题按钮
+      const isLastQuestion = this.currentIndex === this.questions.length - 1;
+      // 只有当前题目已回答且不是最后一题时，才启用下一题按钮
+      nextButton.disabled = !this.hasAnswered || isLastQuestion;
+    }
+  }
+
   getPointsPerQuestion() {
     const pointsMap = {
       'listening-to-chinese': 1,
@@ -449,6 +468,11 @@ export class QuizMode {
     return option.english || option.chinese || option;
   }
 
+  getEnglishText(option) {
+    if (typeof option === 'string') return option;
+    return option.english || option;
+  }
+
   goToQuestion(index) {
     if (index < 0 || index >= this.questions.length) return;
 
@@ -466,19 +490,8 @@ export class QuizMode {
     this.renderQuiz();
     this.bindEvents();
 
-    // 确保导航按钮状态正确
-    const prevButton = document.getElementById('prev-question');
-    const nextButton = document.getElementById('next-question');
-
-    if (prevButton) {
-      prevButton.disabled = index === 0;
-    }
-
-    if (nextButton) {
-      // 如果已回答或下一题已有答案，启用下一题按钮
-      const hasNextState = this.questionStates[index + 1]?.hasAnswered;
-      nextButton.disabled = !this.hasAnswered && !hasNextState;
-    }
+    // 更新导航按钮状态
+    this.updateNavigationButtons();
 
     // 如果有保存的状态，恢复视觉显示
     if (state && state.hasAnswered) {
@@ -516,13 +529,110 @@ export class QuizMode {
   }
 
   showQuizSummary() {
-    const summary = document.getElementById('quiz-summary');
-    if (summary) {
-      summary.style.display = 'block';
+    // 创建弹框DOM
+    const summary = document.createElement('div');
+    summary.className = 'quiz-summary';
+    summary.id = 'quiz-summary';
+
+    const percentage = Math.round((this.score / this.questions.length) * 100);
+
+    summary.innerHTML = `
+      <div class="summary-content">
+        <div class="summary-icon">🎉</div>
+        <h3>练习完成！</h3>
+        <div class="summary-stats">
+          <div class="stat-box stat-box-accuracy">
+            <span class="stat-value">${percentage}%</span>
+            <span class="stat-label">正确率</span>
+          </div>
+          <div class="stat-box stat-box-score">
+            <span class="stat-value">${this.score}</span>
+            <span class="stat-label">本轮得分</span>
+          </div>
+        </div>
+        <div class="goal-message" id="goal-message">
+          <!-- 动态插入目标提示信息 -->
+        </div>
+        <div class="result-actions">
+          <button class="restart-btn" id="restart-quiz">
+            <i class="fas fa-redo"></i>
+            再练一次
+          </button>
+          <button class="restart-btn secondary" id="back-to-home">
+            <i class="fas fa-home"></i>
+            回到首页
+          </button>
+        </div>
+      </div>
+    `;
+
+    // 添加到body中
+    document.body.appendChild(summary);
+
+    // 设置目标提示信息
+    const goalMessage = summary.querySelector('#goal-message');
+    if (goalMessage) {
+      try {
+        let message = '';
+
+        if (window.router && typeof window.router.getGoalProgress === 'function') {
+          const progress = window.router.getGoalProgress();
+          if (progress && typeof progress.current !== 'undefined' && typeof progress.goal !== 'undefined') {
+            const remaining = Math.max(0, progress.goal - progress.current);
+
+            if (remaining > 0) {
+              message = `💪 加油，还差${remaining}分就完成了！`;
+            } else {
+              message = `🎊 太棒了！你已经完成今日目标！`;
+            }
+          } else {
+            message = '🎯 继续加油学习吧！';
+          }
+        } else if (window.getGoalProgress && typeof window.getGoalProgress === 'function') {
+          const progress = window.getGoalProgress();
+          if (progress && typeof progress.current !== 'undefined' && typeof progress.goal !== 'undefined') {
+            const remaining = Math.max(0, progress.goal - progress.current);
+
+            if (remaining > 0) {
+              message = `💪 加油，还差${remaining}分就完成了！`;
+            } else {
+              message = `🎊 太棒了！你已经完成今日目标！`;
+            }
+          } else {
+            message = '🎯 继续加油学习吧！';
+          }
+        } else {
+          message = '🎯 继续加油学习吧！';
+        }
+
+        goalMessage.innerHTML = `<p class="goal-text">${message}</p>`;
+      } catch (error) {
+        console.error('生成目标提示失败:', error);
+        goalMessage.innerHTML = `<p class="goal-text">🎯 继续加油学习吧！</p>`;
+      }
     }
+
+    // 绑定事件
+    document.getElementById('restart-quiz').addEventListener('click', () => this.restart());
+
+    document.getElementById('back-to-home').addEventListener('click', () => {
+      // 移除弹框
+      const summary = document.getElementById('quiz-summary');
+      if (summary) {
+        summary.remove();
+      }
+
+      // 导航回首页
+      if (window.router && window.router.navigate) {
+        window.router.navigate('/');
+      }
+    });
   }
 
   async playQuestionAudio() {
+    // 停止当前正在播放的音频
+    audioPlayer.stop();
+
     const currentQuestion = this.questions[this.currentIndex];
     let textToPlay;
 
@@ -532,7 +642,11 @@ export class QuizMode {
       textToPlay = currentQuestion.question.english;
 
       // 英文对话模式：1.2倍速读题目
-      await this.playDialogueAudioThreeTimes(textToPlay);
+      try {
+        await this.playDialogueAudioThreeTimes(textToPlay);
+      } catch (error) {
+        console.error('英文对话音频播放失败:', error);
+      }
       return; // 直接返回，不执行下面的通用逻辑
     } else {
       textToPlay = currentQuestion.question.english || '';
@@ -548,33 +662,45 @@ export class QuizMode {
     }
   }
 
-  // 英文对话模式：三遍不同语速读题目
+  // 英文对话模式：1.2倍速读题目
   async playDialogueAudioThreeTimes(text) {
     try {
-      // console.log('开始读题目:', text);
+      console.log('英文对话模式开始读题目:', text);
 
       // 1.2倍速读一遍
-      // console.log('1.2倍速读题');
+      console.log('调用音频播放器，语速1.2');
       await audioPlayer.speak(text, { speed: 1.2 });
 
-      // console.log('读题完成');
+      console.log('英文对话模式读题完成');
 
     } catch (error) {
-      console.error('三遍读题失败:', error);
+      console.error('英文对话读题失败:', error);
+      throw error;
     }
   }
 
   playWordAudio(word) {
     if (word) {
+      // console.log('playWordAudio被调用:', word);
+      // 停止当前正在播放的音频
+      audioPlayer.stop();
+      // console.log('已停止当前音频');
+
       audioPlayer.speak(word).then(() => {
-        // console.log('Word audio played successfully');
+        // console.log('单词音频播放成功:', word);
       }).catch(error => {
-        console.error('Error playing word audio:', error);
+        console.error('单词音频播放错误:', error);
       });
     }
   }
 
   restart() {
+    // 清理弹框
+    const summary = document.getElementById('quiz-summary');
+    if (summary) {
+      summary.remove();
+    }
+
     this.currentIndex = 0;
     this.score = 0;
     this.answers = [];
@@ -585,21 +711,69 @@ export class QuizMode {
     this.renderQuiz();
     this.bindEvents();
   }
+
+  cleanup() {
+    // 清理弹框
+    const summary = document.getElementById('quiz-summary');
+    if (summary) {
+      summary.remove();
+    }
+
+    // 只清理当前容器的DOM状态，避免影响其他页面
+    if (this.container) {
+      const options = this.container.querySelectorAll('.quiz-option');
+      options.forEach(option => {
+        option.classList.remove('selected', 'correct', 'incorrect');
+        option.style.pointerEvents = 'auto';
+      });
+
+      // 重置导航按钮状态
+      const prevButton = this.container.querySelector('#prev-question');
+      const nextButton = this.container.querySelector('#next-question');
+      const feedback = this.container.querySelector('#quiz-feedback');
+
+      if (prevButton) prevButton.disabled = true;
+      if (nextButton) nextButton.disabled = true;
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'quiz-feedback';
+      }
+    }
+
+    // 停止音频播放
+    audioPlayer.stop();
+
+    // 清理状态
+    this.currentIndex = 0;
+    this.score = 0;
+    this.answers = [];
+    this.selectedAnswer = null;
+    this.questionStates = {};
+    this.hasAnswered = false;
+  }
 }
 
 // 各个模式的具体实现
 export function initEnglishToChineseMode() {
-  new QuizMode('english-to-chinese-content', 'english-to-chinese').init();
+  const quiz = new QuizMode('english-to-chinese-content', 'english-to-chinese');
+  quiz.init();
+  return quiz;
 }
 
 export function initChineseToEnglishMode() {
-  new QuizMode('chinese-to-english-content', 'chinese-to-english').init();
+  const quiz = new QuizMode('chinese-to-english-content', 'chinese-to-english');
+  quiz.init();
+  return quiz;
 }
 
 export function initListeningToChineseMode() {
-  new QuizMode('listening-to-chinese-content', 'listening-to-chinese').init();
+  const quiz = new QuizMode('listening-to-chinese-content', 'listening-to-chinese');
+  quiz.init();
+  return quiz;
 }
 
 export function initEnglishDialogueMode() {
-  new QuizMode('english-dialogue-content', 'english-dialogue').init();
+  const quiz = new QuizMode('english-dialogue-content', 'english-dialogue');
+  quiz.init();
+  return quiz;
 }
