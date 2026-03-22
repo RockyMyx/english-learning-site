@@ -240,6 +240,26 @@ class Router {
     if (todayPointsElement) {
       todayPointsElement.textContent = todayPoints;
     }
+
+    // 更新达标徽章显示
+    this.updateGoalBadge(todayPoints);
+  }
+
+  updateGoalBadge(points) {
+    const goalBadge = document.getElementById('goal-badge');
+    const pointsCard = goalBadge?.closest('.hero-stat-card');
+
+    if (goalBadge && pointsCard) {
+      if (points >= 50) {
+        // 显示达标徽章
+        goalBadge.style.display = 'flex';
+        pointsCard.classList.add('goal-completed');
+      } else {
+        // 隐藏达标徽章
+        goalBadge.style.display = 'none';
+        pointsCard.classList.remove('goal-completed');
+      }
+    }
   }
 
   getTodayPoints() {
@@ -270,6 +290,9 @@ class Router {
     if (todayPointsElement) {
       todayPointsElement.textContent = pointsData[today];
     }
+
+    // 更新达标徽章
+    this.updateGoalBadge(pointsData[today]);
   }
 
   loadProgressData() {
