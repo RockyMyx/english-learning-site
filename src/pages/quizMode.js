@@ -75,7 +75,7 @@ export class QuizMode {
       { question: "What color is the apple?", correctAnswer: "It's red.", options: ["It's a fruit.", "It's red.", "It's on the table.", "I like apples."] },
       { question: "Can a bird fly?", correctAnswer: "Yes, it can.", options: ["No, it can't.", "Yes, it can.", "It can swim.", "It's a bird."] },
       { question: "What's this? ", correctAnswer: "It's a book.", options: ["It's red.", "It's a book.", "It's on the chair.", "I like books."] },
-      { question: "Where's my bag?", correctAnswer: "It's here.", options: ["It's here.", "It's a bag.", "I've got a bag.", "It's blue."] },
+      { question: "Where is my bag?", correctAnswer: "It's here.", options: ["It's here.", "It's a bag.", "I've got a bag.", "It's blue."] },
       { question: "Who's that? ", correctAnswer: "She's my mother.", options: ["He's happy.", "She's tall.", "She's my mother.", "I'm a girl."] },
       { question: "Which one is your toy?", correctAnswer: "The red one.", options: ["The red one.", "It's a toy.", "I like toys.", "It's on the chair."] },
       { question: "What can you do?", correctAnswer: "I can jump.", options: ["I like swimming.", "I've got a ball.", "I can jump.", "I'm happy."] },
@@ -677,13 +677,13 @@ export class QuizMode {
   // 英文对话模式：1倍速读题目
   async playDialogueAudioThreeTimes(text) {
     try {
-      console.log('英文对话模式开始读题目:', text);
+      // console.log('英文对话模式开始读题目:', text);
 
       // 1倍速读一遍
-      console.log('调用音频播放器，语速1.0');
+      // console.log('调用音频播放器，语速1.0');
       await audioPlayer.speak(text, { speed: 1.0 });
 
-      console.log('英文对话模式读题完成');
+      // console.log('英文对话模式读题完成');
 
     } catch (error) {
       console.error('英文对话读题失败:', error);
