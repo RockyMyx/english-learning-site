@@ -1627,7 +1627,7 @@ export class WordToSentenceMode {
       audioPlayer.speakWord(currentQuestion.word).then(() => {
         // console.log('Word audio played successfully');
       }).catch(error => {
-        console.error('Error playing word audio:', error);
+        // console.error('Error playing word audio:', error);
       });
     }
   }
@@ -1637,7 +1637,7 @@ export class WordToSentenceMode {
       audioPlayer.speakWord(sentence).then(() => {
         // console.log('Sentence audio played successfully');
       }).catch(error => {
-        console.error('Error playing sentence audio:', error);
+        // console.error('Error playing sentence audio:', error);
       });
     }
   }
@@ -1672,7 +1672,7 @@ export class WordToSentenceMode {
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.3);
     } catch (error) {
-      console.warn('Failed to play sound effect:', error);
+      // console.warn('Failed to play sound effect:', error);
     }
   }
 
@@ -1847,7 +1847,7 @@ export class WordToSentenceMode {
 
         goalMessage.innerHTML = `<p class="goal-text">${message}</p>`;
       } catch (error) {
-        console.error('生成目标提示失败:', error);
+        // console.error('生成目标提示失败:', error);
         goalMessage.innerHTML = `<p class="goal-text">🎯 继续加油学习吧！</p>`;
       }
     }
@@ -1912,7 +1912,7 @@ export class WordToSentenceMode {
     this.questionStates = {};
     this.hasAnswered = false;
 
-    console.log('单词造句模式已清理，当前实例状态已重置');
+    // console.log('单词造句模式已清理，当前实例状态已重置');
   }
 }
 

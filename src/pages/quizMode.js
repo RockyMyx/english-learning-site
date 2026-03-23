@@ -415,7 +415,7 @@ export class QuizMode {
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.25);
     } catch (error) {
-      console.warn('Failed to play sound effect:', error);
+      // console.warn('Failed to play sound effect:', error);
     }
   }
 
@@ -612,7 +612,7 @@ export class QuizMode {
 
         goalMessage.innerHTML = `<p class="goal-text">${message}</p>`;
       } catch (error) {
-        console.error('生成目标提示失败:', error);
+        // console.error('生成目标提示失败:', error);
         goalMessage.innerHTML = `<p class="goal-text">🎯 继续加油学习吧！</p>`;
       }
     }
@@ -657,7 +657,7 @@ export class QuizMode {
       try {
         await this.playDialogueAudioThreeTimes(textToPlay);
       } catch (error) {
-        console.error('英文对话音频播放失败:', error);
+        // console.error('英文对话音频播放失败:', error);
       }
       return; // 直接返回，不执行下面的通用逻辑
     } else {
@@ -669,7 +669,7 @@ export class QuizMode {
       audioPlayer.speak(textToPlay).then(() => {
         // console.log('Question audio played successfully');
       }).catch(error => {
-        console.error('Error playing question audio:', error);
+        // console.error('Error playing question audio:', error);
       });
     }
   }
@@ -686,7 +686,7 @@ export class QuizMode {
       // console.log('英文对话模式读题完成');
 
     } catch (error) {
-      console.error('英文对话读题失败:', error);
+      // console.error('英文对话读题失败:', error);
       throw error;
     }
   }
@@ -701,7 +701,7 @@ export class QuizMode {
       audioPlayer.speak(word).then(() => {
         // console.log('单词音频播放成功:', word);
       }).catch(error => {
-        console.error('单词音频播放错误:', error);
+        // console.error('单词音频播放错误:', error);
       });
     }
   }

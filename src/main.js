@@ -93,7 +93,7 @@ class Router {
       targetPage.classList.add('active');
       this.initPage(route);
     } else {
-      console.error('未找到页面:', route);
+      // console.error('未找到页面:', route);
     }
 
     // 停止任何正在播放的音频

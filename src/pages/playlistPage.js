@@ -237,7 +237,7 @@ function updateSelectedCount() {
 
 function playSingleWord(word) {
   import('../utils/audio.js').then(audioModule => {
-    audioModule.default.speakWord(word).catch(console.error);
+    audioModule.default.speakWord(word).catch(() => {});
   });
 }
 

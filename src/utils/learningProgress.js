@@ -22,7 +22,7 @@ class LearningProgressManager {
         this.resetDailyProgress();
       }
     } catch (error) {
-      console.error('加载学习进度失败:', error);
+      // console.error('加载学习进度失败:', error);
       this.resetDailyProgress();
     }
   }
@@ -43,7 +43,7 @@ class LearningProgressManager {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.progress));
     } catch (error) {
-      console.error('保存学习进度失败:', error);
+      // console.error('保存学习进度失败:', error);
     }
   }
 
@@ -288,7 +288,7 @@ class CelebrationEffect {
       }, 300);
 
     } catch (error) {
-      console.warn('播放音效失败:', error);
+      // console.warn('播放音效失败:', error);
     }
   }
 

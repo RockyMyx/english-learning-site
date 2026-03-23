@@ -31,7 +31,7 @@
                 document.body.removeChild(testIcon);
                 // 如果图标宽度为0或很大，说明字体未加载成功
                 if (width === 0 || width > 100) {
-                    console.warn('Font Awesome 加载失败，使用备用CDN');
+                    // console.warn('Font Awesome 加载失败，使用备用CDN');
                     var link = document.createElement('link');
                     link.rel = 'stylesheet';
                     link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';

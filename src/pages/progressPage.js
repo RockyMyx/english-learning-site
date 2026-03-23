@@ -128,7 +128,7 @@ function loadProgressFromStorage() {
       };
     }
   } catch (error) {
-    console.error('加载进度数据失败:', error);
+    // console.error('加载进度数据失败:', error);
   }
 
   return defaultProgress;

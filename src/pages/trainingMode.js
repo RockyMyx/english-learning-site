@@ -108,7 +108,7 @@ export function initTrainingMode() {
         }
       }, interval * 1000);
     } catch (error) {
-      console.error('播放失败:', error);
+      // console.error('播放失败:', error);
       updateUIPlaying(false);
     }
   }

@@ -212,7 +212,7 @@ function startDictation() {
           btn.textContent = '🔊 播放';
         }, 1000);
       }).catch(error => {
-        console.error('播放失败:', error);
+        // console.error('播放失败:', error);
       });
     });
   });
@@ -430,5 +430,5 @@ export function cleanupListeningMode() {
   dictationResults = [];
   currentDictationIndex = 0;
 
-  console.log('听力模式已清理，相关状态已重置');
+  // console.log('听力模式已清理，相关状态已重置');
 }

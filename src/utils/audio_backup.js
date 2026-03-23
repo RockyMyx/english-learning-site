@@ -10,7 +10,7 @@ class AudioPlayer {
 
   init() {
     if (!this.synth) {
-      console.error('❌ Speech synthesis not supported in this browser');
+      // console.error('❌ Speech synthesis not supported in this browser');
       return;
     }
 
@@ -51,15 +51,15 @@ class AudioPlayer {
         });
 
         if (englishVoices.length === 0) {
-          console.warn('⚠️ No English voices found, using first available voice');
+          // console.warn('⚠️ No English voices found, using first available voice');
         }
       } else {
-        console.warn('⏳ No voices loaded yet, will retry...');
+        // console.warn('⏳ No voices loaded yet, will retry...');
         // 声音可能还在加载中，稍后重试
         setTimeout(() => this.loadVoices(), 500);
       }
     } catch (error) {
-      console.error('❌ Error loading voices:', error);
+      // console.error('❌ Error loading voices:', error);
     }
   }
 
@@ -114,7 +114,7 @@ class AudioPlayer {
           // 最后回退到第一个可用声音
           if (!selectedVoice) {
             selectedVoice = this.voices[0];
-            console.warn('⚠️ Using fallback voice (not English)');
+            // console.warn('⚠️ Using fallback voice (not English)');
           }
 
           if (selectedVoice) {
@@ -122,7 +122,7 @@ class AudioPlayer {
             // console.log(`🔊 Using voice: ${selectedVoice.name} (${selectedVoice.lang})`);
           }
         } else {
-          console.warn('⚠️ No voices loaded yet, using browser default');
+          // console.warn('⚠️ No voices loaded yet, using browser default');
         }
 
         // 设置事件处理器
@@ -139,17 +139,17 @@ class AudioPlayer {
 
         utterance.onerror = (event) => {
           this.isSpeaking = false;
-          console.error('❌ Speech synthesis error:', event.error);
-          console.error('   Error details:', {
-            error: event.error,
-            name: event.name,
-            elapsed: event.elapsedTime,
-            charIndex: event.charIndex
-          });
+          // console.error('❌ Speech synthesis error:', event.error);
+          // console.error('   Error details:', {
+          //   error: event.error,
+          //   name: event.name,
+          //   elapsed: event.elapsedTime,
+          //   charIndex: event.charIndex
+          // });
 
           // 特定错误处理
           if (event.error === 'interrupted') {
-            console.warn('⚠️ Speech was interrupted (likely cancelled by new speech)');
+            // console.warn('⚠️ Speech was interrupted (likely cancelled by new speech)');
             resolve(); // 中断不算真正的错误
           } else {
             reject(event.error);
@@ -181,7 +181,7 @@ class AudioPlayer {
             clearInterval(checkInterval);
           } else {
             // 检查是否超时
-            console.warn('⚠️ Audio may not have started (no speaking or pending state)');
+            // console.warn('⚠️ Audio may not have started (no speaking or pending state)');
             clearInterval(checkInterval);
           }
         }, 100);
@@ -190,18 +190,18 @@ class AudioPlayer {
         setTimeout(() => {
           clearInterval(checkInterval);
           if (this.isSpeaking && !this.synth.speaking && !this.synth.pending) {
-            console.error('❌ Audio playback timeout - no audio detected');
+            // console.error('❌ Audio playback timeout - no audio detected');
             reject('Audio playback timeout');
           }
         }, 10000);
 
       } catch (error) {
         this.isSpeaking = false;
-        console.error('❌ Error creating utterance:', error);
-        console.error('   Error details:', {
-          message: error.message,
-          stack: error.stack
-        });
+        // console.error('❌ Error creating utterance:', error);
+        // console.error('   Error details:', {
+        //   message: error.message,
+        //   stack: error.stack
+        // });
         reject(error);
       }
     });
@@ -250,7 +250,7 @@ class AudioPlayer {
 
       } catch (error) {
         lastError = error;
-        console.warn(`⚠️ Attempt ${attempt} failed:`, error);
+        // console.warn(`⚠️ Attempt ${attempt} failed:`, error);
 
         // 如果不是最后一次尝试，等待后重试
         if (attempt < maxRetries) {
@@ -265,7 +265,7 @@ class AudioPlayer {
     }
 
     // 所有尝试都失败了
-    console.error('❌ All retry attempts failed:', lastError);
+    // console.error('❌ All retry attempts failed:', lastError);
     throw lastError;
   }
 

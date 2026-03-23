@@ -70,7 +70,7 @@ class AudioPlayer {
         return;
       }
 
-      console.log('开始处理音频请求:', text, '语速:', options.speed);
+      // console.log('开始处理音频请求:', text, '语速:', options.speed);
 
       // 清空现有队列，防止重复播放
       this.stop();
@@ -78,7 +78,7 @@ class AudioPlayer {
       // 清理文本，移除括号内容
       const cleaned = this.cleanText(text);
       if (!cleaned) {
-        console.warn('清理后的文本为空:', text);
+        // console.warn('清理后的文本为空:', text);
         reject(new Error('清理后的文本为空'));
         return;
       }
@@ -86,13 +86,13 @@ class AudioPlayer {
       // 进一步清理特殊字符，但保留基本标点
       const finalText = this.sanitizeText(cleaned);
       if (!finalText || finalText.trim().length < 1) {
-        console.warn('最终文本过短或为空:', finalText);
+        // console.warn('最终文本过短或为空:', finalText);
         reject(new Error('最终文本过短或为空'));
         return;
       }
 
-      console.log('原始文本:', text);
-      console.log('最终处理文本:', finalText);
+      // console.log('原始文本:', text);
+      // console.log('最终处理文本:', finalText);
 
       // 将请求加入队列，支持自定义语速
       this.speakQueue.push({
@@ -105,7 +105,7 @@ class AudioPlayer {
         reject: reject
       });
 
-      console.log('音频请求已加入队列，当前队列长度:', this.speakQueue.length);
+      // console.log('音频请求已加入队列，当前队列长度:', this.speakQueue.length);
 
       // 处理队列
       this.processQueue();
@@ -114,23 +114,23 @@ class AudioPlayer {
 
   async processQueue() {
     if (this.isProcessingQueue || this.speakQueue.length === 0) {
-      console.log('队列正在处理或队列为空，跳过');
+      // console.log('队列正在处理或队列为空，跳过');
       return;
     }
 
-    console.log('开始处理音频队列，队列长度:', this.speakQueue.length);
+    // console.log('开始处理音频队列，队列长度:', this.speakQueue.length);
     this.isProcessingQueue = true;
 
     while (this.speakQueue.length > 0) {
       const current = this.speakQueue.shift();
-      console.log('处理队列项:', current.text, '语速:', current.options.speed);
+      // console.log('处理队列项:', current.text, '语速:', current.options.speed);
 
       try {
         await this.playAudio(current.text, current.options);
-        console.log('队列项播放成功');
+        // console.log('队列项播放成功');
         current.resolve();
       } catch (error) {
-        console.error('队列项播放失败:', error);
+        // console.error('队列项播放失败:', error);
         current.reject(error);
       }
 
@@ -138,7 +138,7 @@ class AudioPlayer {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    console.log('音频队列处理完成');
+    // console.log('音频队列处理完成');
     this.isProcessingQueue = false;
   }
 
@@ -165,12 +165,12 @@ class AudioPlayer {
           this.audio.src = audioUrl;
           this.audio.volume = 1; // 设置音量为1
 
-          console.log('音频设置完成 - 音量:', this.audio.volume, 'URL:', audioUrl);
+          // console.log('音频设置完成 - 音量:', this.audio.volume, 'URL:', audioUrl);
 
           // 设置超时
           const timeout = setTimeout(() => {
             this.isSpeaking = false;
-            console.error('音频播放超时:', cleanText);
+            // console.error('音频播放超时:', cleanText);
             URL.revokeObjectURL(audioUrl);
             reject(new Error('音频播放超时'));
           }, 15000); // 15秒超时
@@ -199,13 +199,13 @@ class AudioPlayer {
           this.isSpeaking = true;
 
           this.audio.addEventListener('canplaythrough', () => {
-            console.log('音频可以播放，开始播放:', cleanText);
+            // console.log('音频可以播放，开始播放:', cleanText);
             this.audio.play().then(() => {
-              console.log('音频播放成功:', cleanText);
+              // console.log('音频播放成功:', cleanText);
             }).catch(err => {
               clearTimeout(timeout);
               this.isSpeaking = false;
-              console.error('音频播放失败:', err);
+              // console.error('音频播放失败:', err);
               URL.revokeObjectURL(audioUrl);
               reject(err);
             });
@@ -214,7 +214,7 @@ class AudioPlayer {
           this.audio.load();
         })
         .catch(error => {
-          console.error('智谱AI API调用失败:', error);
+          // // console.error('智谱AI API调用失败:', error);
 
           // 显示友好的错误提示
           const userFriendlyError = new Error(`发音服务暂时不可用，请稍后再试。详情: ${error.message}`);
@@ -226,7 +226,7 @@ class AudioPlayer {
   // 调用智谱AI TTS API
   async callZhipuAPI(text, speed = 1.0) {
     try {
-      console.log('发送智谱AI TTS请求:', text, '语速:', speed);
+      // console.log('发送智谱AI TTS请求:', text, '语速:', speed);
 
       const requestBody = {
         model: 'glm-tts',
@@ -238,7 +238,7 @@ class AudioPlayer {
         speed: speed // 使用传入的语速参数
       };
 
-      console.log('请求参数:', JSON.stringify(requestBody, null, 2));
+      // console.log('请求参数:', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch(this.zhipuApiUrl, {
         method: 'POST',
@@ -249,29 +249,29 @@ class AudioPlayer {
         body: JSON.stringify(requestBody)
       });
 
-      console.log('智谱AI响应状态:', response.status, response.statusText);
-      console.log('智谱AI响应headers:', [...response.headers.entries()]);
+      // console.log('智谱AI响应状态:', response.status, response.statusText);
+      // console.log('智谱AI响应headers:', [...response.headers.entries()]);
 
       if (!response.ok) {
         // 尝试读取错误信息
         let errorMessage = `智谱AI API响应错误: ${response.status} ${response.statusText}`;
         try {
           const errorData = await response.json();
-          console.error('智谱AI错误详情:', errorData);
+          // console.error('智谱AI错误详情:', errorData);
           errorMessage += ` - ${JSON.stringify(errorData)}`;
         } catch (e) {
-          console.error('无法解析错误响应');
+          // console.error('无法解析错误响应');
         }
         throw new Error(errorMessage);
       }
 
       // 检查响应类型
       const contentType = response.headers.get('content-type');
-      console.log('智谱AI响应类型:', contentType);
+      // console.log('智谱AI响应类型:', contentType);
 
       // 获取音频blob
       const audioBlob = await response.blob();
-      console.log('音频blob大小:', audioBlob.size, 'bytes');
+      // console.log('音频blob大小:', audioBlob.size, 'bytes');
 
       // 检查是否是有效的音频
       if (audioBlob.size === 0) {
@@ -282,12 +282,12 @@ class AudioPlayer {
       if (!contentType || !contentType.includes('audio')) {
         // 如果不是音频类型，可能是错误信息
         const textResponse = await audioBlob.text();
-        console.error('智谱AI返回非音频数据:', textResponse);
+        // console.error('智谱AI返回非音频数据:', textResponse);
         throw new Error(`智谱AI返回错误: ${textResponse}`);
       }
 
       // 尝试去除音频前面的提示音
-      console.log('开始处理音频，去除提示音');
+      // console.log('开始处理音频，去除提示音');
       return await this.removeAudioBeep(audioBlob);
 
     } catch (error) {
