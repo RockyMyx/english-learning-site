@@ -7,39 +7,31 @@
     <meta name="keywords" content="小学英语,英语学习,单词练习,句型学习,听写练习">
     <meta name="author" content="Elementary English Learning">
     
+    <!-- 性能优化：DNS预解析和预连接 -->
+    <link rel="dns-prefetch" href="//speech.platform.bing.com">
+    <link rel="preconnect" href="//speech.platform.bing.com" crossorigin>
+    
+    <!-- 性能优化：禁止自动检测电话号码 -->
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- 性能优化：控制缓存 -->
+    <meta http-equiv="Cache-Control" content="max-age=86400">
+    
     <title>英语学习</title>
     
     <!-- 本地构建的 TailwindCSS + 阿里巴巴普惠体字体 -->
     <link rel="stylesheet" href="./src/styles/main.css?v=4">
     
-    <!-- Font Awesome - jsDelivr CDN (更稳定) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="./src/vendor/fontawesome.min.css" as="style">
+    <link rel="preload" href="./src/vendor/anime.min.js" as="script">
+    <link rel="preload" href="./src/styles/main.css?v=4" as="style">
     
-    <!-- Anime.js - jsDelivr CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <!-- Font Awesome - 本地引用 -->
+    <link rel="stylesheet" href="./src/vendor/fontawesome.min.css">
     
-    <!-- 资源加载失败检测 -->
-    <script>
-        // 检测 Font Awesome 是否加载成功
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                var testIcon = document.createElement('i');
-                testIcon.className = 'fas fa-check';
-                testIcon.style.cssText = 'position:absolute;visibility:hidden;';
-                document.body.appendChild(testIcon);
-                var width = testIcon.getBoundingClientRect().width;
-                document.body.removeChild(testIcon);
-                // 如果图标宽度为0或很大，说明字体未加载成功
-                if (width === 0 || width > 100) {
-                    // console.warn('Font Awesome 加载失败，使用备用CDN');
-                    var link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-                    document.head.appendChild(link);
-                }
-            }, 2000);
-        });
-    </script>
+    <!-- Anime.js - 本地引用 -->
+    <script src="./src/vendor/anime.min.js"></script>
     
     <!-- Custom Styles for functionality -->
     <link rel="stylesheet" href="./src/assets/styles.css?v=3">
@@ -653,7 +645,8 @@
         <audio id="audio-player" preload="auto"></audio>
     </div>
 
-    <script type="module" src="/src/main.js?v=3"></script>
+    <!-- 主应用脚本 - 使用defer异步加载不阻塞渲染 -->
+    <script type="module" src="/src/main.js?v=3" defer></script>
     
     <!-- Page Load Animation & Theme Toggle -->
     <script>
