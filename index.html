@@ -9,60 +9,63 @@
     
     <title>英语学习</title>
     
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 本地构建的 TailwindCSS + 阿里巴巴普惠体字体 -->
+    <link rel="stylesheet" href="./src/styles/main.css?v=4">
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome - jsDelivr CDN (更稳定) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     
-    <!-- Anime.js -->
+    <!-- Anime.js - jsDelivr CDN -->
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
     
-    <!-- Tailwind Config -->
+    <!-- 资源加载失败检测 -->
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        },
-                        surface: {
-                            light: '#ffffff',
-                            dark: '#0f172a',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-                        'glow': '0 0 20px rgba(59, 130, 246, 0.3)',
-                    }
+        // 检测 Font Awesome 是否加载成功
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var testIcon = document.createElement('i');
+                testIcon.className = 'fas fa-check';
+                testIcon.style.cssText = 'position:absolute;visibility:hidden;';
+                document.body.appendChild(testIcon);
+                var width = testIcon.getBoundingClientRect().width;
+                document.body.removeChild(testIcon);
+                // 如果图标宽度为0或很大，说明字体未加载成功
+                if (width === 0 || width > 100) {
+                    console.warn('Font Awesome 加载失败，使用备用CDN');
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                    document.head.appendChild(link);
                 }
-            }
-        }
+            }, 2000);
+        });
     </script>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <!-- Custom Styles for functionality -->
-    <link rel="stylesheet" href="./src/assets/styles.css">
+    <link rel="stylesheet" href="./src/assets/styles.css?v=3">
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* 页面切换 */
+        .page {
+            display: none;
+            min-height: calc(100vh - 80px);
+            width: 100%;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* 确保内容居中 */
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         /* Linear风格的微妙渐变背景 */
@@ -132,15 +135,6 @@
             background: #475569;
         }
 
-        /* Page visibility - keep original functionality */
-        .page {
-            display: none;
-        }
-        
-        .page.active {
-            display: block;
-        }
-
         /* Override original styles with Linear style */
         .app-container {
             min-height: 100vh;
@@ -155,11 +149,34 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .mode-card-linear:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mode-card-linear h3 {
+            margin: 0 0 0.5rem 0;
+            line-height: 1.4;
+            font-size: 1.125rem;
+        }
+        
+        .mode-card-linear p {
+            margin: 0 0 0.75rem 0;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .mode-card-linear .tag-line {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #64748b;
         }
 
         .dark .mode-card-linear {
@@ -169,33 +186,42 @@
 
         .mode-points-badge-linear {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            right: 1.5rem;
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
+            line-height: 1;
         }
 
         .mode-icon-linear {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 0.75rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.625rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            margin: 0 0 1rem 0;
         }
 
         .mode-content-linear {
             background: white;
             border-radius: 1rem;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
             border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-top: 0.5rem;
+        }
+        
+        @media (min-width: 640px) {
+            .mode-content-linear {
+                padding: 2rem;
+                margin-top: 1rem;
+            }
         }
 
         .dark .mode-content-linear {
@@ -249,9 +275,10 @@
         .hero-stat-card {
             background: #f8fafc;
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 2rem 1.5rem;
             text-align: center;
             transition: all 0.3s ease;
+            min-width: 160px;
         }
 
         .hero-stat-card:hover {
@@ -315,14 +342,25 @@
             border-color: #f59e0b;
             box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
         }
+        
+        /* 强制间距样式 */
+        .hero-section-card {
+            padding: 2.5rem !important;
+        }
+        
+        @media (min-width: 640px) {
+            .hero-section-card {
+                padding: 3rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-linear min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
     <div id="app" class="app-container">
         <!-- 导航栏 -->
-        <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/50 dark:border-slate-800/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
+        <nav class="fixed top-0 left-0 right-0 z-[100] glass border-b border-slate-200/50 dark:border-slate-800/50" style="height: 60px;">
+            <div class="px-4 sm:px-6 lg:px-8 h-full" style="max-width: 1280px; margin-left: auto; margin-right: auto;">
+                <div class="flex items-center justify-between h-full">
                     <!-- Logo -->
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-glow">
@@ -332,35 +370,35 @@
                     </div>
                     
                     <!-- 主题切换按钮 -->
-                    <button id="theme-toggle" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                        <i class="fas fa-sun hidden dark:block"></i>
-                        <i class="fas fa-moon block dark:hidden"></i>
+                    <button id="theme-toggle" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative overflow-hidden">
+                        <i class="fas fa-sun absolute transition-all duration-300 opacity-0 scale-50 dark:opacity-100 dark:scale-100"></i>
+                        <i class="fas fa-moon absolute transition-all duration-300 opacity-100 scale-100 dark:opacity-0 dark:scale-50"></i>
                     </button>
                 </div>
             </div>
         </nav>
         
-        <!-- 主内容区 -->
-        <main class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- 主内容区 - 增加顶部间距避免被固定导航栏遮挡 -->
+        <main class="pb-16 px-4 sm:px-6 lg:px-8" style="padding-top: 5rem; max-width: 1280px; margin-left: auto; margin-right: auto; width: 100%;">
             
             <!-- Home Page -->
             <div id="home-page" class="page active">
                 <!-- Hero Section -->
                 <section class="fade-in-up mb-12">
-                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-soft p-8 sm:p-12">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-soft hero-section-card">
                         <!-- 装饰背景 -->
                         <div class="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         
                         <div class="relative z-10">
-                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style="margin-bottom: 1.5rem;">
                                 开始你的<span class="text-primary-600 dark:text-primary-400">英语学习</span>之旅
                             </h1>
-                            <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mb-8">
+                            <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl" style="margin-bottom: 2.5rem;">
                                 从小学生基础单词和句型开始，通过多种互动学习模式，轻松掌握英语
                             </p>
                             
                             <!-- 统计卡片 -->
-                            <div class="flex justify-center gap-4 sm:gap-6 w-full flex-wrap">
+                            <div class="flex justify-center gap-4 sm:gap-6 w-full flex-wrap" style="margin-top: 1.5rem;">
                                 <div class="hero-stat-card flex-1 min-w-[140px] sm:min-w-[160px]">
                                     <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-600 dark:text-primary-400 mb-2" id="visit-time">00:00</div>
                                     <div class="text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">今日已学习</div>
@@ -379,8 +417,8 @@
                 </section>
                 
                 <!-- 学习模式 -->
-                <section class="fade-in-up">
-                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <section class="fade-in-up" style="padding-top: 2rem; padding-bottom: 1.5rem;">
+                    <h2 class="text-2xl font-bold flex items-center gap-2" style="margin-bottom: 2rem; margin-top: 0.5rem;">
                         <i class="fas fa-compass text-primary-500"></i>
                         选择学习模式
                     </h2>
@@ -398,7 +436,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 听到英文发音，选择对应的中文意思
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-check-circle text-green-500"></i>
                                 <span>提升听力理解</span>
                             </div>
@@ -416,7 +454,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 告别哑巴英语，让单词说出来
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-star text-yellow-500"></i>
                                 <span>高分挑战模式</span>
                             </div>
@@ -434,7 +472,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 看到英文单词，选择对应的中文意思
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-book text-blue-500"></i>
                                 <span>词汇积累</span>
                             </div>
@@ -452,7 +490,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 看到中文意思，选择正确的英文单词
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-brain text-purple-500"></i>
                                 <span>逆向思维训练</span>
                             </div>
@@ -470,7 +508,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 听到英文句子，选择符合对话内容的英文回答
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-users text-pink-500"></i>
                                 <span>情景对话练习</span>
                             </div>
@@ -488,7 +526,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 家长播放音频，孩子进行听写练习
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                            <div class="tag-line">
                                 <i class="fas fa-home text-indigo-500"></i>
                                 <span>亲子互动模式</span>
                             </div>
@@ -563,7 +601,7 @@
                         </button>
                         <h2><i class="fas fa-comments text-pink-500 mr-2"></i>英文对话练习</h2>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mb-4">听到英文句子，选择符合对话内容的英文回答</p>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4" style="margin-bottom: 15px;">听到英文句子，选择符合对话内容的英文回答</p>
                     <div id="english-dialogue-content" class="mode-content"></div>
                 </div>
             </div>
@@ -578,7 +616,7 @@
                         </button>
                         <h2><i class="fas fa-pen-fancy text-purple-500 mr-2"></i>单词造句练习</h2>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mb-4">通过句子练习掌握单词的实际用法，翻译中文句子为英文</p>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4" style="padding-bottom: 15px;">通过句子练习掌握单词的实际用法，翻译中文句子为英文</p>
                     <div id="word-to-sentence-content" class="mode-content"></div>
                 </div>
             </div>
@@ -605,8 +643,8 @@
         </main>
 
         <!-- 底部 -->
-        <footer class="border-t border-slate-200 dark:border-slate-800 py-8 px-4">
-            <div class="max-w-7xl mx-auto text-center text-sm text-slate-500 dark:text-slate-400">
+        <footer class="border-t border-slate-200 dark:border-slate-800 py-5 px-4 sm:px-6 lg:px-8" style="max-width: 1280px; margin-left: auto; margin-right: auto; width: 100%;">
+            <div class="text-center text-sm text-slate-500 dark:text-slate-400" style="padding: 20px 0;">
                 <p>©Copyright 小马哥AIGC</p>
             </div>
         </footer>
@@ -615,7 +653,7 @@
         <audio id="audio-player" preload="auto"></audio>
     </div>
 
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.js?v=3"></script>
     
     <!-- Page Load Animation & Theme Toggle -->
     <script>
