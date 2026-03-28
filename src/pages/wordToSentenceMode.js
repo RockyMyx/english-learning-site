@@ -310,24 +310,24 @@ export class WordToSentenceMode {
         englishSentences: [
           "Listen to your mother.",
           "Listen, and point to your head.",
-          "Listen, and point to the book."
+          "Listen! The cat is on the sofa."
         ],
         chineseSentences: [
           "听你妈妈的话。",
           "听，并指着你的头。",
-          "听，指着书。"
+          "听！那只猫在沙发上。"
         ]
       },
       {
         word: "look",
         wordChinese: "看",
         englishSentences: [
-          "Look! The cat is on the sofa.",
+          "Look! The dog is under the table.",
           "Look! That tiger is big.",
           "Look at the book."
         ],
         chineseSentences: [
-          "看！那只猫在沙发上。",
+          "看！那只狗在桌子下面。",
           "看！那只老虎很大。",
           "看着书。"
         ]
@@ -1359,7 +1359,7 @@ export class WordToSentenceMode {
         wordChinese: "火车",
         englishSentences: [
           "I have a toy train. It's blue.",
-          "Look at the train! It's long.",
+          "Look at the train! It's very long.",
           "What's your favourite toy? It's a train."
         ],
         chineseSentences: [
@@ -1429,7 +1429,7 @@ export class WordToSentenceMode {
         wordChinese: "老",
         englishSentences: [
           "My grandfather is old.",
-          "Look at the old car! It's small.",
+          "Look at the old car! It's very small.",
           "That house is old."
         ],
         chineseSentences: [
@@ -1465,6 +1465,454 @@ export class WordToSentenceMode {
           "猫喜欢老鼠。",
           "一只黑色的老鼠在椅子下面。"
         ]
+      },
+      {
+        word: "mouse",
+        wordChinese: "老鼠",
+        englishSentences: [
+          "The mouse is small.",
+          "Cats like mice.",
+          "A black mouse is under the chair."
+        ],
+        chineseSentences: [
+          "老鼠很小。",
+          "猫喜欢老鼠。",
+          "一只黑色的老鼠在椅子下面。"
+        ]
+      },
+      {
+        word: "face",
+        wordChinese: "脸",
+        englishSentences: [
+          "Point to your face.",
+          "My face is clean.",
+          "Look at that boy! His face is dirty."
+        ],
+        chineseSentences: [
+          "指着你的脸。",
+          "我的脸很干净。",
+          "看那个男孩！他的脸是脏的。"
+        ]
+      },
+      {
+        word: "ear",
+        wordChinese: "耳朵",
+        englishSentences: [
+          "I've got two ears.",
+          "Point to your ears.",
+          "I hear with my ears."
+        ],
+        chineseSentences: [
+          "我有两只耳朵。",
+          "指着你的耳朵。",
+          "我用耳朵听。"
+        ]
+      },
+      {
+        word: "shoulder",
+        wordChinese: "肩膀",
+        englishSentences: [
+          "Point to your shoulder.",
+          "My shoulder is big.",
+          "Look at that robot! It's got shoulders."
+        ],
+        chineseSentences: [
+          "指着你的肩膀。",
+          "我的肩膀很大。",
+          "看那个机器人！它有肩膀。"
+        ]
+      },
+      {
+        word: "knee",
+        wordChinese: "膝盖",
+        englishSentences: [
+          "Point to your knee.",
+          "My knee is dirty.",
+          "Look at that dog! Its knee is dirty."
+        ],
+        chineseSentences: [
+          "指着你的膝盖。",
+          "我的膝盖很脏。",
+          "看那只狗！它的膝盖脏了。"
+        ]
+      },
+      {
+        word: "toe",
+        wordChinese: "脚趾",
+        englishSentences: [
+          "I've got ten toes.",
+          "Point to your toes.",
+          "My toes are small."
+        ],
+        chineseSentences: [
+          "我有十个脚趾。",
+          "指着你的脚趾。",
+          "我的脚趾很小。"
+        ]
+      },
+      {
+        word: "monster",
+        wordChinese: "怪物",
+        englishSentences: [
+          "Look at that monster! It's ugly.",
+          "I don't like monsters.",
+          "That monster has got a big green head."
+        ],
+        chineseSentences: [
+          "看那个怪物！它很丑。",
+          "我不喜欢怪物。",
+          "那个怪物有绿色的大头。"
+        ]
+      },
+      {
+        word: "hair",
+        wordChinese: "头发",
+        englishSentences: [
+          "My hair is black.",
+          "That doll has got long hair.",
+          "Point to your hair."
+        ],
+        chineseSentences: [
+          "我的头发是黑色的。",
+          "那个洋娃娃有长头发。",
+          "指着你的头发。"
+        ]
+      },
+      {
+        word: "but",
+        wordChinese: "但是",
+        englishSentences: [
+          "I like cats, but I don't like spiders.",
+          "My grandfather is old, but he is happy.",
+          "I can swim, but I can't fly."
+        ],
+        chineseSentences: [
+          "我喜欢猫，但是我不喜欢蜘蛛。",
+          "我的爷爷很老，但是他很快乐。",
+          "我会游泳，但是我不会飞。"
+        ]
+      },
+      {
+        word: "teeth",
+        wordChinese: "牙齿",
+        englishSentences: [
+          "I've got teeth. They are white.",
+          "Look at that tiger! It's got big teeth.",
+          "I can brush my teeth."
+        ],
+        chineseSentences: [
+          "我有牙齿。它们是白色的。",
+          "看那只老虎！它有大的牙齿。",
+          "我会刷牙。"
+        ]
+      },
+      {
+        word: "nose",
+        wordChinese: "鼻子",
+        englishSentences: [
+          "Point to your nose.",
+          "My nose is small.",
+          "I smell with my nose."
+        ],
+        chineseSentences: [
+          "指着你的鼻子。",
+          "我的鼻子很小。",
+          "我用鼻子闻。"
+        ]
+      },
+      {
+        word: "show",
+        wordChinese: "展示",
+        englishSentences: [
+          "Show me your toy.",
+          "Show me that book, please.",
+          "Show me your hand."
+        ],
+        chineseSentences: [
+          "给我看看你的玩具。",
+          "请给我看看那本书。",
+          "给我看看你的手。"
+        ]
+      },
+      {
+        word: "boy",
+        wordChinese: "男孩",
+        englishSentences: [
+          "That boy is my brother.",
+          "Look at that boy! He is happy.",
+          "I am a boy."
+        ],
+        chineseSentences: [
+          "那个男孩是我的哥哥。",
+          "看那个男孩！他很快乐。",
+          "我是一个男孩。"
+        ]
+      },
+      {
+        word: "girl",
+        wordChinese: "女孩",
+        englishSentences: [
+          "That girl is my sister.",
+          "Look at that girl! She is beautiful.",
+          "I am a girl."
+        ],
+        chineseSentences: [
+          "那个女孩是我的妹妹。",
+          "看那个女孩！她很漂亮。",
+          "我是一个女孩。"
+        ]
+      },
+      {
+        word: "too",
+        wordChinese: "也",
+        englishSentences: [
+          "I've got a cat. My sister has got a cat too.",
+          "I like apples. I like bananas too.",
+          "I am happy. My sister is happy too."
+        ],
+        chineseSentences: [
+          "我有一只猫。我妹妹也有一只猫。",
+          "我喜欢苹果。我也喜欢香蕉。",
+          "我很高兴。我妹妹也很高兴。"
+        ]
+      },
+      {
+        word: "very",
+        wordChinese: "非常",
+        englishSentences: [
+          "That tiger is very big.",
+          "My mother is very beautiful.",
+          "I am very happy."
+        ],
+        chineseSentences: [
+          "那只老虎非常大。",
+          "我的妈妈非常漂亮。",
+          "我非常快乐。"
+        ]
+      },
+      {
+        word: "sea",
+        wordChinese: "大海",
+        englishSentences: [
+          "Look at the sea! It's blue.",
+          "Fish are in the sea.",
+          "I like the sea."
+        ],
+        chineseSentences: [
+          "看那片海！它是蓝色的。",
+          "鱼在海里。",
+          "我喜欢海。"
+        ]
+      },
+      {
+        word: "smell",
+        wordChinese: "闻",
+        englishSentences: [
+          "I smell with my nose.",
+          "Smell this cake. It is big.",
+          "This dog can smell the ball."
+        ],
+        chineseSentences: [
+          "我用鼻子闻。",
+          "闻一闻这个蛋糕。它很大。",
+          "这只狗在闻球。"
+        ]
+      },
+      {
+        word: "taste",
+        wordChinese: "尝",
+        englishSentences: [
+          "I taste with my mouth.",
+          "Taste this red apple.",
+          "I like to taste food."
+        ],
+        chineseSentences: [
+          "我用嘴巴尝。",
+          "尝一尝这个红色的苹果",
+          "我喜欢尝食物。"
+        ]
+      },
+      {
+        word: "touch",
+        wordChinese: "触摸",
+        englishSentences: [
+          "I touch with my hands.",
+          "Touch this cat. It is small.",
+          "Don't touch that spider!"
+        ],
+        chineseSentences: [
+          "我用手触摸。",
+          "摸一摸这只猫。它很小。",
+          "不要摸那个蜘蛛！"
+        ]
+      },
+      {
+        word: "brush",
+        wordChinese: "刷",
+        englishSentences: [
+          "I can brush my teeth.",
+          "Brush your hair, please.",
+          "Look! That girl is brushing her teeth."
+        ],
+        chineseSentences: [
+          "我会刷牙。",
+          "请刷你的头发。",
+          "看！那个女孩在刷牙。"
+        ]
+      },
+      {
+        word: "walk",
+        wordChinese: "走路",
+        englishSentences: [
+          "I can walk.",
+          "Look! That boy is walking.",
+          "My dog can walk."
+        ],
+        chineseSentences: [
+          "我会走路。",
+          "看！那个男孩在走路。",
+          "我的狗会走路。"
+        ]
+      },
+      {
+        word: "wash",
+        wordChinese: "洗",
+        englishSentences: [
+          "I can wash my hands.",
+          "Wash your face, please.",
+          "Look! That girl is washing an apple."
+        ],
+        chineseSentences: [
+          "我会洗手。",
+          "请洗你的脸。",
+          "看！那个女孩在洗苹果。"
+        ]
+      },
+      {
+        word: "feed",
+        wordChinese: "喂养",
+        englishSentences: [
+          "I can feed my cat.",
+          "Feed that bird, please.",
+          "Look! That boy is feeding the dog."
+        ],
+        chineseSentences: [
+          "我会喂我的猫。",
+          "请喂那只鸟。",
+          "看！那个男孩在喂狗。"
+        ]
+      },
+      {
+        word: "elephant",
+        wordChinese: "大象",
+        englishSentences: [
+          "Look at the elephant! It's big.",
+          "Elephants have got long noses.",
+          "I like elephants."
+        ],
+        chineseSentences: [
+          "看那头大象！它很大。",
+          "大象有长鼻子。",
+          "我喜欢大象。"
+        ]
+      },
+      {
+        word: "wild",
+        wordChinese: "野生的",
+        englishSentences: [
+          "Tigers are wild animals.",
+          "I don't like wild animals.",
+          "Look at those wild animals!"
+        ],
+        chineseSentences: [
+          "老虎是野生动物。",
+          "我不喜欢野生动物。",
+          "看那些野生动物！"
+        ]
+      },
+      {
+        word: "animal",
+        wordChinese: "动物",
+        englishSentences: [
+          "I like animals. Cats are my favourite.",
+          "Look at those animals! They are tigers, ducks, and fish.",
+          "What's your favourite animal? It's a dog."
+        ],
+        chineseSentences: [
+          "我喜欢动物。猫是我的最爱。",
+          "看那些动物！它们是老虎、鸭子和鱼。",
+          "你最喜欢的动物是什么？是狗。"
+        ]
+      },
+      {
+        word: "hippo",
+        wordChinese: "河马",
+        englishSentences: [
+          "Look at the hippo! It's big.",
+          "Hippos have got big mouths.",
+          "I like hippos."
+        ],
+        chineseSentences: [
+          "看那只河马！它很大。",
+          "河马有大的嘴。",
+          "我喜欢河马。"
+        ]
+      },
+      {
+        word: "tiger",
+        wordChinese: "老虎",
+        englishSentences: [
+          "Look at the tiger! It's big.",
+          "Tigers are orange.",
+          "I don't like tigers. They are ugly."
+        ],
+        chineseSentences: [
+          "看那只老虎！它很大。",
+          "老虎是橙色的。",
+          "我不喜欢老虎。它们很丑。"
+        ]
+      },
+      {
+        word: "monkey",
+        wordChinese: "猴子",
+        englishSentences: [
+          "Look at the monkey! It's got long arms.",
+          "Monkeys can jump.",
+          "I like monkeys."
+        ],
+        chineseSentences: [
+          "看那只猴子！它有长手臂。",
+          "猴子会跳。",
+          "我喜欢猴子。"
+        ]
+      },
+      {
+        word: "snake",
+        wordChinese: "蛇",
+        englishSentences: [
+          "Look at the snake! It's long.",
+          "I don't like snakes.",
+          "That snake is green."
+        ],
+        chineseSentences: [
+          "看那条蛇！它很长。",
+          "我不喜欢蛇。",
+          "那条蛇是绿色的。"
+        ]
+      },
+      {
+        word: "crocodile",
+        wordChinese: "鳄鱼",
+        englishSentences: [
+          "Look at the crocodile! It's got a big mouth.",
+          "Crocodiles have got long legs.",
+          "I don't like crocodiles."
+        ],
+        chineseSentences: [
+          "看那只鳄鱼！它有大的嘴。",
+          "鳄鱼有长腿。",
+          "我不喜欢鳄鱼。"
+        ]
       }
     ];
 
@@ -1475,6 +1923,11 @@ export class WordToSentenceMode {
 
   renderQuiz() {
     const currentQuestion = this.questions[this.currentIndex];
+    
+    // 检查当前题目是否已有答题状态
+    const currentState = this.questionStates[this.currentIndex];
+    const hasAnswered = currentState && currentState.hasAnswered;
+    const answeredIndex = hasAnswered ? currentState.answeredSentenceIndex : -1;
 
     this.container.innerHTML = `
       <div class="sentence-practice-container">
@@ -1505,8 +1958,17 @@ export class WordToSentenceMode {
           <div class="sentences-list">
             ${currentQuestion.chineseSentences.map((chineseSentence, index) => {
               const englishSentence = currentQuestion.englishSentences[index];
+              // 根据保存的状态设置按钮样式
+              const isAnswered = hasAnswered && answeredIndex === index;
+              const isDisabled = hasAnswered;
+              const correctBtnClass = isAnswered ? 'result-btn correct-btn clicked correct-clicked' : 
+                                     (isDisabled ? 'result-btn correct-btn disabled' : 'result-btn correct-btn');
+              const correctBtnContent = isAnswered ? 
+                '<i class="fas fa-check"></i><span>答对</span>' : '<span>答对</span>';
+              const correctBtnDisabled = isDisabled ? 'disabled' : '';
+              
               return `
-                <div class="sentence-item" data-index="${index}">
+                <div class="sentence-item ${isAnswered ? 'answered' : ''}" data-index="${index}">
                   <div class="sentence-row">
                     <div class="sentence-content">
                       <p class="sentence-chinese-text"><span class="sentence-num">${index + 1}.</span>${chineseSentence}</p>
@@ -1516,8 +1978,8 @@ export class WordToSentenceMode {
                         <i class="fas fa-eye"></i>
                         <span>查看答案</span>
                       </button>
-                      <button class="result-btn correct-btn" data-sentence-index="${index}">
-                        <span>答对</span>
+                      <button class="${correctBtnClass}" data-sentence-index="${index}" ${correctBtnDisabled}>
+                        ${correctBtnContent}
                       </button>
                     </div>
                   </div>
@@ -1700,15 +2162,35 @@ export class WordToSentenceMode {
     // 如果按钮已被禁用，直接返回
     if (button.disabled) return;
 
-    // 修改按钮状态而不是替换整个内容
-    button.disabled = true;
-    button.classList.add('clicked', 'correct-clicked');
+    // 检查当前题目是否已经有选中的句子
+    const currentQuestionIndex = this.currentIndex;
+    if (this.questionStates[currentQuestionIndex] && this.questionStates[currentQuestionIndex].answeredSentenceIndex !== undefined) {
+      // 已经答过这题了，不能重复选择
+      return;
+    }
 
-    // 更新按钮内容，添加勾选标记
-    button.innerHTML = `
-      <i class="fas fa-check"></i>
-      <span>答对</span>
-    `;
+    // 保存答题状态
+    this.questionStates[currentQuestionIndex] = {
+      answeredSentenceIndex: parseInt(sentenceIndex),
+      hasAnswered: true
+    };
+
+    // 禁用当前题目的所有"答对"按钮
+    const allCorrectButtons = this.container.querySelectorAll('.result-btn.correct-btn');
+    allCorrectButtons.forEach((btn, index) => {
+      btn.disabled = true;
+      if (index === parseInt(sentenceIndex)) {
+        // 选中的按钮显示勾选标记
+        btn.classList.add('clicked', 'correct-clicked');
+        btn.innerHTML = `
+          <i class="fas fa-check"></i>
+          <span>答对</span>
+        `;
+      } else {
+        // 未选中的按钮显示为禁用状态
+        btn.classList.add('disabled');
+      }
+    });
 
     // 播放答对音效
     this.playSoundEffect(true);
@@ -1743,31 +2225,14 @@ export class WordToSentenceMode {
     if (index < 0 || index >= this.questions.length) return;
 
     this.currentIndex = index;
-    this.hasAnswered = false;
-
-    // 恢复当前题目的选择状态
+    
+    // 检查当前题目是否已答题
     const state = this.questionStates[index];
-    if (state && state.hasAnswered) {
-      this.hasAnswered = true;
-    }
+    this.hasAnswered = state && state.hasAnswered;
 
+    // renderQuiz 会自动根据 questionStates 恢复状态
     this.renderQuiz();
     this.bindEvents();
-
-    // 如果有保存的状态，恢复视觉显示
-    if (state && state.hasAnswered) {
-      this.restoreQuestionState(state);
-    }
-  }
-
-  restoreQuestionState(state) {
-    if (state.answeredButton === 'correct') {
-      const correctButtons = document.querySelectorAll('.correct-btn-check');
-      correctButtons.forEach(button => {
-        button.disabled = true;
-        button.classList.add('disabled');
-      });
-    }
   }
 
   restart() {
