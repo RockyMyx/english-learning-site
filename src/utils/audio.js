@@ -4,7 +4,8 @@ class AudioPlayer {
     this.isSpeaking = false;
     this.speakQueue = [];
     this.isProcessingQueue = false;
-    this.zhipuApiKey = '4580c38bffb3433ba83182c20d7a4050.ulSX2n8qexklBZU1';
+    // 从环境变量读取 API Key，如果没有则使用空字符串
+    this.zhipuApiKey = import.meta.env.VITE_ZHIPU_API_KEY || '';
     this.zhipuApiUrl = 'https://open.bigmodel.cn/api/paas/v4/audio/speech';
   }
 
