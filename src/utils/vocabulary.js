@@ -42,7 +42,15 @@ export const vocabularyData = {
     { english: 'talk', chinese: '说话' },
     { english: 'jump', chinese: '跳跃' },
     { english: 'fly', chinese: '飞' },
-    { english: 'swim', chinese: '游泳' }
+    { english: 'swim', chinese: '游泳' },
+    { english: 'show', chinese: '展示' },
+    { english: 'brush', chinese: '刷' },
+    { english: 'walk', chinese: '走路' },
+    { english: 'wash', chinese: '洗' },
+    { english: 'feed', chinese: '喂养' },
+    { english: 'smell', chinese: '闻' },
+    { english: 'taste', chinese: '品尝' },
+    { english: 'touch', chinese: '触摸' }
   ],
 
   // 食物
@@ -72,7 +80,16 @@ export const vocabularyData = {
     { english: 'hand', chinese: '手' },
     { english: 'leg', chinese: '腿' },
     { english: 'arm', chinese: '手臂' },
-    { english: 'head', chinese: '头' }
+    { english: 'head', chinese: '头' },
+    { english: 'face', chinese: '脸' },
+    { english: 'ear', chinese: '耳朵' },
+    { english: 'shoulder', chinese: '肩膀' },
+    { english: 'knee', chinese: '膝盖' },
+    { english: 'toe', chinese: '脚趾' },
+    { english: 'hair', chinese: '头发' },
+    { english: 'teeth', chinese: '牙齿' },
+    { english: 'tooth', chinese: '牙齿' },
+    { english: 'nose', chinese: '鼻子' }
   ],
 
   // 房屋房间
@@ -98,7 +115,13 @@ export const vocabularyData = {
     { english: 'frog', chinese: '青蛙' },
     { english: 'spider', chinese: '蜘蛛' },
     { english: 'horse', chinese: '马' },
-    { english: 'mouse', chinese: '老鼠' }
+    { english: 'mouse', chinese: '老鼠' },
+    { english: 'monster', chinese: '怪物' },
+    { english: 'elephant', chinese: '大象' },
+    { english: 'hippo', chinese: '河马' },
+    { english: 'monkey', chinese: '猴子' },
+    { english: 'snake', chinese: '蛇' },
+    { english: 'crocodile', chinese: '鳄鱼' }
   ],
 
   // 学校用品
@@ -147,13 +170,22 @@ export const vocabularyData = {
     { english: 'happy', chinese: '快乐的' },
     { english: 'sad', chinese: '悲伤的' },
     { english: 'old', chinese: '老的' },
-    { english: 'young', chinese: '年轻的' }
+    { english: 'young', chinese: '年轻的' },
+    { english: 'wild', chinese: '野生的' },
+    { english: 'very', chinese: '非常' }
   ],
 
   // 其他
   others: [
     { english: 'computer', chinese: '电脑' },
-    { english: 'train', chinese: '火车' }
+    { english: 'train', chinese: '火车' },
+    { english: 'these', chinese: '这些' },
+    { english: 'those', chinese: '那些' },
+    { english: 'but', chinese: '但是' },
+    { english: 'too', chinese: '也' },
+    { english: 'sea', chinese: '大海' },
+    { english: 'boy', chinese: '男孩' },
+    { english: 'girl', chinese: '女孩' }
   ],
 
   // 句型 - 基础对话（100个预设对话题）

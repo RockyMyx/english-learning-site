@@ -12,12 +12,29 @@
 .words-grid,
 .responsive-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+    grid-template-columns: repeat(10, 1fr) !important;
     gap: 0.5rem !important;
     width: 100% !important;
     max-width: 100% !important;
 }
 
+/* 平板端 - 每排8个 */
+@media (max-width: 1200px) {
+    .words-grid,
+    .responsive-grid {
+        grid-template-columns: repeat(8, 1fr) !important;
+    }
+}
+
+/* 小平板端 - 每排6个 */
+@media (max-width: 900px) {
+    .words-grid,
+    .responsive-grid {
+        grid-template-columns: repeat(6, 1fr) !important;
+    }
+}
+
+/* 手机端 - 每排3个 */
 @media (max-width: 640px) {
     .words-grid,
     .responsive-grid {
@@ -535,9 +552,16 @@ body {
    Dictation Styles - Unified Design
    ============================================ */
 .dictation-selection {
-    max-width: 720px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1rem 100px 1rem; /* 左右内边距，为底部固定栏留空间 */
+    padding: 0 1.5rem 100px 1.5rem; /* 左右内边距，为底部固定栏留空间 */
+}
+
+/* 电脑端 - 充分利用屏幕宽度 */
+@media (min-width: 1200px) {
+    .dictation-selection {
+        padding: 0 3rem 100px 3rem;
+    }
 }
 
 /* 小屏幕适配 */
@@ -613,11 +637,18 @@ body {
 }
 
 .sticky-bar-content {
-    max-width: 720px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 1rem;
+    padding: 0 1.5rem;
+}
+
+@media (min-width: 1200px) {
+    .sticky-bar-content {
+        padding: 0 3rem;
+    }
 }
 
 .selected-info {
@@ -726,12 +757,39 @@ body {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 0.625rem;
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem 0.25rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: auto;
-    word-break: break-word;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* 电脑端 - 防止长单词换行，增加单词块宽度 */
+@media (min-width: 641px) {
+    .word-block {
+        padding: 0.875rem 0.5rem;
+    }
+    
+    .word-block .word-english {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+}
+
+/* 大屏幕电脑端 - 进一步增加单词块宽度 */
+@media (min-width: 1200px) {
+    .word-block {
+        padding: 1rem 0.75rem;
+    }
+    
+    .word-block .word-english {
+        font-size: 1rem;
+    }
+    
+    .word-block .word-chinese {
+        font-size: 0.85rem;
+    }
 }
 
 /* 小屏幕适配 */
@@ -2025,8 +2083,12 @@ body {
 }
 
 .prev-btn {
-    background: #f1f5f9;
+    background: rgb(59, 130, 246)
     color: var(--text-secondary);
+}
+
+.prev-btn:hover:not(:disabled) {
+    background: rgb(59, 130, 246)
 }
 
 .dark .prev-btn {
@@ -2034,8 +2096,8 @@ body {
     color: #94a3b8;
 }
 
-.prev-btn:hover:not(:disabled) {
-    background: #e2e8f0;
+.dark .prev-btn:hover:not(:disabled) {
+    background: 334155;
 }
 
 .next-btn {
