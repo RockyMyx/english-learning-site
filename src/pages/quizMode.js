@@ -151,7 +151,16 @@ export class QuizMode {
       { question: "What your cat eat?", correctAnswer: "I feed the cat with fish.", options: ["I like cats.", "The cat likes fish.", "The cat eat birds", "I feed the cat with fish."] },
       { question: "What do you wash with?", correctAnswer: "I wash with my hands.", options: ["I wash with my feet.", "I wash with my hands.", "I wash with my head.", "I wash with my arms."] },
       { question: "Be quiet, please.", correctAnswer: "I'm sorry.", options: ["Thank you.", "That's ok.", "I'm sorry.", "You are welcome."] },
-      { question: "Look at that monster! Is it ugly?", correctAnswer: "Yes, it is very ugly.", options: ["No, it's beautiful.", "It's big.", "Yes, it is very ugly.", "I don't like it."] }
+      { question: "Look at that monster! Is it ugly?", correctAnswer: "Yes, it is very ugly.", options: ["No, it's beautiful.", "It's big.", "Yes, it is very ugly.", "I don't like it."] },
+      { question: "I am big. I have a long nose. What am I?", correctAnswer: "Elephant", options: ["Tiger", "Elephant", "Horse", "Cat"] },
+      { question: "I am yellow. I can swim. I have two legs. What am I?", correctAnswer: "Duck", options: ["Fish", "Duck", "Bird", "Frog"] },
+      { question: "My hands are dirty. What can I do?", correctAnswer: "Wash my hands", options: ["Wash my hands", "Brush my teeth", "Open the door", "Sit down"] },
+      { question: "Teacher says, 'Be quiet!' What do you do?", correctAnswer: "Don't talk", options: ["Talk", "Don't talk", "Jump", "Run"] },
+      { question: "Your friend says, 'Welcome to my house.' What do you say?", correctAnswer: "Thank you", options: ["I'm sorry", "Thank you", "That's ok", "Here you are"] },
+      { question: "I am hungry. What do I want?", correctAnswer: "Food", options: ["Book", "Food", "Toy", "Bike"] },
+      { question: "It is cold. What can I do?", correctAnswer: "Close the door", options: ["Open the door", "Close the door", "Open the book", "Close the book"] },
+      { question: "I cannot find my pencil. What do I say?", correctAnswer: "Where is my pencil?", options: ["How many pencils?", "Where is my pencil?", "What's this?", "Which pencil?"] },
+      { question: "He is sad. What can I do?", correctAnswer: "Give him a toy", options: ["Wash my hands", "Give him a toy", "Close the door", "Brush my teeth"] }
     ];
 
     // 随机选择题目
