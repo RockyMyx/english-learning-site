@@ -4,9 +4,18 @@ class AudioPlayer {
     this.isSpeaking = false;
     this.speakQueue = [];
     this.isProcessingQueue = false;
-    // 从环境变量读取 API Key，如果没有则使用空字符串
+
+    // TTS 提供商配置：从环境变量读取，默认为 'zhipu'
+    this.ttsProvider = import.meta.env.VITE_TTS_PROVIDER || 'zhipu';
+
+    // 智谱 AI 配置
     this.zhipuApiKey = import.meta.env.VITE_ZHIPU_API_KEY || '';
     this.zhipuApiUrl = 'https://open.bigmodel.cn/api/paas/v4/audio/speech';
+
+    // MiniMax 配置
+    this.minimaxApiKey = import.meta.env.VITE_MINIMAX_API_KEY || '';
+    // 官方 HTTP 端点
+    this.minimaxApiUrl = 'https://api.minimaxi.com/v1/t2a_v2';
   }
 
   // 清理文本，移除括号内容
@@ -154,10 +163,13 @@ class AudioPlayer {
       }
       this.isSpeaking = false;
 
-      // console.log('调用智谱AI TTS API:', cleanText, '语速:', options.speed || 1.2);
+      // console.log(`调用${this.ttsProvider === 'minimax' ? 'MiniMax' : '智谱AI'} TTS API:`, cleanText, '语速:', options.speed || 1.2);
 
-      // 调用智谱AI API，传入语速参数
-      this.callZhipuAPI(cleanText, options.speed || 1.0)
+      // 根据配置的 TTS 提供商调用对应的 API
+      const apiCall = this.ttsProvider === 'minimax'
+        ? this.callMiniMaxAPI(cleanText, options.speed || 1.0)
+        : this.callZhipuAPI(cleanText, options.speed || 1.0);
+      apiCall
         .then(audioBlob => {
           // 创建本地URL
           const audioUrl = URL.createObjectURL(audioBlob);
@@ -222,6 +234,102 @@ class AudioPlayer {
           reject(userFriendlyError);
         });
     });
+  }
+
+  // 调用 MiniMax TTS API（HTTP 同步方式）
+  async callMiniMaxAPI(text, speed = 1.0) {
+    try {
+      // console.log('发送 MiniMax TTS 请求:', text, '语速:', speed);
+
+      // MiniMax API 使用 speed 范围是 0.5-2.0
+      const adjustedSpeed = Math.max(0.5, Math.min(1.0, speed));
+
+      const requestBody = {
+        model: 'speech-2.8-hd',
+        text: text,
+        stream: false,
+        voice_setting: {
+          voice_id: 'English_radiant_girl',
+          speed: adjustedSpeed,
+          vol: 1,
+          pitch: 0,
+          emotion: 'happy'
+        },
+        audio_setting: {
+          sample_rate: 32000,
+          bitrate: 128000,
+          format: 'mp3',
+          channel: 1
+        },
+        language_boost: 'English',
+        subtitle_enable: false,
+        output_format: 'hex'
+      };
+
+      // console.log('MiniMax 请求参数:', JSON.stringify(requestBody, null, 2));
+
+      // 官方 HTTP 端点，只需要 Authorization header
+      const response = await fetch(this.minimaxApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.minimaxApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      // console.log('MiniMax 响应状态:', response.status, response.statusText);
+
+      if (!response.ok) {
+        let errorMessage = `MiniMax API 响应错误: ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          console.error('MiniMax 错误详情:', errorData);
+          errorMessage += ` - ${JSON.stringify(errorData)}`;
+        } catch (e) {
+          console.error('无法解析错误响应');
+        }
+        throw new Error(errorMessage);
+      }
+
+      // MiniMax 返回 JSON 格式，audio 数据在 data.audio 字段（hex 格式）
+      const responseData = await response.json();
+      // console.log('MiniMax 响应数据:', responseData);
+
+      // 检查 base_resp 状态
+      if (responseData.base_resp?.status_code !== 0) {
+        throw new Error(`MiniMax API 错误: ${responseData.base_resp?.status_msg || '未知错误'}`);
+      }
+
+      // 获取 hex 格式的音频数据
+      const audioHex = responseData.data?.audio;
+      if (!audioHex) {
+        throw new Error('MiniMax 返回的数据中没有音频');
+      }
+
+      // 将 hex 转换为 ArrayBuffer
+      const audioBuffer = this.hexToArrayBuffer(audioHex);
+      // console.log('MiniMax 音频大小:', audioBuffer.byteLength, 'bytes');
+
+      // 创建 Blob（MP3 格式）
+      const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' });
+      return audioBlob;
+
+    } catch (error) {
+      console.error('MiniMax API 调用失败:', error);
+      throw error;
+    }
+  }
+
+  // 将 hex 字符串转换为 ArrayBuffer
+  hexToArrayBuffer(hexString) {
+    // 移除可能的空格和换行
+    const cleanHex = hexString.replace(/\s/g, '');
+    const bytes = new Uint8Array(cleanHex.length / 2);
+    for (let i = 0; i < cleanHex.length; i += 2) {
+      bytes[i / 2] = parseInt(cleanHex.substr(i, 2), 16);
+    }
+    return bytes.buffer;
   }
 
   // 调用智谱AI TTS API

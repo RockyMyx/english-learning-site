@@ -720,8 +720,8 @@ export class QuizMode {
     }
 
     if (textToPlay) {
-      // 统一使用speak方法
-      audioPlayer.speak(textToPlay).then(() => {
+      // 统一使用speak方法，语速0.5
+      audioPlayer.speak(textToPlay, { speed: 0.5 }).then(() => {
         // console.log('Question audio played successfully');
       }).catch(error => {
         // console.error('Error playing question audio:', error);
@@ -729,14 +729,14 @@ export class QuizMode {
     }
   }
 
-  // 英文对话模式：1倍速读题目
+  // 英文对话模式：0.5倍速读题目
   async playDialogueAudioThreeTimes(text) {
     try {
       // console.log('英文对话模式开始读题目:', text);
 
-      // 1倍速读一遍
-      // console.log('调用音频播放器，语速1.0');
-      await audioPlayer.speak(text, { speed: 1.0 });
+      // 0.5倍速读一遍
+      // console.log('调用音频播放器，语速0.5');
+      await audioPlayer.speak(text, { speed: 0.5 });
 
       // console.log('英文对话模式读题完成');
 
@@ -753,7 +753,7 @@ export class QuizMode {
       audioPlayer.stop();
       // console.log('已停止当前音频');
 
-      audioPlayer.speak(word).then(() => {
+      audioPlayer.speak(word, { speed: 0.5 }).then(() => {
         // console.log('单词音频播放成功:', word);
       }).catch(error => {
         // console.error('单词音频播放错误:', error);
