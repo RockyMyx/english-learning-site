@@ -1913,6 +1913,34 @@ export class WordToSentenceMode {
           "鳄鱼有长腿。",
           "我不喜欢鳄鱼。"
         ]
+      },
+      {
+        word: "these",
+        wordChinese: "这些",
+        englishSentences: [
+          "These are my books.",
+          "These books are my favourite.",
+          "I like these apples."
+        ],
+        chineseSentences: [
+          "这些是我的书。",
+          "这些是我最喜欢的书。",
+          "我喜欢这些苹果。"
+        ]
+      },
+      {
+        word: "those",
+        wordChinese: "那些",
+        englishSentences: [
+          "Those are her toys.",
+          "Look at those birds!",
+          "I don't like crocodiles."
+        ],
+        chineseSentences: [
+          "那些是她的玩具。",
+          "看那些鸟！",
+          "我不喜欢那些蜘蛛。"
+        ]
       }
     ];
 
