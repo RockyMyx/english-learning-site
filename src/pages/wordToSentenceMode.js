@@ -1941,6 +1941,104 @@ export class WordToSentenceMode {
           "看那些鸟！",
           "我不喜欢那些蜘蛛。"
         ]
+      },
+      {
+        word: "tail",
+        wordChinese: "尾巴",
+        englishSentences: [
+          "Look at that cat! It's got a long tail.",
+          "That dog has got a short tail.",
+          "The monkey's tail is very long."
+        ],
+        chineseSentences: [
+          "看那只猫！它有一条长尾巴。",
+          "那只狗有一条短尾巴。",
+          "猴子的尾巴很长。"
+        ]
+      },
+      {
+        word: "clothes",
+        wordChinese: "衣服",
+        englishSentences: [
+          "These are my clothes. They are clean.",
+          "I like red clothes.",
+          "Those clothes are dirty. Please wash them."
+        ],
+        chineseSentences: [
+          "这些是我的衣服。它们是干净的。",
+          "我喜欢红色的衣服。",
+          "那些衣服是脏的。请洗它们。"
+        ]
+      },
+      {
+        word: "shoes",
+        wordChinese: "鞋子",
+        englishSentences: [
+          "My shoes are under the bed.",
+          "I've got a pair of black shoes.",
+          "Look! His shoes are big."
+        ],
+        chineseSentences: [
+          "我的鞋子在床下面。",
+          "我有一双黑色的鞋子。",
+          "看！他的鞋子很大。"
+        ]
+      },
+      {
+        word: "trousers",
+        wordChinese: "裤子",
+        englishSentences: [
+          "These are my trousers. They are blue.",
+          "Your trousers are on the chair.",
+          "I don't like those trousers. They are ugly."
+        ],
+        chineseSentences: [
+          "这些是我的裤子。它们是蓝色的。",
+          "你的裤子在椅子上。",
+          "我不喜欢那条裤子。它很丑。"
+        ]
+      },
+      {
+        word: "skirt",
+        wordChinese: "裙子",
+        englishSentences: [
+          "My sister has got a pink skirt.",
+          "This skirt is beautiful.",
+          "Where's your skirt? It's in the bedroom."
+        ],
+        chineseSentences: [
+          "我妹妹有一条粉色的裙子。",
+          "这条裙子很漂亮。",
+          "你的裙子在哪里？它在卧室里。"
+        ]
+      },
+      {
+        word: "jacket",
+        wordChinese: "夹克",
+        englishSentences: [
+          "I've got a red jacket.",
+          "His jacket is on the sofa.",
+          "That jacket is small."
+        ],
+        chineseSentences: [
+          "我有一件红色的夹克。",
+          "他的夹克在沙发上。",
+          "那件夹克很小。"
+        ]
+      },
+      {
+        word: "t-shirt",
+        wordChinese: "T恤",
+        englishSentences: [
+          "I like this white t-shirt.",
+          "Your t-shirt is dirty. Please wash it.",
+          "My brother has got a blue t-shirt."
+        ],
+        chineseSentences: [
+          "我喜欢这件白色的T恤。",
+          "你的T恤是脏的。请洗它。",
+          "我哥哥有一件蓝色的T恤。"
+        ]
       }
     ];
 

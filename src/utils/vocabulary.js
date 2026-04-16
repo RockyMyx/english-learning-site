@@ -121,7 +121,8 @@ export const vocabularyData = {
     { english: 'hippo', chinese: '河马' },
     { english: 'monkey', chinese: '猴子' },
     { english: 'snake', chinese: '蛇' },
-    { english: 'crocodile', chinese: '鳄鱼' }
+    { english: 'crocodile', chinese: '鳄鱼' },
+    { english: 'tail', chinese: '尾巴' }
   ],
 
   // 学校用品
@@ -186,6 +187,16 @@ export const vocabularyData = {
     { english: 'sea', chinese: '大海' },
     { english: 'boy', chinese: '男孩' },
     { english: 'girl', chinese: '女孩' }
+  ],
+
+  // 衣物
+  clothes: [
+    { english: 'clothes', chinese: '衣服' },
+    { english: 'shoes', chinese: '鞋子' },
+    { english: 'trousers', chinese: '裤子' },
+    { english: 'skirt', chinese: '裙子' },
+    { english: 'jacket', chinese: '夹克' },
+    { english: 't-shirt', chinese: 'T恤' }
   ],
 
   // 句型 - 基础对话（100个预设对话题）

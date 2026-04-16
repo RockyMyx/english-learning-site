@@ -1027,3 +1027,73 @@
 
 中文：一只黑色的老鼠在椅子下面。
 英文：A black mouse is under the chair.
+
+单词：tail
+中文：看那只猫！它有一条长尾巴。
+英文：Look at that cat! It's got a long tail.
+
+中文：那只狗有一条短尾巴。
+英文：That dog has got a short tail.
+
+中文：猴子的尾巴很长。
+英文：The monkey's tail is very long.
+
+单词：clothes
+中文：这些是我的衣服。它们是干净的。
+英文：These are my clothes. They are clean.
+
+中文：我喜欢红色的衣服。
+英文：I like red clothes.
+
+中文：那些衣服是脏的。请洗它们。
+英文：Those clothes are dirty. Please wash them.
+
+单词：shoes
+中文：我的鞋子在床下面。
+英文：My shoes are under the bed.
+
+中文：我有一双黑色的鞋子。
+英文：I've got a pair of black shoes.
+
+中文：看！他的鞋子很大。
+英文：Look! His shoes are big.
+
+单词：trousers
+中文：这些是我的裤子。它们是蓝色的。
+英文：These are my trousers. They are blue.
+
+中文：你的裤子在椅子上。
+英文：Your trousers are on the chair.
+
+中文：我不喜欢那条裤子。它很丑。
+英文：I don't like those trousers. They are ugly.
+
+单词：skirt
+中文：我妹妹有一条粉色的裙子。
+英文：My sister has got a pink skirt.
+
+中文：这条裙子很漂亮。
+英文：This skirt is beautiful.
+
+中文：你的裙子在哪里？它在卧室里。
+英文：Where's your skirt? It's in the bedroom.
+
+单词：jacket
+中文：我有一件红色的夹克。
+英文：I've got a red jacket.
+
+中文：他的夹克在沙发上。
+英文：His jacket is on the sofa.
+
+中文：那件夹克很小。
+英文：That jacket is small.
+
+单词：t-shirt
+中文：我喜欢这件白色的T恤。
+英文：I like this white t-shirt.
+
+中文：你的T恤是脏的。请洗它。
+英文：Your t-shirt is dirty. Please wash it.
+
+中文：我哥哥有一件蓝色的T恤。
+英文：My brother has got a blue t-shirt.
