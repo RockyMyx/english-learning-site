@@ -982,23 +982,23 @@ function showDifficultySelection(onSelect) {
       key: 'easy',
       title: '初级',
       description: '简单句型，语法巩固',
-      tags: '【简单】2分/题',
+      tags: '简单2分/题',
       icon: '🌟',
       className: 'easy'
     },
     {
       key: 'normal',
       title: '中级',
-      description: '基础+进阶题目，全面提升',
-      tags: '【简单】2分 / 【中等】3分',
+      description: '基础+进阶题目',
+      tags: '简单2分 / 中等3分',
       icon: '⚡',
       className: 'normal'
     },
     {
       key: 'hard',
       title: '高级',
-      description: '进阶+挑战题目，高手专属',
-      tags: '【中等】3分 / 【困难】5分',
+      description: '进阶+挑战题目',
+      tags: '中等3分 / 困难5分',
       icon: '🔥',
       className: 'hard'
     }
