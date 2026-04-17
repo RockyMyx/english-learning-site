@@ -636,7 +636,9 @@ export class QuizMode {
     summary.className = 'quiz-summary';
     summary.id = 'quiz-summary';
 
-    const percentage = Math.round((this.score / this.questions.length) * 100);
+    // 计算答对题数（不是分数）
+    const correctCount = this.answers.filter(a => a && a.isCorrect).length;
+    const percentage = Math.round((correctCount / this.questions.length) * 100);
 
     summary.innerHTML = `
       <div class="summary-content">

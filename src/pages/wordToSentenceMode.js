@@ -2241,24 +2241,22 @@ export class WordToSentenceMode {
       gainNode.connect(audioContext.destination);
 
       if (isCorrect) {
-        // 正确答案：更明亮、更响亮的音效
-        oscillator.type = 'square';
+        // 正确答案：更高音的音效，更响亮
         oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(1320, audioContext.currentTime + 0.1);
-        oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
-        gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        oscillator.frequency.exponentialRampToValueAtTime(660, audioContext.currentTime + 0.15);
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
       } else {
-        // 错误答案：更低沉的音效
-        oscillator.type = 'square';
-        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.15);
-        gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        // 错误答案：更明显的错误音效，更响亮
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(110, audioContext.currentTime + 0.15);
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
       }
 
+      oscillator.type = 'sine';
       oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
+      oscillator.stop(audioContext.currentTime + 0.25);
     } catch (error) {
       // console.warn('Failed to play sound effect:', error);
     }
