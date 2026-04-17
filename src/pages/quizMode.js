@@ -6,6 +6,7 @@ export class QuizMode {
   constructor(containerId, mode, options = {}) {
     this.container = document.getElementById(containerId);
     this.mode = mode;
+    this.difficulty = options.difficulty || null;
     this.questionsPerRound = options.questionsPerRound || 10;
     this.questions = [];
     this.currentIndex = 0;
@@ -54,164 +55,212 @@ export class QuizMode {
   }
 
   generateDialogueQuestions() {
-    // 50个预设对话题目 - 完全按照用户提供的题目顺序
+    // 预设对话题目 - 完全按照用户提供的题目顺序
     // 正确答案分布：A选项10%，B选项20%，C选项30%，D选项40%
-    const dialogueQuestions = [
-      { question: "What's your name?", correctAnswer: "I'm Tom.", options: ["I'm Tom.", "I'm seven.", "It's a cat.", "It's red."] },
-      { question: "I'm sorry.", correctAnswer: "That's ok.", options: ["That's ok.", "I'm sorry too.", "Thank you.", "Here you are."] },
-      { question: "Tell me your name.", correctAnswer: "I'm Tom.", options: ["I'm Tom.", "I'm ten.", "It's Tom.", "I'm a boy."] },
-      { question: "The tomato is ( ).", correctAnswer: "red", options: ["red", "yellow", "green", "purple"] },
-      { question: "I've got two ( ) in my bag.", correctAnswer: "books", options: ["books", "book", "a book", "red"] },
-      { question: "How old are you?", correctAnswer: "I'm nine.", options: ["I'm fine.", "I'm nine.", "My name is Lily.", "It's a book."] },
-      { question: "Where is my pencil?", correctAnswer: "It's under the chair.", options: ["It's a pencil.", "It's under the chair.", "It's blue.", "I've got a pencil."] },
-      { question: "What's your favourite animal?", correctAnswer: "I like dogs.", options: ["My favourite color is blue.", "I like dogs.", "It's a dog.", "I've got a dog."] },
-      { question: "Is the cat on the sofa?", correctAnswer: "Yes, it is.", options: ["It's a cat.", "Yes, it is.", "It's black.", "I like cats."] },
-      { question: "What can a bird do?", correctAnswer: "It can fly.", options: ["It can swim.", "It can jump.", "It can fly.", "It can talk."] },
-      { question: "What's your mother's name?", correctAnswer: "She's Mary.", options: ["She's my mother.", "My name is Mary.", "She's Mary.", "I'm Mary."] },
-      { question: "I'm happy. But my sister is ( ).", correctAnswer: "sad", options: ["sad", "happy", "big", "young"] },
-      { question: "My hands are dirty. I need to ( ) them.", correctAnswer: "clean", options: ["clean", "dirty", "look", "point"] },
-      { question: "What's your favourite food?", correctAnswer: "I like cake.", options: ["I like cake.", "It's a cake.", "Cake is food.", "I've got cake."] },
-      { question: "I've got a ( ). It's red and I can ride it.", correctAnswer: "bike", options: ["bike", "car", "doll", "kite"] },
-      { question: "What color is the apple?", correctAnswer: "It's red.", options: ["It's a fruit.", "It's red.", "It's on the table.", "I like apples."] },
-      { question: "Can a bird fly?", correctAnswer: "Yes, it can.", options: ["No, it can't.", "Yes, it can.", "It can swim.", "It's a bird."] },
-      { question: "What's this? ", correctAnswer: "It's a book.", options: ["It's red.", "It's a book.", "It's on the chair.", "I like books."] },
-      { question: "Where is my bag?", correctAnswer: "It's here.", options: ["It's here.", "It's a bag.", "I've got a bag.", "It's blue."] },
-      { question: "Who's that? ", correctAnswer: "She's my mother.", options: ["He's happy.", "She's tall.", "She's my mother.", "I'm a girl."] },
-      { question: "Which one is your toy?", correctAnswer: "The red one.", options: ["The red one.", "It's a toy.", "I like toys.", "It's on the chair."] },
-      { question: "What can you do?", correctAnswer: "I can jump.", options: ["I like swimming.", "I've got a ball.", "I can jump.", "I'm happy."] },
-      { question: "What's this? It's a ( ).", correctAnswer: "red book", options: ["red book", "book red", "red book is", "book is red"] },
-      { question: "He's my ( ). He is young.", correctAnswer: "brother", options: ["father", "grandfather", "brother", "sister"] },
-      { question: "I am a fish. I can ( ) but I can't fly.", correctAnswer: "swim", options: ["swim", "jump", "run", "fly"] },
-      { question: "It's cold. Please ( ) the door.", correctAnswer: "close", options: ["open", "close", "look", "point"] },
-      { question: "How many eggs are in the fridge?", correctAnswer: "Ten.", options: ["Ten.", "They are white.", "I like eggs.", "It's an egg."] },
-      { question: "Where is my toy car? I can't find it.", correctAnswer: "It's under the sofa.", options: ["It's under the sofa.", "It's a car.", "I've got a car.", "It's red."] },
-      { question: "Can a fish swim?", correctAnswer: "Yes, it can.", options: ["Yes, it can.", "No, it can't.", "It can fly.", "It's a fish."] },
-      { question: "The milk is ( ).", correctAnswer: "white", options: ["black", "red", "white", "blue"] },
-      { question: "How many cats do you have?", correctAnswer: "I've got two cats.", options: ["I've got two cats.", "They are black.", "It's a cat.", "I like cats."] },
-      { question: "Have you got a sister?", correctAnswer: "Yes, I have.", options: ["Yes, I have.", "I've got a dog.", "She is my mother.", "It's a girl."] },
-      { question: "What's your favourite color?", correctAnswer: "My favourite color is red.", options: ["My favourite color is red.", "I like apples.", "It's a book.", "I'm seven."] },
-      { question: "How many legs does a spider have?", correctAnswer: "It's got eight legs.", options: ["It's got four legs.", "It's got six legs.", "It's got eight legs.", "It's got ten legs."] },
-      { question: "How many books are on the table?", correctAnswer: "One book.", options: ["It's a book.", "They are on the table.", "One book.", "I like books."] },
-      { question: "Pass me the pencil, please.", correctAnswer: "Here you are.", options: ["Here you are.", "Thank you.", "I'm sorry.", "It's a pencil."] },
-      { question: "Here's a cake for you.", correctAnswer: "Thank you.", options: ["Thank you.", "I like cake.", "It's a cake.", "Here you are."] },
-      { question: "Who's that boy?", correctAnswer: "He's my brother.", options: ["He's my brother.", "She's my sister.", "It's a boy.", "I'm a boy."] },
-      { question: "Is the book on the table?", correctAnswer: "No, it's under the chair.", options: ["No, it's under the chair.", "Yes, it's a book.", "It's red.", "I see a book."] },
-      { question: "Have you got a pet?", correctAnswer: "Yes, I've got a cat.", options: ["I like dogs.", "Yes, I see a cat.", "Yes, I've got a cat.", "They are animals."] },
-      { question: "How many chairs are in the living room?", correctAnswer: "Four.", options: ["Four.", "They are chairs.", "It's a chair.", "I see chairs."] },
-      { question: "Where is the cat? It isn't here.", correctAnswer: "It's under the bed.", options: ["It's under the bed.", "It's here.", "It's a cat.", "I like cats."] },
-      { question: "Look at the dog. It's very ( ).", correctAnswer: "big", options: ["big", "a dog", "run", "on the bed"] },
-      { question: "She's my ( ). She is old.", correctAnswer: "grandmother", options: ["grandfather", "mother", "grandmother", "brother"] },
-      { question: "What color is your new bike?", correctAnswer: "It's pink.", options: ["It's pink.", "It's a bike.", "I like pink.", "It's on the table."] },
-      { question: "Who is that woman?", correctAnswer: "She's my mother.", options: ["He's my father.", "It's a woman.", "She's my mother.", "I'm a girl."] },
-      { question: "The elephant is ( ) but mouse is small.", correctAnswer: "big", options: ["small", "long", "short", "big"] },
-      { question: "This is our ( ). We sleep in it.", correctAnswer: "bedroom", options: ["kitchen", "bedroom", "living room", "house"] },
-      { question: "What can a monkey do?", correctAnswer: "It can jump.", options: ["It can swim.", "It can jump.", "It can fly.", "It can talk."] },
-      { question: "Have you got a pet fish?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "Yes, I have.", "No, it isn't.", "I like fish."] },
-      { question: "Is she your sister?", correctAnswer: "Yes, she is.", options: ["Yes, he is.", "Yes, she is.", "No, it isn't.", "She is beautiful."] },
-      { question: "What color is the banana?", correctAnswer: "It's yellow.", options: ["It's red.", "It's green.", "It's orange.", "It's yellow."] },
-      { question: "Where are my shoes?", correctAnswer: "They are under the bed.", options: ["They are under the bed.", "It's under the bed.", "They are blue.", "I've got shoes."] },
-      { question: "Can you wash your hands?", correctAnswer: "Yes, I can.", options: ["Yes, I can.", "Yes, I have.", "No, I don't.", "I like washing."] },
-      { question: "What's that? (pointing to a kite)", correctAnswer: "It's a kite.", options: ["It's blue.", "It can fly.", "It's a kite.", "I like it."] },
-      { question: "How many toes have you got?", correctAnswer: "I've got ten toes.", options: ["I've got ten fingers.", "I've got ten toes.", "I've got two legs.", "I've got one nose."] },
-      { question: "Is the hippo big?", correctAnswer: "Yes, it is.", options: ["No, it's small.", "Yes, it is.", "It's an animal.", "I like hippos."] },
-      { question: "What do you see with?", correctAnswer: "I see with my eyes.", options: ["I see with my ears.", "I see with my nose.", "I see with my eyes.", "I see with my hands."] },
-      { question: "Where is the mouse?", correctAnswer: "It's under the chair.", options: ["It's under the chair.", "It's a mouse.", "It's small.", "Cats like mice."] },
-      { question: "Can a snake walk?", correctAnswer: "No, it can't.", options: ["Yes, it can.", "It can jump.", "No, it can't.", "It is long."] },
-      { question: "Who's that girl?", correctAnswer: "She's my sister.", options: ["He's my brother.", "She's my sister.", "It's a girl.", "I'm a girl."] },
-      { question: "Have you got a robot?", correctAnswer: "No, I haven't.", options: ["No, I don't.", "Yes, it is.", "No, I haven't.", "I like robots."] },
-      { question: "What can you smell with?", correctAnswer: "I smell with my nose.", options: ["I smell with my mouth.", "I smell with my ears.", "I smell with my nose.", "I smell with my eyes."] },
-      { question: "Is the elephant big or small?", correctAnswer: "It's big.", options: ["It's small.", "It's long.", "It's big.", "It's short."] },
-      { question: "What color is the milk?", correctAnswer: "It's white.", options: ["It's black.", "It's red.", "It's blue.", "It's white."] },
-      { question: "Where is my book? It isn't on the table.", correctAnswer: "It's under the chair.", options: ["It's on the table.", "It's a book.", "I like books.", "It's under the chair."] },
-      { question: "Can you feed the cat?", correctAnswer: "Yes, I can.", options: ["Yes, I can.", "Yes, I have.", "No, it can't.", "I like cats."] },
-      { question: "What are these?", correctAnswer: "They are apples.", options: ["It's an apple.", "They are bird.", "They are red.", "They are apples."] },
-      { question: "Is he your grandfather?", correctAnswer: "Yes, he is.", options: ["Yes, she is.", "He is old.", "Yes, he is.", "I love him."] },
-      { question: "How many legs has a frog got?", correctAnswer: "It's got four legs.", options: ["It's got two legs.", "It's got six legs.", "It's got four legs.", "It's got eight legs."] },
-      { question: "What do you taste with?", correctAnswer: "I taste with my mouth.", options: ["I taste with my nose.", "I taste with my hands.", "I taste with my eyes.", "I taste with my mouth."] },
-      { question: "Welcome to my house.", correctAnswer: "Thank you.", options: ["You are welcome.", "I'm sorry.", "Thank you.", "That's ok."] },
-      { question: "Can you brush your teeth?", correctAnswer: "Yes, I can.", options: ["Yes, I have.", "I like brushing.", "Yes, I can.", "My teeth are white."] },
-      { question: "What are those?", correctAnswer: "They are birds.", options: ["It's a bird.", "They can fly.", "They are birds.", "I like birds."] },
-      { question: "Is the crocodile has big eyes?", correctAnswer: "Yes, it is.", options: ["No, it isn't.", "Yes, it is.", "It's green.", "I don't like it."] },
-      { question: "Have you got a bike?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "It's blue.", "Yes, I have.", "I like bikes."] },
-      { question: "What can you touch with?", correctAnswer: "I touch with my hands.", options: ["I touch with my feet.", "I touch with my arms.", "I touch with my hands.", "I touch with my legs."] },
-      { question: "Who's that man?", correctAnswer: "He's my father.", options: ["She's my mother.", "He's my father.", "It's a man.", "I'm a boy."] },
-      { question: "What color is the frog?", correctAnswer: "It's green.", options: ["It's yellow.", "It's green.", "It's red.", "It's blue."] },
-      { question: "Where is the train?", correctAnswer: "It's next to the house.", options: ["It's a train.", "It's long.", "I've got a train.", "It's next to the house."] },
-      { question: "Can a crocodile swim?", correctAnswer: "Yes, it can.", options: ["No, it can't.", "Yes, it can.", "It can walk.", "It is big."] },
-      { question: "How many eyes have you got?", correctAnswer: "I've got two eyes.", options: ["I've got one eye.", "I've got two eyes.", "I've got ten eyes.", "I've got five eyes."] },
-      { question: "Is she your grandmother?", correctAnswer: "Yes, she is.", options: ["Yes, he is.", "She is old.", "Yes, she is.", "I love her."] },
-      { question: "What do you hear with?", correctAnswer: "I hear with my ears.", options: ["I hear with my nose.", "I hear with my mouth.", "I hear with my ears.", "I hear with my eyes."] },
-      { question: "What's your favourite toy?", correctAnswer: "I like the robot.", options: ["It's a robot.", "I've got a robot.", "I like the robot.", "The robot is small."] },
-      { question: "Can you walk?", correctAnswer: "Yes, I can.", options: ["Yes, I have.", "No, I can't.", "Yes, I can.", "I like walking."] },
-      { question: "Where is my pencil? I can't find it.", correctAnswer: "It's in your bag.", options: ["It's a pencil.", "It's yellow.", "It's in your bag.", "I've got a pencil."] },
-      { question: "Is the snake long or short?", correctAnswer: "It's long.", options: ["It's bad.", "It's long.", "It's green.", "It's an animal."] },
-      { question: "What are these? They are my ( ).", correctAnswer: "toys", options: ["toy", "a toy", "toys", "red"] },
-      { question: "Can you fly?", correctAnswer: "No, I can't.", options: ["Yes, I can.", "I can jump.", "Birds can fly.", "No, I can't."] },
-      { question: "Have you got a kite?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "Yes, I have.", "It's red.", "I like kites."] },
-      { question: "What your cat eat?", correctAnswer: "I feed the cat with fish.", options: ["I like cats.", "The cat likes fish.", "The cat eat birds", "I feed the cat with fish."] },
-      { question: "What do you wash with?", correctAnswer: "I wash with my hands.", options: ["I wash with my feet.", "I wash with my hands.", "I wash with my head.", "I wash with my arms."] },
-      { question: "Be quiet, please.", correctAnswer: "I'm sorry.", options: ["Thank you.", "That's ok.", "I'm sorry.", "You are welcome."] },
-      { question: "Look at that monster! Is it ugly?", correctAnswer: "Yes, it is very ugly.", options: ["No, it's beautiful.", "It's big.", "Yes, it is very ugly.", "I don't like it."] },
-      { question: "I am big. I have a long nose. What am I?", correctAnswer: "Elephant", options: ["Tiger", "Elephant", "Horse", "Cat"] },
-      { question: "I am yellow. I can swim. I have two legs. What am I?", correctAnswer: "Duck", options: ["Fish", "Duck", "Bird", "Frog"] },
-      { question: "My hands are dirty. What can I do?", correctAnswer: "Wash my hands", options: ["Wash my hands", "Brush my teeth", "Open the door", "Sit down"] },
-      { question: "Teacher says, 'Be quiet!' What do you do?", correctAnswer: "Don't talk", options: ["Talk", "Don't talk", "Jump", "Run"] },
-      { question: "Your friend says, 'Welcome to my house.' What do you say?", correctAnswer: "Thank you", options: ["I'm sorry", "Thank you", "That's ok", "Here you are"] },
-      { question: "I am hungry. What do I want?", correctAnswer: "Food", options: ["Book", "Food", "Toy", "Bike"] },
-      { question: "It is cold. What can I do?", correctAnswer: "Close the door", options: ["Open the door", "Close the door", "Open the book", "Close the book"] },
-      { question: "I cannot find my pencil. What do I say?", correctAnswer: "Where is my pencil?", options: ["How many pencils?", "Where is my pencil?", "What's this?", "Which pencil?"] },
-      { question: "He is sad. What can I do?", correctAnswer: "Give him a toy", options: ["Wash my hands", "Give him a toy", "Close the door", "Brush my teeth"] },
-      { question: "What has a long tail?", correctAnswer: "A monkey", options: ["A fish", "A monkey", "A frog", "A spider"] },
-      { question: "I like red clothes. What about you?", correctAnswer: "I like blue.", options: ["I like blue.", "I've got clothes.", "They are dirty.", "Here you are."] },
-      { question: "My shoes are dirty. What do I do?", correctAnswer: "Wash them.", options: ["Wash them.", "Brush my teeth.", "Open the door.", "Sit down."] },
-      { question: "Where are my shoes? I can't find them.", correctAnswer: "They are under the bed.", options: ["It's under the bed.", "They are under the bed.", "It's a shoe.", "I like shoes."] },
-      { question: "What color are your trousers?", correctAnswer: "They are blue.", options: ["They are blue.", "It's blue.", "I like blue.", "Here you are."] },
-      { question: "My sister's skirt is pink. She likes ( ).", correctAnswer: "pink", options: ["red", "pink", "blue", "yellow"] },
-      { question: "Where's my new skirt?", correctAnswer: "It's in the living room.", options: ["They are in the living room.", "It's blue.", "She likes red.", "It's in the living room."] },
-      { question: "Pass me the jacket, please.", correctAnswer: "Here you are.", options: ["Thank you.", "Here you are.", "I'm sorry.", "That's ok."] },
-      { question: "Is that your jacket?", correctAnswer: "Yes, it is.", options: ["Yes, I have.", "No, they aren't.", "Yes, it isn't.", "Yes, it is."] },
-      { question: "What color is your t-shirt?", correctAnswer: "It's white.", options: ["It's white.", "They are white.", "I like white.", "Here you are."] },
-      { question: "Have you got a blue t-shirt?", correctAnswer: "No, I haven't.", options: ["Yes, I am.", "No, I haven't.", "Yes, it is.", "They are blue."] },
-      { question: "How many eyes have you got?", correctAnswer: "Two", options: ["One", "Three", "Two", "Ten"] },
-      { question: "How many fingers are on one hand?", correctAnswer: "Five", options: ["Three", "Four", "Five", "Ten"] },
-      { question: "Which number is next to two?", correctAnswer: "Three", options: ["Six", "Five", "Four", "Three"] },
-      { question: "How many hands do you have?", correctAnswer: "Two", options: ["One", "Two", "Three", "Four"] },
-      { question: "I've got ( ) apple. It is red.", correctAnswer: "one", options: ["four", "three", "two", "one"] },
-      { question: "A table has ( ) legs.", correctAnswer: "four", options: ["two", "three", "four", "six"] },
-      { question: "My favourite color is ( ). It is the color of a tomato.", correctAnswer: "red", options: ["pink", "red", "orange", "purple"] },
-      { question: "What color is milk?", correctAnswer: "White", options: ["Black", "White", "Red", "Yellow"] },
-      { question: "I can ( ) with my ears.", correctAnswer: "listen", options: ["see", "taste", "listen", "smell"] },
-      { question: "Don't ( ) in class.", correctAnswer: "talk", options: ["talk", "listen", "look", "point"] },
-      { question: "I have got ( ) toes.", correctAnswer: "ten", options: ["eight", "nine", "ten", "eleven"] },
-      { question: "What's your favourite ( )? It's chips.", correctAnswer: "food", options: ["color", "animal", "food", "toy"] },
-      { question: "A frog has got ( ) legs.", correctAnswer: "four", options: ["two", "four", "six", "eight"] },
-      { question: "What animal can fly?", correctAnswer: "A bird", options: ["A fish", "A bird", "A frog", "A duck"] },
-      { question: "Where is the sofa? It's in the ( ).", correctAnswer: "living room", options: ["bedroom", "living room", "kitchen", "house"] },
-      { question: "Where do you sleep?", correctAnswer: "In the bedroom", options: ["In the kitchen", "In the bedroom", "In the living room", "On the sofa"] },
-      { question: "Can a duck swim?", correctAnswer: "Yes, it can.", options: ["Yes, it is.", "Yes, it can.", "No, it can't.", "It can fly."] },
-      { question: "What do you brush?", correctAnswer: "My teeth", options: ["My eyes", "My teeth", "My ears", "My nose"] },
-      { question: "The elephant has got a ( ) nose.", correctAnswer: "long", options: ["short", "long", "small", "big"] },
-      { question: "What color is a tiger?", correctAnswer: "It's orange.", options: ["It's orange.", "It's purple.", "It's blue.", "It's pink."] },
-      { question: "The spider is ( ). I don't like it.", correctAnswer: "ugly", options: ["beautiful", "happy", "ugly", "clean"] },
-      { question: "I've got ( ) arms.", correctAnswer: "two", options: ["one", "two", "four", "six"] },
-      { question: "Is the monkey's tail ( ) or short?", correctAnswer: "long", options: ["big", "small", "short", "long"] },
-      { question: "The hippo has got a ( ) mouth.", correctAnswer: "big", options: ["small", "long", "big", "short"] },
-      { question: "Point ( ) the blackboard.", correctAnswer: "to", options: ["to", "in", "on", "under"] },
-      { question: "What's your favourite fruit?", correctAnswer: "I like apples.", options: ["I like chips", "I like potatos.", "I like tomatos.", "I like apples."] },
-      { question: "Those shoes are ( ). Please wash them.", correctAnswer: "dirty", options: ["clean", "dirty", "beautiful", "happy"] },
-      { question: "What are ( )? They are my clothes.", correctAnswer: "these", options: ["this", "these", "that", "those"] },
-      { question: "Is your skirt ( )? No, it's dirty.", correctAnswer: "clean", options: ["clean", "big", "long", "old"] },
-      { question: "What color is the crocodile?", correctAnswer: "It's green.", options: ["It's red.", "It's orange.", "It's green.", "It's purple."] },
-      { question: "I can ( ) with my nose.", correctAnswer: "smell", options: ["see", "hear", "smell", "taste"] }
-    ];
+    const dialogueQuestions = {
+      "easy":[
+        { question: "What's your name?", correctAnswer: "I'm Tom.", options: ["I'm Tom.", "I'm seven.", "It's a cat.", "It's red."] },
+        { question: "I'm sorry.", correctAnswer: "That's ok.", options: ["I'm sorry too.", "Thank you.", "That's ok.", "Here you are."] },
+        { question: "Tell me your name.", correctAnswer: "I'm Tom.", options: ["I'm Tom.", "I'm ten.", "It's Tom.", "I'm a boy."] },
+        { question: "How old are you?", correctAnswer: "I'm nine.", options: ["I'm fine.", "I'm nine.", "My name is Lily.", "It's a book."] },
+        { question: "Can a bird fly?", correctAnswer: "Yes, it can.", options: ["No, it can't.", "Yes, it can.", "It can swim.", "It's a bird."] },
+        { question: "What can a bird do?", correctAnswer: "It can fly.", options: ["It can swim.", "It can jump.", "It can fly.", "It can talk."] },
+        { question: "The tomato is ( ).", correctAnswer: "red", options: ["red", "yellow", "green", "purple"] },
+        { question: "What's this? ", correctAnswer: "It's a book.", options: ["It's red.", "It's a book.", "It's on the chair.", "I like books."] },
+        { question: "Where is my bag?", correctAnswer: "It's here.", options: ["It's here.", "It's a bag.", "I've got a bag.", "It's blue."] },
+        { question: "Who's that? ", correctAnswer: "She's my mother.", options: ["He's happy.", "She's tall.", "She's my mother.", "I'm a girl."] },
+        { question: "Which one is your toy?", correctAnswer: "The red one.", options: ["The red one.", "It's a toy.", "I like toys.", "It's on the chair."] },
+        { question: "What can you do?", correctAnswer: "I can jump.", options: ["I like swimming.", "I've got a ball.", "I can jump.", "I'm happy."] },
+        { question: "Pass me the pencil, please.", correctAnswer: "Here you are.", options: ["Here you are.", "Thank you.", "I'm sorry.", "It's a pencil."] },
+        { question: "Can a fish swim?", correctAnswer: "Yes, it can.", options: ["Yes, it can.", "No, it can't.", "It can fly.", "It's a fish."] },
+        { question: "The milk is ( ).", correctAnswer: "white", options: ["black", "red", "white", "blue"] },
+        { question: "What color is the milk?", correctAnswer: "It's white.", options: ["It's black.", "It's red.", "It's blue.", "It's white."] },
+        { question: "How many cats do you have?", correctAnswer: "I've got two cats.", options: ["They are black.", "I've got two cats.", "It's a cat.", "I like cats."] },
+        { question: "Here's a cake for you.", correctAnswer: "Thank you.", options: ["Thank you.", "I like cake.", "It's a cake.", "Here you are."] },
+        { question: "Who's that boy?", correctAnswer: "He's my brother.", options: ["He's my brother.", "She's my sister.", "It's a boy.", "I'm a boy."] },
+        { question: "Who's that girl?", correctAnswer: "She's my sister.", options: ["He's my brother.", "She's my sister.", "It's a girl.", "I'm a girl."] },
+        { question: "Who is that woman?", correctAnswer: "She's my mother.", options: ["He's my father.", "It's a woman.", "She's my mother.", "I'm a girl."] },
+        { question: "Is the hippo big?", correctAnswer: "Yes, it is.", options: ["No, it's small.", "Yes, it is.", "It's an animal.", "I like hippos."] },
+        { question: "Can a snake walk?", correctAnswer: "No, it can't.", options: ["Yes, it can.", "It can jump.", "No, it can't.", "It is long."] },
+        { question: "Have you got a robot?", correctAnswer: "No, I haven't.", options: ["No, I don't.", "Yes, it is.", "No, I haven't.", "I like robots."] },
+        { question: "Have you got a sister?", correctAnswer: "Yes, I have.", options: ["Yes, I have.", "I've got a dog.", "She is my mother.", "It's a girl."] },
+        { question: "Have you got a pet?", correctAnswer: "Yes, I've got a cat.", options: ["I like dogs.", "Yes, I see a cat.", "Yes, I've got a cat.", "They are animals."] },
+        { question: "What's your favourite color?", correctAnswer: "My favourite color is red.", options: ["My favourite color is red.", "I like apples.", "It's a book.", "I'm seven."] },
+        { question: "Is she your sister?", correctAnswer: "Yes, she is.", options: ["Yes, he is.", "Yes, she is.", "No, it isn't.", "She is beautiful."] },
+        { question: "Can you wash your hands?", correctAnswer: "Yes, I can.", options: ["Yes, I can.", "Yes, I have.", "No, I don't.", "I like washing."] },
+        { question: "Is the elephant big or small?", correctAnswer: "It's big.", options: ["It's small.", "It's long.", "It's big.", "It's short."] },
+        { question: "Have you got a fish?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "Yes, I have.", "No, it isn't.", "I like fish."] },
+        { question: "What color is your new bike?", correctAnswer: "It's pink.", options: ["It's a bike.", "I like pink.", "It's pink.", "It's on the table."] },
+        { question: "What can a monkey do?", correctAnswer: "It can jump.", options: ["It can swim.", "It can jump.", "It can fly.", "It can talk."] },
+        { question: "Can you feed the cat?", correctAnswer: "Yes, I can.", options: ["Yes, I can.", "Yes, I have.", "No, it can't.", "I like cats."] },
+        { question: "What are these?", correctAnswer: "They are apples.", options: ["It's an apple.", "They are bird.", "They are red.", "They are apples."] },
+        { question: "Look at the dog. It's very ( ).", correctAnswer: "big", options: ["big", "a dog", "run", "on the bed"] },
+        { question: "What do you see with?", correctAnswer: "I see with my eyes.", options: ["I see with my ears.", "I see with my nose.", "I see with my eyes.", "I see with my hands."] },
+        { question: "What can you touch with?", correctAnswer: "I touch with my hands.", options: ["I touch with my feet.", "I touch with my arms.", "I touch with my hands.", "I touch with my legs."] },
+        { question: "What can you smell with?", correctAnswer: "I smell with my nose.", options: ["I smell with my mouth.", "I smell with my ears.", "I smell with my nose.", "I smell with my eyes."] },
+        { question: "What do you taste with?", correctAnswer: "I taste with my mouth.", options: ["I taste with my nose.", "I taste with my hands.", "I taste with my eyes.", "I taste with my mouth."] },
+        { question: "What do you hear with?", correctAnswer: "I hear with my ears.", options: ["I hear with my nose.", "I hear with my mouth.", "I hear with my ears.", "I hear with my eyes."] },
+        { question: "What do you wash with?", correctAnswer: "I wash with my hands.", options: ["I wash with my feet.", "I wash with my hands.", "I wash with my head.", "I wash with my arms."] },
+        { question: "I can ( ) with my nose.", correctAnswer: "smell", options: ["see", "hear", "smell", "taste"] },
+        { question: "Is he your grandfather?", correctAnswer: "Yes, he is.", options: ["Yes, she is.", "He is old.", "Yes, he is.", "I love him."] },
+        { question: "Can you brush your teeth?", correctAnswer: "Yes, I can.", options: ["Yes, I have.", "I like brushing.", "Yes, I can.", "My teeth are white."] },
+        { question: "Welcome to my house.", correctAnswer: "Thank you.", options: ["You are welcome.", "I'm sorry.", "Thank you.", "That's ok."] },
+        { question: "Have you got a bike?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "It's blue.", "Yes, I have.", "I like bikes."] },
+        { question: "Who's that man?", correctAnswer: "He's my father.", options: ["She's my mother.", "He's my father.", "It's a man.", "I'm a boy."] },
+        { question: "Is she your grandmother?", correctAnswer: "Yes, she is.", options: ["Yes, he is.", "She is old.", "Yes, she is.", "I love her."] },
+        { question: "Can you walk?", correctAnswer: "Yes, I can.", options: ["Yes, I have.", "No, I can't.", "Yes, I can.", "I like walking."] },
+        { question: "Can you fly?", correctAnswer: "No, I can't.", options: ["Yes, I can.", "I can jump.", "Birds can fly.", "No, I can't."] },
+        { question: "What are these? They are my ( ).", correctAnswer: "toys", options: ["toy", "a toy", "toys", "red"] },
+        { question: "Have you got a kite?", correctAnswer: "Yes, I have.", options: ["Yes, I can.", "Yes, I have.", "It's red.", "I like kites."] },
+        { question: "Be quiet, please.", correctAnswer: "I'm sorry.", options: ["Thank you.", "That's ok.", "I'm sorry.", "You are welcome."] },
+        { question: "Is that your jacket?", correctAnswer: "Yes, it is.", options: ["Yes, I have.", "No, they aren't.", "Yes, it isn't.", "Yes, it is."] },
+        { question: "Have you got a blue t-shirt?", correctAnswer: "No, I haven't.", options: ["Yes, I am.", "No, I haven't.", "Yes, it is.", "They are blue."] },
+        { question: "I've got ( ) apple. It is red.", correctAnswer: "one", options: ["four", "three", "two", "one"] },
+        { question: "I can ( ) with my ears.", correctAnswer: "listen", options: ["see", "taste", "listen", "smell"] },
+        { question: "Don't ( ) in class.", correctAnswer: "talk", options: ["talk", "listen", "look", "point"] },
+        { question: "Can a duck swim?", correctAnswer: "Yes, it can.", options: ["Yes, it is.", "Yes, it can.", "No, it can't.", "It can fly."] },
+        { question: "Point ( ) the blackboard.", correctAnswer: "to", options: ["to", "in", "on", "under"] },
+      ],
+      "medium":[
+        { question: "She's my ( ). She is old.", correctAnswer: "grandmother", options: ["grandfather", "mother", "grandmother", "brother"] },
+        { question: "The elephant is ( ) but mouse is small.", correctAnswer: "big", options: ["small", "long", "short", "big"] },
+        { question: "How many hands do you have?", correctAnswer: "Two", options: ["One", "Two", "Three", "Four"] },
+        { question: "What color is milk?", correctAnswer: "White", options: ["Black", "White", "Red", "Yellow"] },
+        { question: "What are those?", correctAnswer: "They are birds.", options: ["It's a bird.", "Those is bird.", "They are birds.", "I like birds."] },
+        { question: "A table has ( ) legs.", correctAnswer: "four", options: ["two", "three", "four", "six"] },
+        { question: "I have got ( ) toes.", correctAnswer: "ten", options: ["eight", "nine", "ten", "eleven"] },
+        { question: "What animal can fly?", correctAnswer: "A bird", options: ["A fish", "A bird", "A frog", "A duck"] },
+        { question: "My sister's skirt is pink. She likes ( ).", correctAnswer: "pink", options: ["red", "pink", "blue", "yellow"] },
+        { question: "A frog has got ( ) legs.", correctAnswer: "four", options: ["two", "four", "six", "eight"] },
+        { question: "The elephant has got a ( ) nose.", correctAnswer: "long", options: ["short", "long", "small", "big"] },
+        { question: "What do you brush?", correctAnswer: "My teeth", options: ["My eyes", "My teeth", "My ears", "My nose"] },
+        { question: "I've got ( ) arms.", correctAnswer: "two", options: ["one", "two", "four", "six"] },
+        { question: "The hippo has got a ( ) mouth.", correctAnswer: "big", options: ["small", "long", "big", "short"] },
+        { question: "What color is a tiger?", correctAnswer: "It's orange.", options: ["It's orange.", "It's purple.", "It's blue.", "It's pink."] },
+        { question: "What color is the crocodile?", correctAnswer: "It's green.", options: ["It's red.", "It's orange.", "It's green.", "It's purple."] },
+        { question: "What are ( )? They are my clothes.", correctAnswer: "these", options: ["this", "these", "that", "those"] },
+        { question: "Where do you sleep?", correctAnswer: "In the bedroom", options: ["In the kitchen", "In the bedroom", "In the living room", "On the sofa"] },
+        { question: "Where are my shoes? I can't find them.", correctAnswer: "They are under the bed.", options: ["It's under the bed.", "They are under the bed.", "It's a shoe.", "I like shoes."] },
+        { question: "What your cat eat?", correctAnswer: "I feed the cat with fish.", options: ["I like cats.", "The cat likes fish.", "The cat eat birds", "I feed the cat with fish."] },
+        { question: "What color is the banana?", correctAnswer: "It's yellow.", options: ["It's red.", "It's green.", "It's orange.", "It's yellow."] },
+        { question: "What's your favourite animal?", correctAnswer: "I like dogs.", options: ["apples.", "dogs.", "trees.", "potatoes."] },
+        { question: "What's your mother's name?", correctAnswer: "She's Mary.", options: ["She's my mother.", "My name is Mary.", "She's Mary.", "I'm Mary."] },
+        { question: "I'm happy. But my sister is ( ).", correctAnswer: "sad", options: ["sad", "happy", "big", "young"] },
+        { question: "How many eggs are on the table?", correctAnswer: "Ten.", options: ["One.", "Ten.", "I like eggs.", "It's an egg."] },
+        { question: "Is the cat on the sofa?", correctAnswer: "Yes, it is.", options: ["It's a cat.", "Yes, it is.", "It's black.", "I like cats."] },
+        { question: "Where is my pencil?", correctAnswer: "It's under the chair.", options: ["It's a pencil.", "It's under the chair.", "It's blue.", "I've got a pencil."] },
+        { question: "I've got two ( ) in my bag.", correctAnswer: "books", options: ["apple", "book", "a book", "books"] },
+        { question: "What's your favourite food?", correctAnswer: "I like cake.", options: ["I like cake.", "It's a cake.", "Cake is food.", "I've got cake."] },
+        { question: "What color is the apple?", correctAnswer: "It's red.", options: ["It's a fruit.", "It's red.", "It's on the table.", "I like apples."] },
+        { question: "He's my ( ). He is young.", correctAnswer: "brother", options: ["father", "grandfather", "brother", "sister"] },
+        { question: "It's cold. Please ( ) the door.", correctAnswer: "close", options: ["open", "close", "look", "point"] },
+        { question: "Where is the mouse?", correctAnswer: "It's under the chair.", options: ["It's under the chair.", "It's a mouse.", "It's small.", "Cats like mice."] },
+        { question: "Where is the cat? It isn't here.", correctAnswer: "It's under the bed.", options: ["It's small.", "It's a cat.", "It's under the bed.", "I like cats."] },
+        { question: "Where is my toy car? I can't find it.", correctAnswer: "It's under the sofa.", options: ["It's under the sofa.", "It's a car.", "I've got a car.", "It's red."] },
+        { question: "Where is my pencil? I can't find it.", correctAnswer: "It's in your bag.", options: ["It's a pencil.", "It's yellow.", "It's in your bag.", "I've got a pencil."] },
+        { question: "Where is my book? It isn't on the table.", correctAnswer: "It's under the chair.", options: ["It's on the table.", "It's a book.", "I like books.", "It's under the chair."] },
+        { question: "Where are my shoes?", correctAnswer: "They are under the bed.", options: ["They are under the bed.", "It's under the bed.", "They are blue.", "I've got shoes."] },
+        { question: "How many toes have you got?", correctAnswer: "I've got ten toes.", options: ["I've got ten fingers.", "I've got ten toes.", "I've got two legs.", "I've got one nose."] },
+        { question: "This is our ( ). We sleep in it.", correctAnswer: "bedroom", options: ["kitchen", "bedroom", "living room", "house"] },
+        { question: "How many legs has a frog got?", correctAnswer: "It's got four legs.", options: ["It's got two legs.", "It's got six legs.", "It's got four legs.", "It's got eight legs."] },
+        { question: "Is the crocodile has big eyes?", correctAnswer: "Yes, it is.", options: ["No, it isn't.", "Yes, it is.", "It's green.", "I don't like it."] },
+        { question: "How many legs does a spider have?", correctAnswer: "It's got eight legs.", options: ["It's got four legs.", "It's got six legs.", "It's got eight legs.", "It's got ten legs."] },
+        { question: "What color is the frog?", correctAnswer: "It's green.", options: ["It's yellow.", "It's green.", "It's red.", "It's blue."] },
+        { question: "Where is the train?", correctAnswer: "It's next to the house.", options: ["It's a train.", "It's long.", "I've got a train.", "It's next to the house."] },
+        { question: "Can a crocodile swim?", correctAnswer: "Yes, it can.", options: ["No, it can't.", "Yes, it can.", "It can walk.", "It is big."] },
+        { question: "Look at that monster! Is it ugly?", correctAnswer: "Yes, it is very ugly.", options: ["No, it's beautiful.", "It's big.", "Yes, it is very ugly.", "I don't like it."] },
+        { question: "I like red clothes. What about you?", correctAnswer: "I like it too.", options: ["I like apples.", "I've got clothes.", "They are dirty.", "I like it too."] },
+        { question: "Pass me the jacket, please.", correctAnswer: "Here you are.", options: ["Thank you.", "Here you are.", "I'm sorry.", "That's ok."] },
+        { question: "How many eyes have you got?", correctAnswer: "Two", options: ["One", "Three", "Two", "Ten"] },
+        { question: "I like bananas. What am I?", correctAnswer: "A monkey", options: ["A monkey", "A tiger", "A frog", "A bird"] },
+      ],
+      "hard":[
+        { question: "Is the book on the table?", correctAnswer: "No, it's under the chair.", options: ["Yes, it's a book.", "No, it's under the chair.", "It's red.", "I see a book."] },
+        { question: "How many books are on the table?", correctAnswer: "One book.", options: ["It's a book.", "They are on the table.", "One book.", "Two book."] },
+        { question: "Is the monkey's tail ( ) or short?", correctAnswer: "long", options: ["big", "small", "short", "long"] },
+        { question: "How many chairs are in the living room?", correctAnswer: "Four.", options: ["Yes, they are", "One.", "It's a chair.", "Four."] },
+        { question: "Those shoes are ( ). Please wash them.", correctAnswer: "dirty", options: ["clean", "dirty", "beautiful", "happy"] },
+        { question: "My hands are dirty. I need to ( ) them.", correctAnswer: "clean", options: ["dirty", "look", "clean", "point"] },
+        { question: "The spider is ( ). I don't like it.", correctAnswer: "ugly", options: ["beautiful", "happy", "ugly", "clean"] },
+        { question: "Which number is next to two?", correctAnswer: "Three", options: ["Six", "Five", "Four", "Three"] },
+        { question: "Where is the sofa? It's in the ( ).", correctAnswer: "living room", options: ["bedroom", "living room", "kitchen", "house"] },
+        { question: "What's your favourite fruit?", correctAnswer: "I like apples.", options: ["I like chips", "I like potatos.", "I like tomatos.", "I like apples."] },
+        { question: "What's your favourite ( )? It's chips.", correctAnswer: "food", options: ["color", "animal", "food", "toy"] },
+        { question: "My favourite color is ( ). It is the color of a tomato.", correctAnswer: "red", options: ["pink", "red", "orange", "purple"] },
+        { question: "I am a fish. I can ( ) but I can't fly.", correctAnswer: "swim", options: ["swim", "jump", "run", "fly"] },
+        { question: "How many fingers are on one hand?", correctAnswer: "Five", options: ["Three", "Four", "Five", "Ten"] },
+        { question: "Where's my skirt?", correctAnswer: "It's in the living room.", options: ["They are in the living room.", "It's blue.", "She likes red.", "It's in the living room."] },
+        { question: "What color are your trousers?", correctAnswer: "They are blue.", options: ["It's blue.", "They are blue.", "I like blue.", "Here you are."] },
+        { question: "I've got a ( ). It's red and I can ride it.", correctAnswer: "bike", options: ["bike", "car", "doll", "kite"] },
+        { question: "I am yellow. I can swim. I have two legs. What am I?", correctAnswer: "Duck", options: ["Fish", "Duck", "Bird", "Frog"] },
+        { question: "My hands are dirty. What can I do?", correctAnswer: "Wash my hands", options: ["Wash my hands", "Brush my teeth", "Open the door", "Sit down"] },
+        { question: "Teacher says, 'Be quiet!' What do you do?", correctAnswer: "Don't talk", options: ["Talk", "Sit down", "Stand up", "Don't talk"] },
+        { question: "Your friend says, 'Welcome to my house.' What do you say?", correctAnswer: "Thank you", options: ["I'm sorry", "Thank you", "That's ok", "Here you are"] },
+        { question: "I am hungry. What do I want?", correctAnswer: "Food", options: ["Book", "Food", "Toy", "Bike"] },
+        { question: "It is cold. What can I do?", correctAnswer: "Close the door", options: ["Open the door", "Close the door", "Open the book", "Close the book"] },
+        { question: "I cannot find my pencil. What do I say?", correctAnswer: "Where is my pencil?", options: ["How many pencils?", "Where is my pencil?", "What's this?", "Which pencil?"] },
+        { question: "He is sad. What can I do?", correctAnswer: "Pass a toy", options: ["Wash my hands", "Pass a toy", "Close the door", "Brush my teeth"] },
+        { question: "What has a long tail?", correctAnswer: "A monkey", options: ["A fish", "A monkey", "A frog", "A spider"] },
+        { question: "My shoes are dirty. What do I do?", correctAnswer: "Wash them.", options: ["Wash them.", "Brush my teeth.", "Open the door.", "Sit down."] },
+        { question: "What color is your t-shirt?", correctAnswer: "It's white.", options: ["It's white.", "They are white.", "I like white.", "Here you are."] },
+        { question: "I am big. I have a long nose. What am I?", correctAnswer: "Elephant", options: ["Tiger", "Elephant", "Horse", "Cat"] },
+        { question: "I have a pet. It is small. It can jump. It is green. What is it?", correctAnswer: "A frog", options: ["A fish", "A frog", "A bird", "A spider"] },
+        { question: "I can swim. I have two legs. I am yellow. What am I?", correctAnswer: "A duck", options: ["A fish", "A crocodile", "A duck", "A frog"] },
+        { question: "I am small. Cats like me. I am grey. What am I?", correctAnswer: "A mouse", options: ["A frog", "A mouse", "A bird", "A fish"] },
+        { question: "I am big. I am grey. I have a long nose. What am I?", correctAnswer: "An elephant", options: ["A hippo", "An elephant", "A horse", "A tiger"] },
+        { question: "I am big. I am heavy. I have a big mouth. I live in water. What am I?", correctAnswer: "A hippo", options: ["A crocodile", "A hippo", "An elephant", "A frog"] },
+        { question: "I have no legs. I am long. I can swim. What am I?", correctAnswer: "A snake", options: ["A fish", "A snake", "A crocodile", "A dog"] },
+        { question: "I am green. I can jump. I can swim. What am I?", correctAnswer: "A frog", options: ["A duck", "A frog", "A crocodile", "A bird"] },
+        { question: "I am orange and black. I am big. I am wild. What am I?", correctAnswer: "A tiger", options: ["A tiger", "A lion", "A cat", "A dog"] },
+        { question: "I can fly. I can sing. I have two legs. What am I?", correctAnswer: "A bird", options: ["A bird", "A duck", "A fish", "A frog"] },
+        { question: "I have four legs. I can run fast. You can ride me. What am I?", correctAnswer: "A horse", options: ["A dog", "A horse", "A tiger", "A cow"] },
+        { question: "I live in water. I can swim. I have no legs. What am I?", correctAnswer: "A fish", options: ["A fish", "A duck", "A frog", "A snake"] },
+        { question: "I am long. I have no legs.I am a wild animal. What am I?", correctAnswer: "A snake", options: ["A snake", "A crocodile", "A fish", "A cat"] },
+        { question: "I am big. I have a long tail. I have big teeth. What am I?", correctAnswer: "A crocodile", options: ["A crocodile", "A hippo", "A snake", "A fish"] },
+        { question: "I am big. I am grey. I have big ears. What am I?", correctAnswer: "An elephant", options: ["An elephant", "A hippo", "A horse", "A tiger"] },
+      ]
+    };
 
-    // 随机选择题目
-    const shuffledQuestions = [...dialogueQuestions].sort(() => Math.random() - 0.5);
+    // 根据难度选择题目池
+    let pool = [];
+    if (this.difficulty === 'easy') {
+      pool = dialogueQuestions.easy.map(q => ({ ...q, difficultyLevel: 'easy' }));
+    } else if (this.difficulty === 'normal') {
+      pool = [
+        ...dialogueQuestions.easy.map(q => ({ ...q, difficultyLevel: 'easy' })),
+        ...dialogueQuestions.medium.map(q => ({ ...q, difficultyLevel: 'medium' }))
+      ];
+    } else if (this.difficulty === 'hard') {
+      pool = [
+        ...dialogueQuestions.medium.map(q => ({ ...q, difficultyLevel: 'medium' })),
+        ...dialogueQuestions.hard.map(q => ({ ...q, difficultyLevel: 'hard' }))
+      ];
+    } else {
+      // 无难度设置时使用所有题目（兼容旧逻辑）
+      pool = [
+        ...dialogueQuestions.easy.map(q => ({ ...q, difficultyLevel: 'easy' })),
+        ...dialogueQuestions.medium.map(q => ({ ...q, difficultyLevel: 'medium' })),
+        ...dialogueQuestions.hard.map(q => ({ ...q, difficultyLevel: 'hard' }))
+      ];
+    }
+
+    // 随机打乱并截取
+    const shuffledQuestions = [...pool].sort(() => Math.random() - 0.5);
     const selectedQuestions = shuffledQuestions.slice(0, Math.min(this.questionsPerRound, shuffledQuestions.length));
+
+    // 难度对应分值和标签
+    const difficultyConfig = {
+      easy: { label: '简单', points: 2 },
+      medium: { label: '中等', points: 3 },
+      hard: { label: '困难', points: 5 }
+    };
 
     // 转换为统一格式
     return selectedQuestions.map(q => ({
       type: this.mode,
+      difficulty: q.difficultyLevel,
+      difficultyLabel: difficultyConfig[q.difficultyLevel].label,
+      points: difficultyConfig[q.difficultyLevel].points,
       question: {
         english: q.question
       },
@@ -270,6 +319,7 @@ export class QuizMode {
       <div class="quiz-practice-container">
         <!-- 题目卡片 -->
         <div class="question-card">
+          ${this.mode === 'english-dialogue' && currentQuestion.difficultyLabel ? `<span class="difficulty-badge difficulty-${currentQuestion.difficulty}">${currentQuestion.difficultyLabel}</span>` : ''}
           <div class="question-content">
             <div class="question-header">
               <span class="question-number">${this.currentIndex + 1}</span>
@@ -454,7 +504,7 @@ export class QuizMode {
 
     // 更新分数
     if (isCorrect) {
-      const pointsPerQuestion = this.getPointsPerQuestion();
+      const pointsPerQuestion = currentQuestion.points || this.getPointsPerQuestion();
       this.score += pointsPerQuestion;
 
       // 添加积分
@@ -519,7 +569,8 @@ export class QuizMode {
   showFeedback(isCorrect) {
     const feedback = this.container.querySelector('#quiz-feedback');
     if (!feedback) return;
-    const pointsPerQuestion = this.getPointsPerQuestion();
+    const currentQuestion = this.questions[this.currentIndex];
+    const pointsPerQuestion = currentQuestion.points || this.getPointsPerQuestion();
     feedback.textContent = isCorrect ? `✅ 正确！+${pointsPerQuestion}分` : '❌ 错误！';
     feedback.className = `quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
   }
@@ -812,6 +863,23 @@ export class QuizMode {
       summary.remove();
     }
 
+    // 英文对话模式重新选择难度
+    if (this.mode === 'english-dialogue') {
+      showDifficultySelection((difficulty) => {
+        this.difficulty = difficulty;
+        this.currentIndex = 0;
+        this.score = 0;
+        this.answers = [];
+        this.selectedAnswer = null;
+        this.questionStates = {};
+        this.hasAnswered = false;
+        this.generateQuestions();
+        this.renderQuiz();
+        this.bindEvents();
+      });
+      return;
+    }
+
     this.currentIndex = 0;
     this.score = 0;
     this.answers = [];
@@ -828,6 +896,12 @@ export class QuizMode {
     const summary = document.getElementById('quiz-summary');
     if (summary) {
       summary.remove();
+    }
+
+    // 清理难度选择弹框
+    const difficulty = document.getElementById('difficulty-selection');
+    if (difficulty) {
+      difficulty.remove();
     }
 
     // 只清理当前容器的DOM状态，避免影响其他页面
@@ -884,7 +958,81 @@ export function initListeningToChineseMode() {
 }
 
 export function initEnglishDialogueMode() {
-  const quiz = new QuizMode('english-dialogue-content', 'english-dialogue');
-  quiz.init();
+  let quiz = null;
+
+  showDifficultySelection((difficulty) => {
+    quiz = new QuizMode('english-dialogue-content', 'english-dialogue', { difficulty });
+    quiz.init();
+  });
+
   return quiz;
+}
+
+function showDifficultySelection(onSelect) {
+  // 如果已有弹窗先移除
+  const existing = document.getElementById('difficulty-selection');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'difficulty-selection';
+  overlay.id = 'difficulty-selection';
+
+  const difficulties = [
+    {
+      key: 'easy',
+      title: '初级',
+      description: '简单句型，语法巩固',
+      tags: '【简单】2分/题',
+      icon: '🌟',
+      className: 'easy'
+    },
+    {
+      key: 'normal',
+      title: '中级',
+      description: '基础+进阶题目，全面提升',
+      tags: '【简单】2分 / 【中等】3分',
+      icon: '⚡',
+      className: 'normal'
+    },
+    {
+      key: 'hard',
+      title: '高级',
+      description: '进阶+挑战题目，高手专属',
+      tags: '【中等】3分 / 【困难】5分',
+      icon: '🔥',
+      className: 'hard'
+    }
+  ];
+
+  overlay.innerHTML = `
+    <div class="difficulty-content">
+      <h3 class="difficulty-title">选择难度</h3>
+      <p class="difficulty-subtitle">请选择本次练习的难度模式</p>
+      <div class="difficulty-options">
+        ${difficulties.map(d => `
+          <div class="difficulty-card difficulty-card-${d.className}" data-difficulty="${d.key}">
+            <div class="difficulty-card-left">
+              <div class="difficulty-card-icon">${d.icon}</div>
+              <div class="difficulty-card-title">${d.title}</div>
+            </div>
+            <div class="difficulty-card-right">
+              <div class="difficulty-card-desc">${d.description}</div>
+              <div class="difficulty-card-tags">${d.tags}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // 绑定点击事件
+  overlay.querySelectorAll('.difficulty-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const difficulty = card.dataset.difficulty;
+      overlay.remove();
+      onSelect(difficulty);
+    });
+  });
 }
