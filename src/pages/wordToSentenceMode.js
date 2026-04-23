@@ -2039,6 +2039,34 @@ export class WordToSentenceMode {
           "你的T恤是脏的。请洗它。",
           "我哥哥有一件蓝色的T恤。"
         ]
+      },
+      {
+        word: "ask",
+        wordChinese: "问",
+        englishSentences: [
+          "Can I ask you a question?",
+          "I ask my mother: Where is my bag?",
+          "The teacher says: Please ask me."
+        ],
+        chineseSentences: [
+          "我可以问你一个问题吗？",
+          "我问妈妈：“我的书包在哪里？”",
+          "老师说：请问我。"
+        ]
+      },
+      {
+        word: "catch",
+        wordChinese: "接住、抓住",
+        englishSentences: [
+          "I can catch the ball.",
+          "Look! That cat can catch a mouse.",
+          "Please catch my hand."
+        ],
+        chineseSentences: [
+          "我能接住球",
+          "我问妈妈：“我的书包在哪里？”",
+          "请抓住我的手。"
+        ]
       }
     ];
 

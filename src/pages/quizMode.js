@@ -119,6 +119,7 @@ export class QuizMode {
         { question: "Don't ( ) in class.", correctAnswer: "talk", options: ["talk", "listen", "look", "point"] },
         { question: "Can a duck swim?", correctAnswer: "Yes, it can.", options: ["Yes, it is.", "Yes, it can.", "No, it can't.", "It can fly."] },
         { question: "Point ( ) the blackboard.", correctAnswer: "to", options: ["to", "in", "on", "under"] },
+        { question: 'I ask, "( ) this?" "It\'s a frog."', correctAnswer: "What's", options: ["Where's", "Which's", "Who's", "What's"] },
       ],
       "medium":[
         { question: "She's my ( ). She is old.", correctAnswer: "grandmother", options: ["grandfather", "mother", "grandmother", "brother"] },
@@ -172,6 +173,10 @@ export class QuizMode {
         { question: "How many eyes have you got?", correctAnswer: "Two", options: ["One", "Three", "Two", "Ten"] },
         { question: "Is the monkey's tail ( ) or short?", correctAnswer: "long", options: ["big", "small", "short", "long"] },
         { question: "I like bananas. What am I?", correctAnswer: "A monkey", options: ["A monkey", "A tiger", "A frog", "A bird"] },
+        { question: 'I ask my friend, "( ) you got a red car?"', correctAnswer: "Have", options: ["Have", "Has", "Are", "Can"] },
+        { question: 'I ask my friend, "( ) he got a toy?"', correctAnswer: "Has", options: ["Have", "Has", "Are", "Is"] },
+        { question: 'I ask, "( ) the cat under the bed?" "No, it isn\'t."', correctAnswer: "Is", options: ["Have", "Has", "Are", "Is"] },
+        { question: 'I ask, "( ) they got the ball?" "No, they haven\'t."', correctAnswer: "Have", options: ["Is", "Are", "Has", "Have"] },
       ],
       "hard":[
         { question: "Is the book on the table?", correctAnswer: "No, it's under the chair.", options: ["Yes, it's a book.", "No, it's under the chair.", "It's red.", "I see a book."] },
@@ -217,6 +222,8 @@ export class QuizMode {
         { question: "I am long. I have no legs.I am a wild animal. What am I?", correctAnswer: "A snake", options: ["A snake", "A crocodile", "A fish", "A cat"] },
         { question: "I am big. I have a long tail. I have big teeth. What am I?", correctAnswer: "A crocodile", options: ["A crocodile", "A hippo", "A snake", "A fish"] },
         { question: "I am big. I am grey. I have big ears. What am I?", correctAnswer: "An elephant", options: ["An elephant", "A hippo", "A horse", "A tiger"] },
+        { question: "Can the cat catch the ( )? No, it can't.", correctAnswer: "car", options: ["fish", "ball", "car", "apple"] },
+        { question: "Can the cat catch the ( )? Yes, it can.", correctAnswer: "fish", options: ["car", "elephant", "crocodile", "fish"] },
       ]
     };
 

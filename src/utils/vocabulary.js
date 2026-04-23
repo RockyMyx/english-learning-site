@@ -50,7 +50,9 @@ export const vocabularyData = {
     { english: 'feed', chinese: '喂养' },
     { english: 'smell', chinese: '闻' },
     { english: 'taste', chinese: '品尝' },
-    { english: 'touch', chinese: '触摸' }
+    { english: 'touch', chinese: '触摸' },
+    { english: 'ask', chinese: '问' },
+    { english: 'catch', chinese: '接住' }
   ],
 
   // 食物
