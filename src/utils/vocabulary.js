@@ -647,6 +647,26 @@ export function getWordsByCategory(category) {
   return vocabularyData[category] || [];
 }
 
+// 获取排除指定分类的所有单词
+const excludedCategories = ['numbers', 'colors'];
+
+export function getAllWordsExcluding(categories = excludedCategories) {
+  const allWords = [];
+  Object.keys(vocabularyData).forEach(key => {
+    if (key !== 'sentences' && !categories.includes(key)) {
+      allWords.push(...vocabularyData[key]);
+    }
+  });
+  return allWords;
+}
+
+// 随机获取指定数量的单词（排除指定分类）
+export function getRandomWordsExcluding(count = 10, categories = excludedCategories) {
+  const words = getAllWordsExcluding(categories);
+  const shuffled = [...words].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, words.length));
+}
+
 // 随机获取指定数量的单词
 export function getRandomWords(count = 10) {
   const allWords = getAllWords();

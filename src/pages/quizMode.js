@@ -1,4 +1,4 @@
-import { getRandomWords, getQuizOptions } from '../utils/vocabulary.js';
+import { getRandomWords, getRandomWordsExcluding, getQuizOptions } from '../utils/vocabulary.js';
 import audioPlayer from '../utils/audio.js';
 
 // 通用的测试模式生成器
@@ -36,7 +36,10 @@ export class QuizMode {
   }
 
   generateVocabularyQuestions() {
-    const words = getRandomWords(this.questionsPerRound * 4);
+    const excludeCategories = ['listening-to-chinese', 'chinese-to-english', 'english-to-chinese'].includes(this.mode);
+    const words = excludeCategories
+      ? getRandomWordsExcluding(this.questionsPerRound * 4)
+      : getRandomWords(this.questionsPerRound * 4);
     const questions = [];
 
     for (let i = 0; i < this.questionsPerRound && i < words.length; i++) {
