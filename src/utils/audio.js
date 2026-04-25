@@ -5,8 +5,11 @@ class AudioPlayer {
     this.speakQueue = [];
     this.isProcessingQueue = false;
 
-    // TTS 提供商配置：从环境变量读取，默认为 'zhipu'
-    this.ttsProvider = import.meta.env.VITE_TTS_PROVIDER || 'zhipu';
+    // TTS 提供商配置：从环境变量读取，默认为 'web-speech'
+    // 可选值: 'zhipu' | 'minimax' | 'web-speech'
+    // 强制使用 web-speech，避免依赖外部 API
+    this.ttsProvider = 'web-speech';
+    // console.log('[AudioPlayer] TTS Provider:', this.ttsProvider, '(强制使用浏览器原生TTS)');
 
     // 智谱 AI 配置
     this.zhipuApiKey = import.meta.env.VITE_ZHIPU_API_KEY || '';
@@ -16,6 +19,84 @@ class AudioPlayer {
     this.minimaxApiKey = import.meta.env.VITE_MINIMAX_API_KEY || '';
     // 官方 HTTP 端点
     this.minimaxApiUrl = 'https://api.minimaxi.com/v1/t2a_v2';
+
+    // Web Speech API 配置（浏览器原生，免费）
+    this.webSpeechVoices = [];
+    this.loadWebSpeechVoices();
+  }
+
+  // 加载 Web Speech API 语音列表
+  loadWebSpeechVoices() {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      // console.log('[AudioPlayer] Web Speech API not available');
+      return;
+    }
+
+    const loadVoices = () => {
+      this.webSpeechVoices = window.speechSynthesis.getVoices();
+      // console.log('[AudioPlayer] Web Speech voices loaded:', this.webSpeechVoices.length);
+    };
+
+    loadVoices();
+    // 语音列表可能需要异步加载
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  // 获取适合英文的 Web Speech 语音
+  getEnglishVoice() {
+    // 优先选择英语语音
+    const englishVoices = this.webSpeechVoices.filter(v => v.lang.startsWith('en'));
+    // 优先选择 Google US English 或类似的高质量语音
+    const preferredVoice = englishVoices.find(v => 
+      v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
+    );
+    return preferredVoice || englishVoices[0] || this.webSpeechVoices[0];
+  }
+
+  // 调用 Web Speech API（浏览器原生，完全免费）
+  async callWebSpeechAPI(text, speed = 1.0) {
+    return new Promise((resolve, reject) => {
+      if (typeof window === 'undefined' || !window.speechSynthesis) {
+        reject(new Error('浏览器不支持 Web Speech API'));
+        return;
+      }
+
+      // 取消之前的语音
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voice = this.getEnglishVoice();
+      
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = 'en-US';
+      }
+      
+      // 设置语速 (0.1 - 10)，允许更慢的速度用于学习
+      utterance.rate = Math.max(0.1, Math.min(2.0, speed));
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      utterance.onstart = () => {
+        // console.log('[Web Speech] 开始播放:', text);
+      };
+
+      utterance.onend = () => {
+        // console.log('[Web Speech] 播放完成');
+        resolve();
+      };
+
+      utterance.onerror = (e) => {
+        // console.error('[Web Speech] 播放错误:', e);
+        reject(new Error(`Web Speech API 错误: ${e.error}`));
+      };
+
+      window.speechSynthesis.speak(utterance);
+    });
   }
 
   // 清理文本，移除括号内容
@@ -163,12 +244,28 @@ class AudioPlayer {
       }
       this.isSpeaking = false;
 
-      // console.log(`调用${this.ttsProvider === 'minimax' ? 'MiniMax' : '智谱AI'} TTS API:`, cleanText, '语速:', options.speed || 1.2);
+      // console.log(`[AudioPlayer] 使用 ${this.ttsProvider} TTS 提供商`);
 
       // 根据配置的 TTS 提供商调用对应的 API
-      const apiCall = this.ttsProvider === 'minimax'
-        ? this.callMiniMaxAPI(cleanText, options.speed || 1.0)
-        : this.callZhipuAPI(cleanText, options.speed || 1.0);
+      let apiCall;
+      if (this.ttsProvider === 'web-speech') {
+        // 使用浏览器原生的 Web Speech API（完全免费）
+        this.callWebSpeechAPI(cleanText, options.speed || 1.0)
+          .then(() => {
+            this.isSpeaking = false;
+            resolve();
+          })
+          .catch(error => {
+            this.isSpeaking = false;
+            reject(error);
+          });
+        return;
+      } else if (this.ttsProvider === 'minimax') {
+        apiCall = this.callMiniMaxAPI(cleanText, options.speed || 1.0);
+      } else {
+        apiCall = this.callZhipuAPI(cleanText, options.speed || 1.0);
+      }
+      
       apiCall
         .then(audioBlob => {
           // 创建本地URL
