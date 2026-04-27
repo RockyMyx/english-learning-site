@@ -28,48 +28,31 @@ class AudioPlayer {
   // 加载 Web Speech API 语音列表
   loadWebSpeechVoices() {
     if (typeof window === 'undefined' || !window.speechSynthesis) {
+      // console.log('[AudioPlayer] Web Speech API not available');
       return;
     }
 
     const loadVoices = () => {
       this.webSpeechVoices = window.speechSynthesis.getVoices();
+      // console.log('[AudioPlayer] Web Speech voices loaded:', this.webSpeechVoices.length);
     };
 
     loadVoices();
-
+    // 语音列表可能需要异步加载
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+      window.speechSynthesis.onvoiceschanged = loadVoices;
     }
-
-    // 部分移动浏览器 voiceschanged 事件不触发，用定时器兜底
-    let retries = 0;
-    const retryLoad = setInterval(() => {
-      loadVoices();
-      retries++;
-      if (this.webSpeechVoices.length > 0 || retries > 20) {
-        clearInterval(retryLoad);
-      }
-    }, 500);
   }
 
   // 获取适合英文的 Web Speech 语音
   getEnglishVoice() {
-    const allVoices = this.webSpeechVoices.length > 0
-      ? this.webSpeechVoices
-      : (typeof window !== 'undefined' && window.speechSynthesis ? window.speechSynthesis.getVoices() : []);
-
-    const englishVoices = allVoices.filter(v => v.lang && v.lang.startsWith('en'));
-
-    // 优先选择高质量英语语音
-    const preferredVoice = englishVoices.find(v =>
+    // 优先选择英语语音
+    const englishVoices = this.webSpeechVoices.filter(v => v.lang.startsWith('en'));
+    // 优先选择 Google US English 或类似的高质量语音
+    const preferredVoice = englishVoices.find(v => 
       v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
     );
-
-    // 回退：优先 en-US，再 en-GB，再任意 en-*
-    const usVoice = englishVoices.find(v => v.lang === 'en-US');
-    const gbVoice = englishVoices.find(v => v.lang === 'en-GB');
-
-    return preferredVoice || usVoice || gbVoice || englishVoices[0] || null;
+    return preferredVoice || englishVoices[0] || this.webSpeechVoices[0];
   }
 
   // 调用 Web Speech API（浏览器原生，完全免费）
@@ -80,63 +63,39 @@ class AudioPlayer {
         return;
       }
 
-      // 先取消之前的语音
+      // 取消之前的语音
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
       const voice = this.getEnglishVoice();
-
+      
       if (voice) {
         utterance.voice = voice;
         utterance.lang = voice.lang;
       } else {
-        // 没有找到英语语音时，设置 lang 为 en-US 让系统自动选择
         utterance.lang = 'en-US';
       }
-
+      
+      // 设置语速 (0.1 - 10)，允许更慢的速度用于学习
       utterance.rate = Math.max(0.1, Math.min(2.0, speed));
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
 
-      // iOS 兼容：确保 speechSynthesis 处于活跃状态
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
-
-      // iOS 兼容：iOS Safari 上 speechSynthesis 可能会在约15秒后自动暂停
-      const iosKeepAlive = setInterval(() => {
-        if (!window.speechSynthesis.speaking) {
-          clearInterval(iosKeepAlive);
-          return;
-        }
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-      }, 3000);
-
-      const cleanup = () => {
-        clearInterval(iosKeepAlive);
+      utterance.onstart = () => {
+        // console.log('[Web Speech] 开始播放:', text);
       };
 
       utterance.onend = () => {
-        cleanup();
+        // console.log('[Web Speech] 播放完成');
         resolve();
       };
 
       utterance.onerror = (e) => {
-        cleanup();
-        if (e.error === 'canceled' || e.error === 'interrupted') {
-          resolve();
-          return;
-        }
+        // console.error('[Web Speech] 播放错误:', e);
         reject(new Error(`Web Speech API 错误: ${e.error}`));
       };
 
-      // Android Chrome 兼容：使用 setTimeout 确保 cancel() 完成后再 speak()
-      // 部分设备上 cancel() 是异步的，立即 speak() 可能被吞掉
-      setTimeout(() => {
-        window.speechSynthesis.speak(utterance);
-      }, 50);
+      window.speechSynthesis.speak(utterance);
     });
   }
 
@@ -202,9 +161,15 @@ class AudioPlayer {
         return;
       }
 
+      // console.log('开始处理音频请求:', text, '语速:', options.speed);
+
+      // 清空现有队列，防止重复播放
+      this.stop();
+
       // 清理文本，移除括号内容
       const cleaned = this.cleanText(text);
       if (!cleaned) {
+        // console.warn('清理后的文本为空:', text);
         reject(new Error('清理后的文本为空'));
         return;
       }
@@ -212,44 +177,28 @@ class AudioPlayer {
       // 进一步清理特殊字符，但保留基本标点
       const finalText = this.sanitizeText(cleaned);
       if (!finalText || finalText.trim().length < 1) {
+        // console.warn('最终文本过短或为空:', finalText);
         reject(new Error('最终文本过短或为空'));
         return;
       }
 
-      // web-speech 模式下直接调用，绕过队列机制
-      // 移动端（特别是 iOS）要求在用户交互事件中直接调用 speechSynthesis.speak()
-      // 队列机制的异步延迟会破坏这个约束
-      if (this.ttsProvider === 'web-speech') {
-        // 清空队列和其他 TTS 的音频，但不 cancel speechSynthesis
-        // callWebSpeechAPI 内部会自行处理 cancel 时序
-        this.speakQueue = [];
-        this.isProcessingQueue = false;
-        if (this.audio) {
-          this.audio.pause();
-          this.audio.src = '';
-          this.audio = null;
-        }
-        this.isSpeaking = false;
+      // console.log('原始文本:', text);
+      // console.log('最终处理文本:', finalText);
 
-        this.callWebSpeechAPI(finalText, options.speed || 1.0)
-          .then(() => resolve())
-          .catch(error => reject(error));
-        return;
-      }
-
-      // 其他 TTS 提供商使用队列机制
-      this.stop();
-
+      // 将请求加入队列，支持自定义语速
       this.speakQueue.push({
         text: finalText,
         options: {
           ...options,
-          speed: options.speed || 1.0
+          speed: options.speed || 1.0 // 默认语速1.0倍
         },
         resolve: resolve,
         reject: reject
       });
 
+      // console.log('音频请求已加入队列，当前队列长度:', this.speakQueue.length);
+
+      // 处理队列
       this.processQueue();
     });
   }
@@ -674,11 +623,6 @@ class AudioPlayer {
       this.audio.src = '';
       this.audio = null;
     }
-
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-
     this.isSpeaking = false;
   }
 }
