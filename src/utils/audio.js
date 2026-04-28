@@ -5,24 +5,26 @@ class AudioPlayer {
     this.speakQueue = [];
     this.isProcessingQueue = false;
 
-    // TTS 提供商配置：从环境变量读取，默认为 'web-speech'
-    // 可选值: 'zhipu' | 'minimax' | 'web-speech'
-    // 强制使用 web-speech，避免依赖外部 API
-    this.ttsProvider = 'web-speech';
-    // console.log('[AudioPlayer] TTS Provider:', this.ttsProvider, '(强制使用浏览器原生TTS)');
-
     // 智谱 AI 配置
     this.zhipuApiKey = import.meta.env.VITE_ZHIPU_API_KEY || '';
     this.zhipuApiUrl = 'https://open.bigmodel.cn/api/paas/v4/audio/speech';
 
     // MiniMax 配置
     this.minimaxApiKey = import.meta.env.VITE_MINIMAX_API_KEY || '';
-    // 官方 HTTP 端点
     this.minimaxApiUrl = 'https://api.minimaxi.com/v1/t2a_v2';
 
     // Web Speech API 配置（浏览器原生，免费）
     this.webSpeechVoices = [];
-    this.loadWebSpeechVoices();
+
+    // 自动检测最佳 TTS 方案
+    const hasWebSpeech = typeof window !== 'undefined' && window.speechSynthesis;
+
+    if (hasWebSpeech) {
+      this.ttsProvider = 'web-speech';
+      this.loadWebSpeechVoices();
+    } else {
+      this.ttsProvider = 'youdao-audio';
+    }
   }
 
   // 加载 Web Speech API 语音列表
@@ -55,6 +57,36 @@ class AudioPlayer {
     return preferredVoice || englishVoices[0] || this.webSpeechVoices[0];
   }
 
+  async playYoudaoAudio(text) {
+    return new Promise((resolve, reject) => {
+      if (this.audio) {
+        this.audio.pause();
+        this.audio = null;
+      }
+
+      const encodedText = encodeURIComponent(text);
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
+
+      this.audio = new Audio();
+      this.audio.volume = 1.0;
+
+      this.audio.oncanplaythrough = () => {
+        this.audio.play().catch(err => reject(err));
+      };
+
+      this.audio.onended = () => {
+        resolve();
+      };
+
+      this.audio.onerror = () => {
+        reject(new Error('有道发音加载失败'));
+      };
+
+      this.audio.src = audioUrl;
+      this.audio.load();
+    });
+  }
+
   // 调用 Web Speech API（浏览器原生，完全免费）
   async callWebSpeechAPI(text, speed = 1.0) {
     return new Promise((resolve, reject) => {
@@ -63,39 +95,44 @@ class AudioPlayer {
         return;
       }
 
-      // 取消之前的语音
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      const voice = this.getEnglishVoice();
-      
+
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
+      const preferredVoice = englishVoices.find(v =>
+        v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
+      );
+      const usVoice = englishVoices.find(v => v.lang === 'en-US');
+      const voice = preferredVoice || usVoice || englishVoices[0] || null;
+
       if (voice) {
         utterance.voice = voice;
         utterance.lang = voice.lang;
       } else {
         utterance.lang = 'en-US';
       }
-      
-      // 设置语速 (0.1 - 10)，允许更慢的速度用于学习
+
       utterance.rate = Math.max(0.1, Math.min(2.0, speed));
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
 
-      utterance.onstart = () => {
-        // console.log('[Web Speech] 开始播放:', text);
-      };
-
       utterance.onend = () => {
-        // console.log('[Web Speech] 播放完成');
         resolve();
       };
 
       utterance.onerror = (e) => {
-        // console.error('[Web Speech] 播放错误:', e);
+        if (e.error === 'canceled' || e.error === 'interrupted') {
+          resolve();
+          return;
+        }
         reject(new Error(`Web Speech API 错误: ${e.error}`));
       };
 
-      window.speechSynthesis.speak(utterance);
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 100);
     });
   }
 
@@ -235,8 +272,6 @@ class AudioPlayer {
 
   playAudio(cleanText, options = {}) {
     return new Promise((resolve, reject) => {
-      // 注意：不要在这里调用 stop()，因为 processQueue 已经处理了队列逻辑
-      // 停止当前音频播放，但不清空队列
       if (this.audio) {
         this.audio.pause();
         this.audio.src = '';
@@ -244,13 +279,20 @@ class AudioPlayer {
       }
       this.isSpeaking = false;
 
-      // console.log(`[AudioPlayer] 使用 ${this.ttsProvider} TTS 提供商`);
-
-      // 根据配置的 TTS 提供商调用对应的 API
       let apiCall;
       if (this.ttsProvider === 'web-speech') {
-        // 使用浏览器原生的 Web Speech API（完全免费）
         this.callWebSpeechAPI(cleanText, options.speed || 1.0)
+          .then(() => {
+            this.isSpeaking = false;
+            resolve();
+          })
+          .catch(error => {
+            this.isSpeaking = false;
+            reject(error);
+          });
+        return;
+      } else if (this.ttsProvider === 'youdao-audio') {
+        this.playYoudaoAudio(cleanText)
           .then(() => {
             this.isSpeaking = false;
             resolve();
@@ -268,32 +310,25 @@ class AudioPlayer {
       
       apiCall
         .then(audioBlob => {
-          // 创建本地URL
           const audioUrl = URL.createObjectURL(audioBlob);
 
           this.audio = new Audio();
           this.audio.src = audioUrl;
-          this.audio.volume = 1; // 设置音量为1
+          this.audio.volume = 1;
 
-          // console.log('音频设置完成 - 音量:', this.audio.volume, 'URL:', audioUrl);
-
-          // 设置超时
           const timeout = setTimeout(() => {
             this.isSpeaking = false;
-            // console.error('音频播放超时:', cleanText);
             URL.revokeObjectURL(audioUrl);
             reject(new Error('音频播放超时'));
-          }, 15000); // 15秒超时
+          }, 15000);
 
           this.audio.onloadeddata = () => {
             clearTimeout(timeout);
-            // console.log('智谱AI音频数据加载完成:', cleanText);
           };
 
           this.audio.onended = () => {
             clearTimeout(timeout);
             this.isSpeaking = false;
-            // console.log('智谱AI发音播放完成:', cleanText);
             URL.revokeObjectURL(audioUrl);
             resolve();
           };
@@ -301,7 +336,6 @@ class AudioPlayer {
           this.audio.onerror = (e) => {
             clearTimeout(timeout);
             this.isSpeaking = false;
-            // console.error('智谱AI发音播放失败:', e);
             URL.revokeObjectURL(audioUrl);
             reject(e);
           };
@@ -309,13 +343,9 @@ class AudioPlayer {
           this.isSpeaking = true;
 
           this.audio.addEventListener('canplaythrough', () => {
-            // console.log('音频可以播放，开始播放:', cleanText);
-            this.audio.play().then(() => {
-              // console.log('音频播放成功:', cleanText);
-            }).catch(err => {
+            this.audio.play().catch(err => {
               clearTimeout(timeout);
               this.isSpeaking = false;
-              // console.error('音频播放失败:', err);
               URL.revokeObjectURL(audioUrl);
               reject(err);
             });
@@ -324,11 +354,7 @@ class AudioPlayer {
           this.audio.load();
         })
         .catch(error => {
-          // // console.error('智谱AI API调用失败:', error);
-
-          // 显示友好的错误提示
-          const userFriendlyError = new Error(`发音服务暂时不可用，请稍后再试。详情: ${error.message}`);
-          reject(userFriendlyError);
+          reject(error);
         });
     });
   }
@@ -432,19 +458,15 @@ class AudioPlayer {
   // 调用智谱AI TTS API
   async callZhipuAPI(text, speed = 1.0) {
     try {
-      // console.log('发送智谱AI TTS请求:', text, '语速:', speed);
-
       const requestBody = {
         model: 'glm-tts',
         input: text,
         voice: 'tongtong',
-        response_format: 'wav', // 改回wav格式
+        response_format: 'wav',
         stream: false,
         volume: 3,
-        speed: speed // 使用传入的语速参数
+        speed: speed
       };
-
-      // console.log('请求参数:', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch(this.zhipuApiUrl, {
         method: 'POST',
@@ -455,45 +477,27 @@ class AudioPlayer {
         body: JSON.stringify(requestBody)
       });
 
-      // console.log('智谱AI响应状态:', response.status, response.statusText);
-      // console.log('智谱AI响应headers:', [...response.headers.entries()]);
-
       if (!response.ok) {
-        // 尝试读取错误信息
         let errorMessage = `智谱AI API响应错误: ${response.status} ${response.statusText}`;
         try {
           const errorData = await response.json();
-          // console.error('智谱AI错误详情:', errorData);
           errorMessage += ` - ${JSON.stringify(errorData)}`;
-        } catch (e) {
-          // console.error('无法解析错误响应');
-        }
+        } catch (e) {}
         throw new Error(errorMessage);
       }
 
-      // 检查响应类型
       const contentType = response.headers.get('content-type');
-      // console.log('智谱AI响应类型:', contentType);
-
-      // 获取音频blob
       const audioBlob = await response.blob();
-      // console.log('音频blob大小:', audioBlob.size, 'bytes');
 
-      // 检查是否是有效的音频
       if (audioBlob.size === 0) {
         throw new Error('智谱AI返回了空的音频数据');
       }
 
-      // 检查响应类型是否为音频
       if (!contentType || !contentType.includes('audio')) {
-        // 如果不是音频类型，可能是错误信息
         const textResponse = await audioBlob.text();
-        // console.error('智谱AI返回非音频数据:', textResponse);
         throw new Error(`智谱AI返回错误: ${textResponse}`);
       }
 
-      // 尝试去除音频前面的提示音
-      // console.log('开始处理音频，去除提示音');
       return await this.removeAudioBeep(audioBlob);
 
     } catch (error) {

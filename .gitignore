@@ -7,6 +7,7 @@ dist
 *.log
 
 # Environment variables - 包含敏感信息，不要提交到Git
+.env
 .env.local
 .env.*.local
 .env.development
