@@ -118,11 +118,33 @@ class AudioPlayer {
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
 
+      let resumeTimer = null;
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+      const clearResumeTimer = () => {
+        if (resumeTimer) {
+          clearInterval(resumeTimer);
+          resumeTimer = null;
+        }
+      };
+
+      utterance.onstart = () => {
+        if (isMobile) {
+          resumeTimer = setInterval(() => {
+            if (window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+              window.speechSynthesis.resume();
+            }
+          }, 3000);
+        }
+      };
+
       utterance.onend = () => {
+        clearResumeTimer();
         resolve();
       };
 
       utterance.onerror = (e) => {
+        clearResumeTimer();
         if (e.error === 'canceled' || e.error === 'interrupted') {
           resolve();
           return;
@@ -130,9 +152,18 @@ class AudioPlayer {
         reject(new Error(`Web Speech API 错误: ${e.error}`));
       };
 
-      setTimeout(() => {
+      const startSpeak = () => {
         window.speechSynthesis.speak(utterance);
-      }, 100);
+        if (isMobile && window.speechSynthesis.speaking) {
+          window.speechSynthesis.resume();
+        }
+      };
+
+      if (isMobile) {
+        setTimeout(startSpeak, 50);
+      } else {
+        startSpeak();
+      }
     });
   }
 
