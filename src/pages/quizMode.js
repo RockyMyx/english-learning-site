@@ -823,8 +823,8 @@ export class QuizMode {
     }
 
     if (textToPlay) {
-      // 统一使用speak方法
-      audioPlayer.speak(textToPlay);
+      const speed = this.mode === 'english-dialogue' ? 0.6 : 1.0;
+      audioPlayer.speak(textToPlay, { speed });
     }
   }
 

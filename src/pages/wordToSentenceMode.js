@@ -2246,7 +2246,7 @@ export class WordToSentenceMode {
 
   playSentenceAudio(sentence) {
     if (sentence) {
-      audioPlayer.speak(sentence);
+      audioPlayer.speak(sentence, { speed: 0.6 });
     }
   }
 

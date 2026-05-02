@@ -7,7 +7,7 @@ class AudioPlayer {
 
     // Kokoro TTS 配置（自建服务）
     this.kokoroApiUrl = import.meta.env.VITE_KOKORO_API_URL || '';
-    this.kokoroApiKey = import.meta.env.VITE_KOKORO_API_KEY || 'not-needed';
+    this.kokoroApiKey = import.meta.env.VITE_KOKORO_API_KEY || '';
 
     // 检测设备类型
     this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -142,10 +142,6 @@ class AudioPlayer {
 
   // Kokoro TTS（句子）
   async speakKokoro(text, speed = 1.0) {
-    if (!this.kokoroApiUrl) {
-      throw new Error('Kokoro API URL not configured');
-    }
-
     const cacheKey = this.getCacheKey(text, speed);
 
     // 尝试从缓存读取
@@ -161,12 +157,22 @@ class AudioPlayer {
     this.triggerLoadingStart();
 
     try {
-      const response = await fetch(this.kokoroApiUrl, {
+      // 优先使用 Vercel 代理（解决 HTTPS → HTTP 的 Mixed Content 问题）
+      const useProxy = window.location.protocol === 'https:';
+      const apiUrl = useProxy ? '/api/tts' : this.kokoroApiUrl;
+
+      if (!apiUrl) {
+        throw new Error('Kokoro API URL not configured');
+      }
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (!useProxy && this.kokoroApiKey) {
+        headers['Authorization'] = `Bearer ${this.kokoroApiKey}`;
+      }
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.kokoroApiKey}`,
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify({
           model: 'kokoro',
           input: text,
@@ -296,7 +302,8 @@ class AudioPlayer {
     }
 
     // 句子：使用 Kokoro
-    if (this.kokoroApiUrl) {
+    const useProxy = window.location.protocol === 'https:';
+    if (useProxy || this.kokoroApiUrl) {
       try {
         const blob = await this.speakKokoro(text, options.speed || 1.0);
         await this.playBlob(blob);
