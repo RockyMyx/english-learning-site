@@ -2240,21 +2240,13 @@ export class WordToSentenceMode {
   playWordAudio() {
     const currentQuestion = this.questions[this.currentIndex];
     if (currentQuestion && currentQuestion.word) {
-      audioPlayer.speak(currentQuestion.word, { speed: 0.5 }).then(() => {
-        // console.log('Word audio played successfully');
-      }).catch(error => {
-        // console.error('Error playing word audio:', error);
-      });
+      audioPlayer.speak(currentQuestion.word);
     }
   }
 
   playSentenceAudio(sentence) {
     if (sentence) {
-      audioPlayer.speak(sentence, { speed: 0.5 }).then(() => {
-        // console.log('Sentence audio played successfully');
-      }).catch(error => {
-        // console.error('Error playing sentence audio:', error);
-      });
+      audioPlayer.speak(sentence);
     }
   }
 

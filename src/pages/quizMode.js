@@ -811,39 +811,29 @@ export class QuizMode {
       textToPlay = currentQuestion.correctAnswer.english;
     } else if (this.mode === 'english-dialogue') {
       textToPlay = currentQuestion.question.english;
-
       // 英文对话模式：1.2倍速读题目
-      try {
-        await this.playDialogueAudioThreeTimes(textToPlay);
-      } catch (error) {
-        // console.error('英文对话音频播放失败:', error);
-      }
-      return; // 直接返回，不执行下面的通用逻辑
+      // try {
+      //   await this.playDialogue(textToPlay);
+      // } catch (error) {
+      //   // console.error('英文对话音频播放失败:', error);
+      // }
+      // return; // 直接返回，不执行下面的通用逻辑
     } else {
       textToPlay = currentQuestion.question.english || '';
     }
 
     if (textToPlay) {
-      // 统一使用speak方法，语速0.5
-      audioPlayer.speak(textToPlay, { speed: 0.5 }).then(() => {
-        // console.log('Question audio played successfully');
-      }).catch(error => {
-        // console.error('Error playing question audio:', error);
-      });
+      // 统一使用speak方法
+      audioPlayer.speak(textToPlay);
     }
   }
 
   // 英文对话模式：0.5倍速读题目
-  async playDialogueAudioThreeTimes(text) {
+  async playDialogue(text) {
     try {
       // console.log('英文对话模式开始读题目:', text);
-
-      // 0.5倍速读一遍
-      // console.log('调用音频播放器，语速0.5');
-      await audioPlayer.speak(text, { speed: 0.5 });
-
+      await audioPlayer.speak(text);
       // console.log('英文对话模式读题完成');
-
     } catch (error) {
       // console.error('英文对话读题失败:', error);
       throw error;

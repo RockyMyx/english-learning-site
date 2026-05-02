@@ -172,7 +172,7 @@ class AudioPlayer {
           input: text,
           voice: 'af_bella',
           response_format: 'mp3',
-          speed: Math.max(0.5, Math.min(2.0, speed))
+          speed: 0.7
         })
       });
 
