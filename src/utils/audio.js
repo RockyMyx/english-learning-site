@@ -126,16 +126,40 @@ class AudioPlayer {
         this.audio.pause();
         this.audio = null;
       }
+
+      const useProxy = window.location.protocol === 'https:';
       const encodedText = encodeURIComponent(text);
-      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
+      const audioUrl = useProxy
+        ? `/api/youdao?text=${encodedText}`
+        : `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
+
       this.audio = new Audio();
       this.audio.volume = 1.0;
+      this.audio.preload = 'auto';
+
+      let playAttempted = false;
+
       this.audio.oncanplaythrough = () => {
-        this.audio.play().catch(err => reject(err));
+        if (!playAttempted) {
+          playAttempted = true;
+          this.audio.play().catch(err => {
+            console.warn('[AudioPlayer] Youdao play failed:', err.message);
+            reject(err);
+          });
+        }
       };
+
       this.audio.onended = () => resolve();
       this.audio.onerror = () => reject(new Error('有道发音加载失败'));
+
       this.audio.src = audioUrl;
+
+      if (this.isMobile) {
+        this.audio.play().then(() => {
+          playAttempted = true;
+        }).catch(() => {});
+      }
+
       this.audio.load();
     });
   }
