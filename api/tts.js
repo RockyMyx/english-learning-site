@@ -29,13 +29,17 @@ export default async function handler(req, res) {
 
     const token = await tokenRes.text();
 
-    // 将 speed（如 0.7, 1.0）转换为百分比格式（如 70%, 100%）
-    const speedPercent = Math.round((speed || 1.0) * 100) + '%';
+    // speed: 1.0 = 正常速度, 0.5 = 慢一半
+    // Azure SSML rate: 100%=正常, <100%=加速, >100%=减速（反直觉）
+    // 所以用相对值：0.5 → '-50%', 0.8 → '-20%', 1.0 → '0%'
+    const speedVal = speed || 1.0;
+    const ratePercent = Math.round((speedVal - 1.0) * 100);
+    const rateStr = ratePercent === 0 ? '0%' : `${ratePercent}%`;
 
     // SSML 中需要转义特殊字符
     const escapedInput = (input || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='Female' name='${voice || 'en-US-JennyNeural'}'><prosody rate='${speedPercent}'>${escapedInput}</prosody></voice></speak>`;
+    const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='Female' name='${voice || 'en-US-JennyNeural'}'><prosody rate='${rateStr}'>${escapedInput}</prosody></voice></speak>`;
 
     const ttsUrl = `https://${AZURE_TTS_REGION}.tts.speech.microsoft.com/cognitiveservices/v1`;
 
