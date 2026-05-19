@@ -5,11 +5,6 @@ class AudioPlayer {
     this.speakQueue = [];
     this.isProcessingQueue = false;
 
-    // Azure Cognitive Services TTS 配置
-    this.azureTtsEndpoint = import.meta.env.VITE_AZURE_TTS_ENDPOINT || '';
-    this.azureTtsKey = import.meta.env.VITE_AZURE_TTS_KEY || '';
-    this.azureTtsRegion = import.meta.env.VITE_AZURE_TTS_REGION || '';
-
     // 检测设备类型
     this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -182,19 +177,9 @@ class AudioPlayer {
     this.triggerLoadingStart();
 
     try {
-      // 优先使用 Vercel 代理（解决 HTTPS → HTTP 的 Mixed Content 问题）
-      const useProxy = window.location.protocol === 'https:';
-      const apiUrl = useProxy ? '/api/tts' : null;
-
-      if (!apiUrl && !this.azureTtsEndpoint) {
-        throw new Error('Azure TTS not configured');
-      }
-
-      const headers = { 'Content-Type': 'application/json' };
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/tts', {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           input: text,
           voice: 'en-US-JennyNeural',
@@ -323,15 +308,12 @@ class AudioPlayer {
     }
 
     // 句子：使用 Azure TTS
-    const useProxy = window.location.protocol === 'https:';
-    if (useProxy || this.azureTtsEndpoint) {
-      try {
-        const blob = await this.speakAzure(text, options.speed || 1.0);
-        await this.playBlob(blob);
-        return;
-      } catch (e) {
-        console.warn('[AudioPlayer] Azure TTS failed:', e.message);
-      }
+    try {
+      const blob = await this.speakAzure(text, options.speed || 1.0);
+      await this.playBlob(blob);
+      return;
+    } catch (e) {
+      console.warn('[AudioPlayer] Azure TTS failed:', e.message);
     }
 
     // 回退到 Web Speech

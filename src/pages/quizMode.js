@@ -823,7 +823,7 @@ export class QuizMode {
     }
 
     if (textToPlay) {
-      const speed = this.mode === 'english-dialogue' ? 0.6 : 1.0;
+      const speed = this.mode === 'english-dialogue' ? 0.5 : 1.0;
       audioPlayer.speak(textToPlay, { speed });
     }
   }
