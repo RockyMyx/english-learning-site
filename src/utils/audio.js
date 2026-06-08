@@ -81,6 +81,17 @@ class AudioPlayer {
     }
   }
 
+  async waitForVoices(maxWait = 2000) {
+    if (this.webSpeechVoices.length > 0) return;
+    const start = Date.now();
+    while (this.webSpeechVoices.length === 0 && Date.now() - start < maxWait) {
+      this.webSpeechVoices = window.speechSynthesis.getVoices();
+      if (this.webSpeechVoices.length === 0) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+  }
+
   getEnglishVoice() {
     const englishVoices = this.webSpeechVoices.filter(v => v.lang && v.lang.startsWith('en'));
     const preferred = englishVoices.find(v =>
@@ -202,45 +213,56 @@ class AudioPlayer {
       }
 
       return blob;
-    } finally {
+    } catch (e) {
       this.triggerLoadingEnd();
+      throw e;
     }
   }
 
   // Web Speech API
   async callWebSpeechAPI(text, speed = 1.0) {
-    return new Promise((resolve, reject) => {
-      if (typeof window === 'undefined' || !window.speechSynthesis) {
-        reject(new Error('Web Speech API not available'));
-        return;
-      }
-
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voice = this.getEnglishVoice();
-      if (voice) {
-        utterance.voice = voice;
-        utterance.lang = voice.lang;
-      } else {
-        utterance.lang = 'en-US';
-      }
-
-      utterance.rate = Math.max(0.1, Math.min(2.0, speed));
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-
-      utterance.onend = () => resolve();
-      utterance.onerror = (e) => {
-        if (e.error === 'canceled' || e.error === 'interrupted') {
-          resolve();
+    this.triggerLoadingStart();
+    try {
+      return await new Promise(async (resolve, reject) => {
+        if (typeof window === 'undefined' || !window.speechSynthesis) {
+          reject(new Error('Web Speech API not available'));
           return;
         }
-        reject(new Error(`Web Speech error: ${e.error}`));
-      };
 
-      setTimeout(() => window.speechSynthesis.speak(utterance), 100);
-    });
+        await this.waitForVoices();
+
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voice = this.getEnglishVoice();
+        if (voice) {
+          utterance.voice = voice;
+          utterance.lang = voice.lang;
+        } else {
+          utterance.lang = 'en-US';
+        }
+
+        utterance.rate = Math.max(0.1, Math.min(2.0, speed));
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        utterance.onstart = () => this.triggerLoadingEnd();
+        utterance.onend = () => resolve();
+        utterance.onerror = (e) => {
+          this.triggerLoadingEnd();
+          if (e.error === 'canceled' || e.error === 'interrupted') {
+            resolve();
+            return;
+          }
+          reject(new Error(`Web Speech error: ${e.error}`));
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    } catch (e) {
+      this.triggerLoadingEnd();
+      throw e;
+    }
   }
 
   speak(text, options = {}) {
@@ -347,7 +369,10 @@ class AudioPlayer {
         if (!playAttempted) {
           playAttempted = true;
           clearTimeout(timeout);
-          this.audio.play().catch(err => {
+          this.audio.play().then(() => {
+            this.triggerLoadingEnd();
+          }).catch(err => {
+            this.triggerLoadingEnd();
             this.isSpeaking = false;
             URL.revokeObjectURL(url);
             reject(err);

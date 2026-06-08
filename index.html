@@ -707,6 +707,48 @@
                     <div id="progress-content"></div>
                 </div>
             </div>
+
+            <!-- Admin: English Dialogue Page (隐藏页面) -->
+            <div id="admin-english-dialogue-page" class="page">
+                <div class="mode-content-linear">
+                    <div id="admin-english-dialogue-content"></div>
+                </div>
+            </div>
+
+            <!-- Admin: Dashboard (隐藏页面，双击Logo进入) -->
+            <div id="admin-dashboard-page" class="page">
+                <div class="mode-content-linear">
+                    <div id="admin-dashboard-content"></div>
+                </div>
+            </div>
+
+            <!-- Admin: Word to Sentence Page (隐藏页面，无导航入口) -->
+            <div id="admin-word-to-sentence-page" class="page">
+                <div class="mode-content-linear">
+                    <div class="page-header-linear">
+                        <button class="back-btn-linear" onclick="router.navigate('/admin')">
+                            <i class="fas fa-arrow-left"></i>
+                            返回
+                        </button>
+                        <h2><i class="fas fa-cog text-slate-500 mr-2"></i>单词造句出题管理</h2>
+                    </div>
+                    <div id="admin-word-to-sentence-content"></div>
+                </div>
+            </div>
+
+            <!-- Admin: Add Word Page (隐藏页面，无导航入口) -->
+            <div id="admin-add-word-page" class="page">
+                <div class="mode-content-linear">
+                    <div class="page-header-linear">
+                        <button class="back-btn-linear" onclick="router.navigate('/admin/word-to-sentence')">
+                            <i class="fas fa-arrow-left"></i>
+                            返回
+                        </button>
+                        <h2><i class="fas fa-plus text-slate-500 mr-2"></i>新增单词</h2>
+                    </div>
+                    <div id="admin-add-word-content"></div>
+                </div>
+            </div>
         </main>
 
         <!-- 底部 -->

@@ -626,6 +626,48 @@ export const vocabularyData = {
   ]
 };
 
+// 自定义单词 localStorage 操作
+const CUSTOM_WORDS_KEY = 'customWords';
+
+export function getCustomWords() {
+  try {
+    const data = localStorage.getItem(CUSTOM_WORDS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export function addCustomWord(english, chinese, category = 'custom') {
+  const customWords = getCustomWords();
+  // 检查是否已存在（包括硬编码中）
+  const allExisting = [];
+  Object.keys(vocabularyData).forEach(key => {
+    if (key !== 'sentences') {
+      allExisting.push(...vocabularyData[key]);
+    }
+  });
+  allExisting.push(...customWords);
+  if (allExisting.some(w => w.english === english)) {
+    return false;
+  }
+  customWords.push({ english, chinese, category });
+  localStorage.setItem(CUSTOM_WORDS_KEY, JSON.stringify(customWords));
+  return true;
+}
+
+export function deleteCustomWord(english) {
+  const customWords = getCustomWords().filter(w => w.english !== english);
+  localStorage.setItem(CUSTOM_WORDS_KEY, JSON.stringify(customWords));
+  // 同时删除该单词的题目数据
+  const storedQuestions = localStorage.getItem('adminWordSentenceQuestions');
+  if (storedQuestions) {
+    const data = JSON.parse(storedQuestions);
+    delete data[english];
+    localStorage.setItem('adminWordSentenceQuestions', JSON.stringify(data));
+  }
+}
+
 // 获取所有单词
 export function getAllWords() {
   const allWords = [];
@@ -634,6 +676,9 @@ export function getAllWords() {
       allWords.push(...vocabularyData[key]);
     }
   });
+  // 合并自定义单词
+  const customWords = getCustomWords();
+  allWords.push(...customWords);
   return allWords;
 }
 
