@@ -48,38 +48,56 @@ class LearningRecordsManager {
     return new Set(this.records.map(r => r.questionId).filter(Boolean));
   }
 
-  // 获取回答错误的 questionId 集合
-  getWrongQuestionIds() {
-    return new Set(
-      this.records.filter(r => r.result === 'incorrect').map(r => r.questionId).filter(Boolean)
-    );
+  // 获取"最终仍为错误"的 questionId 集合（答错过，且之后没有再做对过）
+  getStillWrongQuestionIds() {
+    const stillWrong = new Set();
+    const laterCorrect = new Set();
+    // 按时间顺序遍历，记录每道题的最新状态
+    for (const r of this.records) {
+      if (!r.questionId) continue;
+      if (r.result === 'correct') {
+        stillWrong.delete(r.questionId);
+        laterCorrect.add(r.questionId);
+      } else {
+        stillWrong.add(r.questionId);
+      }
+    }
+    return stillWrong;
   }
 
-  // 获取回答正确的 questionId 集合
-  getCorrectQuestionIds() {
-    return new Set(
-      this.records.filter(r => r.result === 'correct').map(r => r.questionId).filter(Boolean)
-    );
+  // 获取已做对的 questionId 集合（最新记录为正确）
+  getFinallyCorrectQuestionIds() {
+    const correctIds = new Set();
+    const wrongIds = new Set();
+    for (const r of this.records) {
+      if (!r.questionId) continue;
+      if (r.result === 'correct') {
+        correctIds.add(r.questionId);
+        wrongIds.delete(r.questionId);
+      } else {
+        wrongIds.add(r.questionId);
+        correctIds.delete(r.questionId);
+      }
+    }
+    return correctIds;
   }
 
-  // 智能选题：优先从错误题目和未做题目中选择
+  // 智能选题：优先从"仍为错误"和"未做过"的题目中选择
   // allQuestions: 完整题库数组，每项需有 questionId 字段
   // count: 需要选取的题目数量
   pickQuestions(allQuestions, count) {
     if (!allQuestions || allQuestions.length === 0) return [];
 
-    const wrongIds = this.getWrongQuestionIds();
+    const stillWrongIds = this.getStillWrongQuestionIds();
     const completedIds = this.getCompletedQuestionIds();
 
-    // 分类
-    const wrongQuestions = allQuestions.filter(q => wrongIds.has(q.questionId));
+    // 分类：仍为错误的 > 未做过的 > 已做对的
+    const wrongQuestions = allQuestions.filter(q => stillWrongIds.has(q.questionId));
     const unansweredQuestions = allQuestions.filter(q => !completedIds.has(q.questionId));
     const correctQuestions = allQuestions.filter(q =>
-      completedIds.has(q.questionId) && !wrongIds.has(q.questionId)
+      completedIds.has(q.questionId) && !stillWrongIds.has(q.questionId)
     );
 
-    // 优先级：错误题 > 未做题 > 已正确题
-    // 从每类中随机选取
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
 
     const pool = [
@@ -125,10 +143,6 @@ export function getRecords() {
 
 export function getCompletedQuestionIds() {
   return manager.getCompletedQuestionIds();
-}
-
-export function getWrongQuestionIds() {
-  return manager.getWrongQuestionIds();
 }
 
 export function pickSmartQuestions(allQuestions, count) {
