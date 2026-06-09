@@ -59,7 +59,7 @@ export class AdminDashboard {
             </div>
           </div>
 
-          <div class="dashboard-card" data-target="">
+          <div class="dashboard-card" data-target="/admin/learning-records">
             <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
               <i class="fas fa-chart-line"></i>
             </div>

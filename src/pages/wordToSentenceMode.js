@@ -1,4 +1,5 @@
 import audioPlayer from '../utils/audio.js';
+import { addRecord, pickSmartQuestions, isAllCompleted, clearRecords } from '../utils/learningRecords.js';
 
 // 从localStorage加载自定义题目
 function loadCustomQuestions() {
@@ -821,9 +822,14 @@ export class WordToSentenceMode {
     // 单词造句素材（自动合并localStorage中的自定义题目）
     const wordSentenceQuestions = getMergedWordSentenceQuestions();
 
-    // 随机选择题目
-    const shuffledQuestions = [...wordSentenceQuestions].sort(() => Math.random() - 0.5);
-    this.questions = shuffledQuestions.slice(0, Math.min(this.questionsPerRound, shuffledQuestions.length));
+    // 给每个题目分配 questionId
+    const questionsWithId = wordSentenceQuestions.map(q => ({
+      ...q,
+      questionId: `word-to-sentence_${q.word}`
+    }));
+
+    // 智能选题：优先错误题和未做题
+    this.questions = pickSmartQuestions(questionsWithId, this.questionsPerRound);
   }
 
   renderQuiz() {
@@ -866,11 +872,14 @@ export class WordToSentenceMode {
               // 根据保存的状态设置按钮样式
               const isAnswered = hasAnswered && answeredIndex === index;
               const isDisabled = hasAnswered;
-              const correctBtnClass = isAnswered ? 'result-btn correct-btn clicked correct-clicked' : 
+              const correctBtnClass = isAnswered && answeredIndex === index ? 'result-btn correct-btn clicked correct-clicked' : 
                                      (isDisabled ? 'result-btn correct-btn disabled' : 'result-btn correct-btn');
-              const correctBtnContent = isAnswered ? 
+              const correctBtnContent = isAnswered && answeredIndex === index ? 
                 '<i class="fas fa-check"></i><span>答对</span>' : '<span>答对</span>';
               const correctBtnDisabled = isDisabled ? 'disabled' : '';
+              const wrongBtnClass = isAnswered && answeredIndex === index ? 'result-btn wrong-btn disabled' :
+                                   (isDisabled ? 'result-btn wrong-btn disabled' : 'result-btn wrong-btn');
+              const wrongBtnDisabled = isDisabled ? 'disabled' : '';
               
               return `
                 <div class="sentence-item ${isAnswered ? 'answered' : ''}" data-index="${index}">
@@ -885,6 +894,9 @@ export class WordToSentenceMode {
                       </button>
                       <button class="${correctBtnClass}" data-sentence-index="${index}" ${correctBtnDisabled}>
                         ${correctBtnContent}
+                      </button>
+                      <button class="${wrongBtnClass}" data-sentence-index="${index}" ${wrongBtnDisabled}>
+                        <span>答错</span>
                       </button>
                     </div>
                   </div>
@@ -949,6 +961,16 @@ export class WordToSentenceMode {
         e.stopPropagation();
         const sentenceIndex = button.dataset.sentenceIndex;
         this.markSentenceResult(sentenceIndex, button);
+      });
+    });
+
+    // 答错按钮
+    const wrongButtons = this.container.querySelectorAll('.result-btn.wrong-btn');
+    wrongButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sentenceIndex = button.dataset.sentenceIndex;
+        this.markSentenceWrong(sentenceIndex, button);
       });
     });
 
@@ -1098,6 +1120,15 @@ export class WordToSentenceMode {
       window.router.addPoints(5);
     }
 
+    // 记录学习记录
+    const currentQuestion = this.questions[this.currentIndex];
+    addRecord({
+      module: 'word-to-sentence',
+      question: currentQuestion.word,
+      result: 'correct',
+      questionId: currentQuestion.questionId
+    });
+
     // 显示反馈
     const feedback = document.getElementById('sentence-feedback');
     if (feedback) {
@@ -1113,6 +1144,62 @@ export class WordToSentenceMode {
       setTimeout(() => {
         feedback.className = 'sentence-feedback';
       }, 3000);
+    }
+  }
+
+  // 标记句子答错
+  markSentenceWrong(sentenceIndex, button) {
+    if (button.disabled) return;
+
+    const currentQuestionIndex = this.currentIndex;
+    if (this.questionStates[currentQuestionIndex] && this.questionStates[currentQuestionIndex].answeredSentenceIndex !== undefined) {
+      return;
+    }
+
+    // 保存答题状态
+    this.questionStates[currentQuestionIndex] = {
+      answeredSentenceIndex: parseInt(sentenceIndex),
+      hasAnswered: true,
+      isWrong: true
+    };
+
+    // 禁用当前题目的所有按钮
+    const allCorrectButtons = this.container.querySelectorAll('.result-btn.correct-btn');
+    const allWrongButtons = this.container.querySelectorAll('.result-btn.wrong-btn');
+    allCorrectButtons.forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
+    allWrongButtons.forEach((btn, index) => {
+      btn.disabled = true;
+      if (index === parseInt(sentenceIndex)) {
+        btn.classList.add('clicked', 'wrong-clicked');
+        btn.innerHTML = '<i class="fas fa-times"></i><span>答错</span>';
+      } else {
+        btn.classList.add('disabled');
+      }
+    });
+
+    // 播放答错音效
+    this.playSoundEffect(false);
+
+    // 记录学习记录
+    const currentQuestion = this.questions[this.currentIndex];
+    addRecord({
+      module: 'word-to-sentence',
+      question: currentQuestion.word,
+      result: 'incorrect',
+      questionId: currentQuestion.questionId
+    });
+
+    // 显示反馈
+    const feedback = document.getElementById('sentence-feedback');
+    if (feedback) {
+      feedback.innerHTML = `
+        <div class="feedback-content incorrect">
+          <i class="fas fa-times-circle"></i>
+          <span>答错了，继续加油！</span>
+        </div>
+      `;
+      feedback.className = 'sentence-feedback show';
+      setTimeout(() => { feedback.className = 'sentence-feedback'; }, 3000);
     }
   }
 
@@ -1148,6 +1235,9 @@ export class WordToSentenceMode {
   }
 
   showQuizSummary() {
+    // 检查是否所有题目都完成
+    this.checkAllCompleted();
+
     // 创建弹框DOM
     const summary = document.createElement('div');
     summary.className = 'quiz-summary';
@@ -1273,6 +1363,17 @@ export class WordToSentenceMode {
     this.hasAnswered = false;
 
     // console.log('单词造句模式已清理，当前实例状态已重置');
+  }
+
+  checkAllCompleted() {
+    const wordSentenceQuestions = getMergedWordSentenceQuestions();
+    const allQuestions = wordSentenceQuestions.map(q => ({
+      questionId: `word-to-sentence_${q.word}`
+    }));
+
+    if (isAllCompleted(allQuestions)) {
+      clearRecords();
+    }
   }
 }
 

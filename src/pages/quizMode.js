@@ -1,5 +1,6 @@
-import { getRandomWords, getRandomWordsExcluding, getQuizOptions } from '../utils/vocabulary.js';
+import { getRandomWords, getRandomWordsExcluding, getQuizOptions, getAllWords, getAllWordsExcluding } from '../utils/vocabulary.js';
 import audioPlayer from '../utils/audio.js';
+import { addRecord, pickSmartQuestions, isAllCompleted, clearRecords } from '../utils/learningRecords.js';
 
 // 通用的测试模式生成器
 export class QuizMode {
@@ -290,9 +291,11 @@ export class QuizMode {
       ];
     }
 
-    // 随机打乱并截取
-    const shuffledQuestions = [...pool].sort(() => Math.random() - 0.5);
-    const selectedQuestions = shuffledQuestions.slice(0, Math.min(this.questionsPerRound, shuffledQuestions.length));
+    // 给每个题目分配 questionId
+    const poolWithId = pool.map(q => ({ ...q, questionId: `${this.mode}_${q.question}` }));
+
+    // 智能选题：优先错误题和未做题
+    const selectedQuestions = pickSmartQuestions(poolWithId, this.questionsPerRound);
 
     // 难度对应分值和标签
     const difficultyConfig = {
@@ -304,6 +307,7 @@ export class QuizMode {
     // 转换为统一格式
     return selectedQuestions.map(q => ({
       type: this.mode,
+      questionId: q.questionId,
       difficulty: q.difficultyLevel,
       difficultyLabel: difficultyConfig[q.difficultyLevel].label,
       points: difficultyConfig[q.difficultyLevel].points,
@@ -353,9 +357,7 @@ export class QuizMode {
           word: word
         };
       default:
-        return {
-          english: word.english
-        };
+        return { english: word.english || '', showAudio: true };
     }
   }
 
@@ -566,6 +568,17 @@ export class QuizMode {
       isCorrect: isCorrect
     };
 
+    // 记录学习记录
+    const questionText = this.mode === 'english-dialogue'
+      ? currentQuestion.question.english
+      : (currentQuestion.correctAnswer.english || currentQuestion.question?.english || '');
+    addRecord({
+      module: this.mode,
+      question: questionText,
+      result: isCorrect ? 'correct' : 'incorrect',
+      questionId: currentQuestion.questionId
+    });
+
     // 显示反馈
     this.showFeedback(isCorrect);
 
@@ -622,19 +635,15 @@ export class QuizMode {
   }
 
   updateNavigationButtons() {
-    // 使用 this.container.querySelector 确保只获取当前模式的按钮
     const prevButton = this.container.querySelector('#prev-question');
     const nextButton = this.container.querySelector('#next-question');
 
     if (prevButton) {
-      // 第一题禁用上一题按钮
       prevButton.disabled = this.currentIndex === 0;
     }
 
     if (nextButton) {
-      // 最后一题禁用下一题按钮
       const isLastQuestion = this.currentIndex === this.questions.length - 1;
-      // 只有当前题目已回答且不是最后一题时，才启用下一题按钮
       nextButton.disabled = !this.hasAnswered || isLastQuestion;
     }
   }
@@ -737,6 +746,9 @@ export class QuizMode {
     const correctCount = this.answers.filter(a => a && a.isCorrect).length;
     const percentage = Math.round((correctCount / this.questions.length) * 100);
 
+    // 检查当前模式的题库是否全部完成
+    this.checkAllCompleted();
+
     summary.innerHTML = `
       <div class="summary-content">
         <div class="summary-icon">🎉</div>
@@ -802,8 +814,6 @@ export class QuizMode {
           } else {
             message = '🎯 继续加油学习吧！';
           }
-        } else {
-          message = '🎯 继续加油学习吧！';
         }
 
         goalMessage.innerHTML = `<p class="goal-text">${message}</p>`;
@@ -927,50 +937,31 @@ export class QuizMode {
     this.bindEvents();
   }
 
-  cleanup() {
-    // 清理弹框
-    const summary = document.getElementById('quiz-summary');
-    if (summary) {
-      summary.remove();
+  checkAllCompleted() {
+    // 获取当前模式的完整题库
+    let allQuestions = [];
+    if (this.mode === 'english-dialogue') {
+      // 对话模式的完整题库取决于难度
+      const dialogueQuestions = this.getDialoguePool();
+      allQuestions = dialogueQuestions.map(q => ({ ...q, questionId: `${this.mode}_${q.question}` }));
+    } else {
+      // 词汇模式
+      const excludeCategories = ['listening-to-chinese', 'chinese-to-english', 'english-to-chinese'].includes(this.mode);
+      const allWords = excludeCategories ? getAllWordsExcluding() : getAllWords();
+      allQuestions = allWords.map(w => ({ questionId: `${this.mode}_${w.english}` }));
     }
 
-    // 清理难度选择弹框
-    const difficulty = document.getElementById('difficulty-selection');
-    if (difficulty) {
-      difficulty.remove();
+    if (isAllCompleted(allQuestions)) {
+      // 自动清空学习记录，开始新一轮
+      clearRecords();
     }
+  }
 
-    // 只清理当前容器的DOM状态，避免影响其他页面
-    if (this.container) {
-      const options = this.container.querySelectorAll('.quiz-option');
-      options.forEach(option => {
-        option.classList.remove('selected', 'correct', 'incorrect');
-        option.style.pointerEvents = 'auto';
-      });
-
-      // 重置导航按钮状态
-      const prevButton = this.container.querySelector('#prev-question');
-      const nextButton = this.container.querySelector('#next-question');
-      const feedback = this.container.querySelector('#quiz-feedback');
-
-      if (prevButton) prevButton.disabled = true;
-      if (nextButton) nextButton.disabled = true;
-      if (feedback) {
-        feedback.textContent = '';
-        feedback.className = 'quiz-feedback';
-      }
-    }
-
-    // 停止音频播放
-    audioPlayer.stop();
-
-    // 清理状态
-    this.currentIndex = 0;
-    this.score = 0;
-    this.answers = [];
-    this.selectedAnswer = null;
-    this.questionStates = {};
-    this.hasAnswered = false;
+  getDialoguePool() {
+    // 复用 generateDialogueQuestions 中的同一份数据，避免重复定义导致数据不一致
+    // 先生成完整题目，然后只提取 question 字段用于完成检测
+    const fullQuestions = this.generateDialogueQuestions();
+    return fullQuestions.map(q => ({ question: q.question.english }));
   }
 }
 

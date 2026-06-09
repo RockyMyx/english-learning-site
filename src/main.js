@@ -9,6 +9,7 @@ import { initAdminWordList, initAdminWordToSentence } from './pages/adminWordToS
 import { initAdminAddWord } from './pages/adminAddWord.js';
 import { initAdminDashboard } from './pages/adminDashboard.js';
 import { initAdminEnglishDialogue } from './pages/adminEnglishDialogue.js';
+import { initAdminLearningRecords } from './pages/adminLearningRecords.js';
 import {
   initEnglishToChineseMode,
   initChineseToEnglishMode,
@@ -57,7 +58,8 @@ class Router {
       '/admin/word-to-sentence': 'admin-word-to-sentence',
       '/admin/add-word': 'admin-add-word',
       '/admin': 'admin-dashboard',
-      '/admin/english-dialogue': 'admin-english-dialogue'
+      '/admin/english-dialogue': 'admin-english-dialogue',
+      '/admin/learning-records': 'admin-learning-records'
     };
   }
 
@@ -172,6 +174,9 @@ class Router {
         break;
       case 'admin-english-dialogue':
         this.currentQuizInstance = initAdminEnglishDialogue();
+        break;
+      case 'admin-learning-records':
+        this.currentQuizInstance = initAdminLearningRecords();
         break;
     }
   }

@@ -1,5 +1,6 @@
 import { getAllWords } from '../utils/vocabulary.js';
 import audioPlayer from '../utils/audio.js';
+import { addRecord, pickSmartQuestions, isAllCompleted, clearRecords } from '../utils/learningRecords.js';
 
 // 全局变量
 let selectedWords = [];
@@ -23,7 +24,7 @@ export function initListeningMode() {
       </div>
 
       <div class="selection-controls">
-        <button class="primary-btn" id="random-select-btn">随机选择</button>
+        <button class="primary-btn" id="random-select-btn">智能选题</button>
       </div>
 
       <div class="words-grid responsive-grid">
@@ -90,24 +91,15 @@ function bindWordBlockEvents() {
 function handleRandomSelect() {
   const allWords = getAllWords();
 
-  // 如果已经选择了一些单词，先保留这些
-  const currentSelected = [...selectedWords];
+  // 为每个词分配 questionId
+  const allQuestions = allWords.map(w => ({
+    ...w,
+    questionId: `listening_${w.english}`
+  }));
 
-  // 计算还需要选择多少个
-  const needed = 10 - currentSelected.length;
-
-  if (needed > 0) {
-    // 从未选择的单词中随机选择
-    const unselectedWords = allWords.filter(word =>
-      !currentSelected.some(selected => selected.english === word.english)
-    );
-
-    const randomWords = getRandomWords(unselectedWords, needed);
-    selectedWords = [...currentSelected, ...randomWords];
-  } else {
-    // 如果已经选了10个，重新随机选择
-    selectedWords = getRandomWords(allWords, 10);
-  }
+  // 使用智能选题：优先错误题和未做题
+  const smartWords = pickSmartQuestions(allQuestions, 10);
+  selectedWords = smartWords;
 
   // 更新UI高亮
   updateWordBlockSelections();
@@ -190,6 +182,7 @@ function startDictation() {
                 <span>查看答案</span>
               </button>
               <button class="result-btn correct-btn" data-index="${index}">答对</button>
+              <button class="result-btn wrong-btn" data-index="${index}">答错</button>
             </div>
           </div>
         `).join('')}
@@ -221,7 +214,15 @@ function startDictation() {
   document.querySelectorAll('.result-btn.correct-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const index = parseInt(btn.dataset.index);
-      markResult(index);
+      markCorrect(index);
+    });
+  });
+
+  // 绑定答错按钮事件
+  document.querySelectorAll('.result-btn.wrong-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = parseInt(btn.dataset.index);
+      markWrong(index);
     });
   });
 
@@ -246,24 +247,26 @@ function startDictation() {
   updateDictationProgress();
 }
 
-function markResult(index, isCorrect) {
+function markCorrect(index) {
   const resultDiv = document.getElementById(`result-${index}`);
   const correctBtn = resultDiv.querySelector('.correct-btn');
+  const wrongBtn = resultDiv.querySelector('.wrong-btn');
 
   // 如果按钮已被禁用，直接返回
   if (correctBtn && correctBtn.disabled) return;
 
   dictationResults[index] = true;
 
-  // 修改按钮状态而不是替换整个内容
+  // 修改按钮状态
   correctBtn.disabled = true;
   correctBtn.classList.add('clicked', 'correct-clicked');
+  correctBtn.innerHTML = `<i class="fas fa-check"></i><span>答对</span>`;
 
-  // 更新按钮内容，添加勾选标记
-  correctBtn.innerHTML = `
-    <i class="fas fa-check"></i>
-    <span>答对</span>
-  `;
+  // 禁用答错按钮
+  if (wrongBtn) {
+    wrongBtn.disabled = true;
+    wrongBtn.classList.add('disabled');
+  }
 
   // 播放答对音效
   playFeedbackSound(true);
@@ -272,6 +275,51 @@ function markResult(index, isCorrect) {
   if (window.router) {
     window.router.addPoints(2);
   }
+
+  // 记录学习记录
+  const word = selectedWords[index];
+  addRecord({
+    module: 'listening',
+    question: word.english,
+    result: 'correct',
+    questionId: word.questionId || `listening_${word.english}`
+  });
+
+  updateDictationProgress();
+}
+
+function markWrong(index) {
+  const resultDiv = document.getElementById(`result-${index}`);
+  const correctBtn = resultDiv.querySelector('.correct-btn');
+  const wrongBtn = resultDiv.querySelector('.wrong-btn');
+
+  // 如果按钮已被禁用，直接返回
+  if (wrongBtn && wrongBtn.disabled) return;
+
+  dictationResults[index] = false;
+
+  // 修改按钮状态
+  wrongBtn.disabled = true;
+  wrongBtn.classList.add('clicked', 'wrong-clicked');
+  wrongBtn.innerHTML = `<i class="fas fa-times"></i><span>答错</span>`;
+
+  // 禁用答对按钮
+  if (correctBtn) {
+    correctBtn.disabled = true;
+    correctBtn.classList.add('disabled');
+  }
+
+  // 播放答错音效
+  playFeedbackSound(false);
+
+  // 记录学习记录
+  const word = selectedWords[index];
+  addRecord({
+    module: 'listening',
+    question: word.english,
+    result: 'incorrect',
+    questionId: word.questionId || `listening_${word.english}`
+  });
 
   updateDictationProgress();
 }
@@ -324,6 +372,7 @@ function playFeedbackSound(isCorrect) {
 function updateDictationProgress() {
   const completed = dictationResults.filter(result => result !== null).length;
   const correct = dictationResults.filter(result => result === true).length;
+  const wrong = dictationResults.filter(result => result === false).length;
 
   const progressElement = document.getElementById('current-progress');
   const correctElement = document.getElementById('correct-count');
@@ -331,13 +380,16 @@ function updateDictationProgress() {
 
   if (progressElement) progressElement.textContent = `${completed}/10`;
   if (correctElement) correctElement.textContent = correct;
-  if (wrongElement) wrongElement.textContent = '0';
+  if (wrongElement) wrongElement.textContent = wrong;
 }
 
 function finishDictation() {
   const correct = dictationResults.filter(result => result === true).length;
   const wrong = dictationResults.filter(result => result === false).length;
   const totalScore = correct * 2;
+
+  // 检查是否完成所有题目
+  checkAllCompleted();
 
   const content = document.getElementById('listening-content');
 
@@ -351,6 +403,10 @@ function finishDictation() {
             <span class="stat-value">${correct}</span>
             <span class="stat-label">答对</span>
           </div>
+          <div class="stat-box">
+            <span class="stat-value">${wrong}</span>
+            <span class="stat-label">答错</span>
+          </div>
         </div>
         <div class="result-actions">
           <button class="restart-btn secondary" onclick="location.reload()">再练一次</button>
@@ -362,6 +418,18 @@ function finishDictation() {
 
   // 保存练习结果到本地存储
   saveDictationResult(correct, wrong, totalScore);
+}
+
+function checkAllCompleted() {
+  const allWords = getAllWords();
+  const allQuestions = allWords.map(w => ({
+    ...w,
+    questionId: `listening_${w.english}`
+  }));
+
+  if (isAllCompleted(allQuestions)) {
+    clearRecords();
+  }
 }
 
 function saveDictationResult(correct, wrong, score) {
@@ -397,13 +465,19 @@ export function cleanupListeningMode() {
     summary.remove();
   }
 
+  // 清理庆祝弹框
+  const overlay = document.getElementById('achievement-overlay');
+  if (overlay) {
+    overlay.remove();
+  }
+
   // 只清理听力模式相关的DOM状态
   const listeningContainer = document.getElementById('listening-content');
   if (listeningContainer) {
     const buttons = listeningContainer.querySelectorAll('button');
     buttons.forEach(button => {
       button.disabled = false;
-      button.classList.remove('clicked', 'correct-clicked', 'disabled');
+      button.classList.remove('clicked', 'correct-clicked', 'disabled', 'wrong-clicked');
     });
 
     // 重置所有输入框
@@ -429,6 +503,4 @@ export function cleanupListeningMode() {
   selectedWords = [];
   dictationResults = [];
   currentDictationIndex = 0;
-
-  // console.log('听力模式已清理，相关状态已重置');
 }
