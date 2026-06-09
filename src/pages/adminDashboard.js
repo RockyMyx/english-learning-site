@@ -46,7 +46,7 @@ export class AdminDashboard {
             </div>
           </div>
 
-          <div class="dashboard-card" data-target="">
+          <div class="dashboard-card" data-target="/admin/storybook">
             <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
               <i class="fas fa-book-open"></i>
             </div>

@@ -10,6 +10,8 @@ import { initAdminAddWord } from './pages/adminAddWord.js';
 import { initAdminDashboard } from './pages/adminDashboard.js';
 import { initAdminEnglishDialogue } from './pages/adminEnglishDialogue.js';
 import { initAdminLearningRecords } from './pages/adminLearningRecords.js';
+import { initStorybook, initStorybookDetail } from './pages/storybook.js';
+import { initAdminStorybook } from './pages/adminStorybook.js';
 import {
   initEnglishToChineseMode,
   initChineseToEnglishMode,
@@ -53,12 +55,14 @@ class Router {
       '/listening-to-chinese': 'listening-to-chinese',
       '/english-dialogue': 'english-dialogue',
       '/word-to-sentence': 'word-to-sentence',
+      '/storybook': 'storybook',
       '/playlist': 'playlist',
       '/progress': 'progress',
       '/admin/word-to-sentence': 'admin-word-to-sentence',
       '/admin/add-word': 'admin-add-word',
       '/admin': 'admin-dashboard',
       '/admin/english-dialogue': 'admin-english-dialogue',
+      '/admin/storybook': 'admin-storybook',
       '/admin/learning-records': 'admin-learning-records'
     };
   }
@@ -83,6 +87,11 @@ class Router {
     const adminDetailMatch = path.match(/^\/admin\/word-to-sentence\/(.+)$/);
     if (adminDetailMatch) {
       return { route: 'admin-word-to-sentence-detail', params: { word: decodeURIComponent(adminDetailMatch[1]) } };
+    }
+    // 参数化路由匹配 /storybook/:id
+    const storyDetailMatch = path.match(/^\/storybook\/(.+)$/);
+    if (storyDetailMatch) {
+      return { route: 'storybook-detail', params: { storyId: decodeURIComponent(storyDetailMatch[1]) } };
     }
     return { route: 'home', params: {} };
   }
@@ -116,6 +125,9 @@ class Router {
     let pageId = route;
     if (route === 'admin-word-to-sentence-detail') {
       pageId = 'admin-word-to-sentence';
+    }
+    if (route === 'storybook-detail') {
+      pageId = 'storybook';
     }
     const targetPage = document.getElementById(`${pageId}-page`);
     if (targetPage) {
@@ -154,6 +166,12 @@ class Router {
       case 'word-to-sentence':
         this.currentQuizInstance = initWordToSentenceMode();
         break;
+      case 'storybook':
+        initStorybook();
+        break;
+      case 'storybook-detail':
+        initStorybookDetail(this.currentParams.storyId);
+        break;
       case 'playlist':
         initPlaylistPage();
         break;
@@ -174,6 +192,9 @@ class Router {
         break;
       case 'admin-english-dialogue':
         this.currentQuizInstance = initAdminEnglishDialogue();
+        break;
+      case 'admin-storybook':
+        this.currentQuizInstance = initAdminStorybook();
         break;
       case 'admin-learning-records':
         this.currentQuizInstance = initAdminLearningRecords();

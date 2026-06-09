@@ -193,6 +193,51 @@
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
         }
 
+        .level-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .level-badge {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .level-badge-beginner {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #2563eb;
+        }
+        .dark .level-badge-beginner {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
+            color: #93c5fd;
+        }
+
+        .level-badge-intermediate {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #d97706;
+        }
+        .dark .level-badge-intermediate {
+            background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+            color: #fbbf24;
+        }
+
+        .level-badge-advanced {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            color: #7c3aed;
+        }
+        .dark .level-badge-advanced {
+            background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+            color: #c4b5fd;
+        }
+
         .mode-icon-linear {
             width: 2.5rem;
             height: 2.5rem;
@@ -483,14 +528,20 @@
                     </div>
                 </section>
                 
-                <!-- 学习模式 -->
-                <section class="fade-in-up" style="padding-top: 2rem; padding-bottom: 1.5rem;">
-                    <h2 class="text-2xl font-bold flex items-center gap-2" style="margin-bottom: 2rem; margin-top: 0.5rem;">
-                        <i class="fas fa-compass text-primary-500"></i>
-                        选择学习模式
-                    </h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-0">
+                <!-- 初级版块 -->
+                <section class="fade-in-up" style="padding-top: 2rem; padding-bottom: 0.5rem;">
+                    <div class="level-section-header">
+                        <div class="level-badge level-badge-beginner">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2" style="margin: 0;">
+                                初级 · 基础入门
+                            </h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" style="margin: 0.25rem 0 0 0;">从听说读基础开始，打好英语根基</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 sm:px-0" style="margin-top: 1.25rem;">
                         <!-- 听读音选中文 -->
                         <div class="mode-card mode-card-linear group" data-mode="listening-to-chinese" onclick="router.navigate('#/listening-to-chinese')">
                             <div class="mode-points-badge-linear">每题1分</div>
@@ -506,24 +557,6 @@
                             <div class="tag-line">
                                 <i class="fas fa-check-circle text-green-500"></i>
                                 <span>提升听力理解</span>
-                            </div>
-                        </div>
-
-                        <!-- 单词造句 -->
-                        <div class="mode-card mode-card-linear group" data-mode="word-to-sentence" onclick="router.navigate('#/word-to-sentence')">
-                            <div class="mode-points-badge-linear">每题5分</div>
-                            <div class="mode-icon-linear bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                                <i class="fas fa-pen-fancy"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                                单词造句
-                            </h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                                告别哑巴英语，让单词说出来
-                            </p>
-                            <div class="tag-line">
-                                <i class="fas fa-star text-yellow-500"></i>
-                                <span>高分挑战模式</span>
                             </div>
                         </div>
 
@@ -562,7 +595,23 @@
                                 <span>逆向思维训练</span>
                             </div>
                         </div>
+                    </div>
+                </section>
 
+                <!-- 中级版块 -->
+                <section class="fade-in-up" style="padding-top: 1rem; padding-bottom: 0.5rem;">
+                    <div class="level-section-header">
+                        <div class="level-badge level-badge-intermediate">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2" style="margin: 0;">
+                                中级 · 能力提升
+                            </h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" style="margin: 0.25rem 0 0 0;">对话与造句，让英语活起来</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 sm:px-0" style="margin-top: 1.25rem;">
                         <!-- 英文对话 -->
                         <div class="mode-card mode-card-linear group" data-mode="english-dialogue" onclick="router.navigate('#/english-dialogue')">
                             <div class="mode-points-badge-linear badge-challenge">挑战</div>
@@ -581,6 +630,24 @@
                             </div>
                         </div>
 
+                        <!-- 单词造句 -->
+                        <div class="mode-card mode-card-linear group" data-mode="word-to-sentence" onclick="router.navigate('#/word-to-sentence')">
+                            <div class="mode-points-badge-linear">每题5分</div>
+                            <div class="mode-icon-linear bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                                <i class="fas fa-pen-fancy"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                单词造句
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                告别哑巴英语，让单词说出来
+                            </p>
+                            <div class="tag-line">
+                                <i class="fas fa-star text-yellow-500"></i>
+                                <span>高分挑战模式</span>
+                            </div>
+                        </div>
+
                         <!-- 单词听写 -->
                         <div class="mode-card mode-card-linear group" data-mode="listening" onclick="router.navigate('#/listening')">
                             <div class="mode-points-badge-linear">每题2分</div>
@@ -588,7 +655,7 @@
                                 <i class="fas fa-spell-check"></i>
                             </div>
                             <h3 class="text-lg font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                                &nbsp;&nbsp;单词听写
+                                单词听写
                             </h3>
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                 家长播放音频，孩子进行听写练习
@@ -596,6 +663,40 @@
                             <div class="tag-line">
                                 <i class="fas fa-home text-indigo-500"></i>
                                 <span>亲子互动模式</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 高级版块 -->
+                <section class="fade-in-up" style="padding-top: 1rem; padding-bottom: 1.5rem;">
+                    <div class="level-section-header">
+                        <div class="level-badge level-badge-advanced">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2" style="margin: 0;">
+                                高级 · 综合运用
+                            </h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" style="margin: 0.25rem 0 0 0;">绘本故事，沉浸式英语阅读体验</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 sm:px-0" style="margin-top: 1.25rem;">
+                        <!-- 绘本故事 -->
+                        <div class="mode-card mode-card-linear group" data-mode="storybook" onclick="router.navigate('#/storybook')">
+                            <div class="mode-points-badge-linear" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">NEW</div>
+                            <div class="mode-icon-linear bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                绘本故事
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                通过精彩绘本故事，提升英语阅读能力
+                            </p>
+                            <div class="tag-line">
+                                <i class="fas fa-magic text-violet-500"></i>
+                                <span>沉浸式阅读</span>
                             </div>
                         </div>
                     </div>
@@ -708,6 +809,13 @@
                 </div>
             </div>
 
+            <!-- Storybook List Page -->
+            <div id="storybook-page" class="page">
+                <div class="mode-content-linear">
+                    <div id="storybook-content"></div>
+                </div>
+            </div>
+
             <!-- Admin: English Dialogue Page (隐藏页面) -->
             <div id="admin-english-dialogue-page" class="page">
                 <div class="mode-content-linear">
@@ -733,6 +841,13 @@
                         <h2><i class="fas fa-cog text-slate-500 mr-2"></i>单词造句出题管理</h2>
                     </div>
                     <div id="admin-word-to-sentence-content"></div>
+                </div>
+            </div>
+
+            <!-- Admin: Storybook Management Page (隐藏页面) -->
+            <div id="admin-storybook-page" class="page">
+                <div class="mode-content-linear">
+                    <div id="admin-storybook-content"></div>
                 </div>
             </div>
 
