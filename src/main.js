@@ -102,6 +102,12 @@ class Router {
     }
 
     const { route, params } = this.matchRoute(path);
+
+    // 防止重复初始化同一路由（onclick 和 addEventListener 可能同时触发）
+    if (this.currentRoute === route && JSON.stringify(this.currentParams) === JSON.stringify(params)) {
+      return;
+    }
+
     this.currentRoute = route;
     this.currentParams = params;
 
@@ -205,18 +211,6 @@ class Router {
   initHomePage() {
     // 初始化首页统计
     this.updateHomeStats();
-
-    // 延迟设置学习模式卡片点击事件，确保DOM完全渲染
-    setTimeout(() => {
-      document.querySelectorAll('.mode-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const mode = card.dataset.mode;
-          if (mode) {
-            this.navigate(`/${mode}`);
-          }
-        });
-      });
-    }, 100);
   }
 
   startStudyTimer() {
