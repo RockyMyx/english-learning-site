@@ -22,8 +22,8 @@ export const stories = [
       { en: 'She can not reach the fish.', cn: '她够不到那条鱼。' },
       { en: 'A dog comes to help her.', cn: '一只狗来帮助她。' },
       { en: 'The dog is tall and big.', cn: '这只狗又高又大。' },
-      { en: 'He pushes the fish down.', cn: '他把鱼推了下来。' },
-      { en: 'The cat and the dog eat together.', cn: '猫和狗一起吃。' },
+      { en: 'He picks up the fish.', cn: '他捡起那条鱼。' },
+      { en: 'The cat and the dog eat together.', cn: '小猫和小狗一起吃起来。' },
       { en: 'They are good friends now.', cn: '他们现在是好朋友了。' },
     ]
   },
