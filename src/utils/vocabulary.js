@@ -1,6 +1,6 @@
 // 词汇工具函数
-import { vocabularyData } from '../data/vocabularyData.js';
 import { wordSentenceData } from '../data/sentenceData.js';
+import { sentencePatterns } from '../data/vocabularyData.js';
 
 // 自定义单词 localStorage 操作
 const CUSTOM_WORDS_KEY = 'customWords';
@@ -58,7 +58,7 @@ export function getAllWords() {
 
 // 获取所有句型
 export function getAllSentences() {
-  return vocabularyData.sentences;
+  return sentencePatterns.map(s => ({ english: s }));
 }
 
 // 获取排除指定单词的所有单词（按单词本身过滤）
@@ -106,6 +106,3 @@ export function getQuizOptions(correctAnswer, _category, count = 4) {
   // 打乱选项顺序
   return options.sort(() => Math.random() - 0.5);
 }
-
-// 导出 vocabularyData 以供其他模块直接引用
-export { vocabularyData };

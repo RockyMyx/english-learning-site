@@ -349,6 +349,7 @@ class AudioPlayer {
     this.isProcessingQueue = true;
 
     while (this.speakQueue.length > 0) {
+      if (!this.isProcessingQueue) break; // stop() 被调用，退出循环
       const current = this.speakQueue.shift();
 
       try {
@@ -406,39 +407,57 @@ class AudioPlayer {
 
       const timeout = setTimeout(() => {
         this.isSpeaking = false;
+        this._currentPlayReject = null;
         reject(new Error('Audio playback timeout'));
       }, 15000);
 
       this.audio.onended = () => {
         clearTimeout(timeout);
         this.isSpeaking = false;
+        this._currentPlayReject = null;
         resolve();
       };
 
       this.audio.onerror = () => {
         clearTimeout(timeout);
         this.isSpeaking = false;
+        this._currentPlayReject = null;
         reject(new Error('Audio playback error'));
       };
 
+      // 保存 reject 供 stop() 调用，避免 Promise 挂起
+      this._currentPlayReject = (err) => {
+        clearTimeout(timeout);
+        this.isSpeaking = false;
+        this._currentPlayReject = null;
+        reject(err);
+      };
+
       // 直接调用 play()，保持在用户手势上下文中
-      // 浏览器会在数据足够时自动开始播放
       this.audio.play().then(() => {
         this.triggerLoadingEnd();
       }).catch(err => {
         this.triggerLoadingEnd();
         this.isSpeaking = false;
+        this._currentPlayReject = null;
+        clearTimeout(timeout);
         reject(err);
       });
     });
   }
 
   stop() {
+    // 立即 reject 挂起的 playBlob Promise，避免等 15 秒超时
+    if (this._currentPlayReject) {
+      this._currentPlayReject(new Error('Stopped'));
+      this._currentPlayReject = null;
+    }
     if (this.audio) {
       this.audio.pause();
       this.audio.removeAttribute('src');
     }
     this.isSpeaking = false;
+    this.isProcessingQueue = false;
     this.speakQueue = [];
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();

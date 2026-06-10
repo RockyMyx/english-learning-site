@@ -18,7 +18,7 @@ export const llmConfig = {
 // ============================================================
 
 import { wordSentenceData } from '../data/sentenceData.js';
-import { vocabularyData } from '../data/vocabularyData.js';
+import { sentencePatterns } from '../data/vocabularyData.js';
 
 // 从 wordSentenceData 动态生成词汇范围文本
 function buildVocabularyText() {
@@ -26,9 +26,9 @@ function buildVocabularyText() {
   return `【词汇范围】共 ${words.length} 个单词\n${words.join('、')}`;
 }
 
-// 从 vocabularyData.sentences 动态生成句型范围文本
+// 从 sentencePatterns 动态生成句型范围文本
 function buildSentencePatternsText() {
-  const patterns = vocabularyData.sentences.map(s => `- ${s.english}`);
+  const patterns = sentencePatterns.map(s => `- ${s}`);
   return `【句型范围】[...]代表【词汇范围】中的某个单词\n${patterns.join('\n')}`;
 }
 
