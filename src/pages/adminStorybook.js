@@ -207,7 +207,7 @@ export function initAdminStorybook() {
     // Back button
     const backBtn = container.querySelector('#storybook-back-btn');
     if (backBtn) {
-      backBtn.addEventListener('click', () => window.router.navigate('#/admin'));
+      backBtn.addEventListener('click', () => window.router.navigate('/admin'));
     }
 
     // Generate story

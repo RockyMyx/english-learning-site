@@ -63,7 +63,7 @@ export function initStorybook() {
       card.style.boxShadow = '0 2px 15px -3px rgba(0,0,0,0.07),0 10px 20px -2px rgba(0,0,0,0.04)';
     });
     card.addEventListener('click', () => {
-      router.navigate(`#/storybook/${card.dataset.storyId}`);
+      router.navigate(`/storybook/${card.dataset.storyId}`);
     });
   });
 }
@@ -80,7 +80,7 @@ export function initStorybookDetail(storyId) {
       <div class="mode-content-linear" style="text-align:center;padding:3rem;">
         <i class="fas fa-exclamation-circle" style="font-size:2.5rem;color:#94a3b8;margin-bottom:1rem;"></i>
         <p style="color:#64748b;font-size:1.1rem;">未找到该故事</p>
-        <button class="back-btn-linear" style="margin-top:1.5rem;" onclick="router.navigate('#/storybook')">
+        <button class="back-btn-linear" style="margin-top:1.5rem;" onclick="router.navigate('/storybook')">
           <i class="fas fa-arrow-left"></i> 返回故事列表
         </button>
       </div>
@@ -113,7 +113,7 @@ export function initStorybookDetail(storyId) {
         50%{box-shadow:0 0 0 6px rgba(59,130,246,0);}
       }
       .story-player {
-        position:sticky;top:0;z-index:50;
+        position:sticky;top:65px;z-index:50;
         background:white;border-radius:1rem;
         padding:1rem 1.25rem;margin-bottom:1rem;
         box-shadow:0 4px 20px rgba(59,130,246,0.12);
@@ -166,7 +166,7 @@ export function initStorybookDetail(storyId) {
     </style>
     <div class="mode-content-linear">
       <div class="page-header-linear">
-        <button class="back-btn-linear" onclick="router.navigate('#/storybook')">
+        <button class="back-btn-linear" onclick="router.navigate('/storybook')">
           <i class="fas fa-arrow-left"></i> 返回
         </button>
         <h2 style="flex:1;font-size:1.25rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
