@@ -13,79 +13,28 @@ export const llmConfig = {
 
 // ============================================================
 // 共享知识库配置（词汇、句型、语法范围）
-// 所有提示词统一引用，修改一处全局生效
+// 数据从 sentenceData.js 和 vocabularyData.js 动态读取
+// 只需维护数据文件，此处自动同步
 // ============================================================
 
-export const knowledgeBase = {
-  vocabulary: `【词汇范围】
-- 颜色：red, white, black, blue, yellow, green, pink, orange, purple
-- 数字：one ~ ten
-- 动物：animal, cat, dog, bird, fish, frog, tiger, spider, duck, horse, mouse, elephant, hippo, monkey, snake, crocodile
-- 食物/水：water, food, cake, potato, tomato, chips, fruit, milk, egg
-- 身体部位：eye, mouth, hand, leg, arm, head, face, ear, nose, hair, teeth, foot, feet, shoulder, body, finger, toe, knee
-- 学校/文具：school, schoolbag, bag, table, eraser, pencil, book, chair
-- 家具/地点：home, house, sofa, door, bed, kitchen, bedroom, living room, dining room
-- 玩具/运动：toy, kite, ball, doll, robot, tennis, guitar, piano, basketball, table-tennis, team
-- 交通：bus, train, lorry, car, bike, motorbike, plane, helicopter, boat, street
-- 家人：mother, father, grandmother, grandfather, sister, brother
-- 动作：listen, look, point, sit, sit down, stand, stand up, open, close, talk, jump, fly, swim, walk, wash, brush, go, play, ride, drive, show, taste, touch, feed, help, pick up, see, cross, sail, watch, read, eat, find, smell, hear,catch,ask
-- 自然：sea, plain, forest, river, wild
-- 形容词：big, small, long, short, clean, dirty, beautiful, ugly, happy, sad, old, young, hot, cold
-- 主宾语：I, me, you, he, him, she, her, they, them, we, us, it
-- 代词：this, that, these, those, some, any, everybody, my, your, his, her, our, their
-- 介词/副词：in, on, under, next to, very, too, here, there
-- 连词：and, or, but, now
-- 衣物：clothes, shoes, trousers, skirt, jacket, t-shirt
-- 其他：boy, girl, children, computer, hero, hall, music`,
+import { wordSentenceData } from '../data/sentenceData.js';
+import { vocabularyData } from '../data/vocabularyData.js';
 
-  sentencePatterns: `【句型范围】[...]代表【词汇范围】中的某个单词
-- What's your name?
-- How old are you?
-- Pass me the [...], please.
-- Here you are.
-- Thank you.
-- What's this? / It's a [...]
-- What's your favourite [...]?
-- My favourite color is [...]
-- It's [something]
-- It's on/in/under the [...]
-- Where's the/my [...]?
-- It's here. / It isn't here.
-- Here's a [...] for you.
-- Color [...] [some color]
-- She's [...] / He's [...]
-- I've got [...] / I haven't got [...]
-- I can [...] / But I can't [...]
-- It can [...]
-- I like [...] / I don't like [...]
-- How many [...]?
-- Which one [...]?
-- Tell me [...]
-- Who's that?
-- They are [...] / They are not [...] / They aren't [...]
-- It's next to [...]
-- Is [...] on/in/under the [...]?
-- I'm sorry. / That's ok.
-- Is she/he/it [...]?
-- Can you [...]?
-- Have you got [...]?
-- You are welcome.
-- Welcome to [...]
-- Be quiet.
-- No, I haven't. / Yes, I have.
-- Look at [...]
-- We are friends.
-- I see with my eyes. / I touch with my hands. / I taste with my mouth. / I smell with my nose. / I hear with my ears.
-- Have they got [...]?
-- Those are [...]
-- Where are my [...]?
-- They're on/in/under/next to the [...]
-- Has [...] got [...]?
-- Put your hands on your head.
-- He can [...] / He can't [...]
-- Who can [...]?
-- Listen to [...]
-- I can help you.`,
+// 从 wordSentenceData 动态生成词汇范围文本
+function buildVocabularyText() {
+  const words = wordSentenceData.map(item => `${item.word}(${item.wordChinese})`);
+  return `【词汇范围】共 ${words.length} 个单词\n${words.join('、')}`;
+}
+
+// 从 vocabularyData.sentences 动态生成句型范围文本
+function buildSentencePatternsText() {
+  const patterns = vocabularyData.sentences.map(s => `- ${s.english}`);
+  return `【句型范围】[...]代表【词汇范围】中的某个单词\n${patterns.join('\n')}`;
+}
+
+export const knowledgeBase = {
+  get vocabulary() { return buildVocabularyText(); },
+  get sentencePatterns() { return buildSentencePatternsText(); },
 
   grammar: `【语法范围】
 - 一般现在时：I like / I have / I can / I don't like

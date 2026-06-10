@@ -409,48 +409,34 @@ class AudioPlayer {
       this.audio.pause();
       this.audio.src = url;
       this.audio.volume = 1.0;
-      this.audio.preload = 'auto';
       this.isSpeaking = true;
-
-      let playAttempted = false;
 
       const timeout = setTimeout(() => {
         this.isSpeaking = false;
-        URL.revokeObjectURL(url);
         reject(new Error('Audio playback timeout'));
       }, 15000);
-
-      this.audio.oncanplaythrough = () => {
-        if (!playAttempted) {
-          playAttempted = true;
-          clearTimeout(timeout);
-          this.audio.play().then(() => {
-            this.triggerLoadingEnd();
-          }).catch(err => {
-            this.triggerLoadingEnd();
-            this.isSpeaking = false;
-            URL.revokeObjectURL(url);
-            reject(err);
-          });
-        }
-      };
 
       this.audio.onended = () => {
         clearTimeout(timeout);
         this.isSpeaking = false;
-        URL.revokeObjectURL(url);
         resolve();
       };
 
       this.audio.onerror = () => {
         clearTimeout(timeout);
         this.isSpeaking = false;
-        URL.revokeObjectURL(url);
         reject(new Error('Audio playback error'));
       };
 
-      // 移动端可能需要预加载才能正常播放
-      this.audio.load();
+      // 直接调用 play()，保持在用户手势上下文中
+      // 浏览器会在数据足够时自动开始播放
+      this.audio.play().then(() => {
+        this.triggerLoadingEnd();
+      }).catch(err => {
+        this.triggerLoadingEnd();
+        this.isSpeaking = false;
+        reject(err);
+      });
     });
   }
 

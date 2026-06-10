@@ -1,8 +1,17 @@
-// 词汇工具函数 - 数据从 data/vocabularyData.js 导入
+// 词汇工具函数
 import { vocabularyData } from '../data/vocabularyData.js';
+import { wordSentenceData } from '../data/sentenceData.js';
 
 // 自定义单词 localStorage 操作
 const CUSTOM_WORDS_KEY = 'customWords';
+
+// 从 wordSentenceData 提取所有单词（自动与造句模块同步）
+function getWordsFromSentenceData() {
+  return wordSentenceData.map(item => ({
+    english: item.word,
+    chinese: item.wordChinese
+  }));
+}
 
 export function getCustomWords() {
   try {
@@ -15,15 +24,10 @@ export function getCustomWords() {
 
 export function addCustomWord(english, chinese, category = 'custom') {
   const customWords = getCustomWords();
-  // 检查是否已存在（包括硬编码中）
-  const allExisting = [];
-  Object.keys(vocabularyData).forEach(key => {
-    if (key !== 'sentences') {
-      allExisting.push(...vocabularyData[key]);
-    }
-  });
-  allExisting.push(...customWords);
-  if (allExisting.some(w => w.english === english)) {
+  // 检查是否已存在
+  const existingWords = getWordsFromSentenceData();
+  existingWords.push(...customWords);
+  if (existingWords.some(w => w.english === english)) {
     return false;
   }
   customWords.push({ english, chinese, category });
@@ -43,14 +47,9 @@ export function deleteCustomWord(english) {
   }
 }
 
-// 获取所有单词
+// 获取所有单词（从 sentenceData 自动提取，无需手动维护）
 export function getAllWords() {
-  const allWords = [];
-  Object.keys(vocabularyData).forEach(key => {
-    if (key !== 'sentences') {
-      allWords.push(...vocabularyData[key]);
-    }
-  });
+  const allWords = getWordsFromSentenceData();
   // 合并自定义单词
   const customWords = getCustomWords();
   allWords.push(...customWords);
@@ -62,27 +61,17 @@ export function getAllSentences() {
   return vocabularyData.sentences;
 }
 
-// 按类别获取单词
-export function getWordsByCategory(category) {
-  return vocabularyData[category] || [];
+// 获取排除指定单词的所有单词（按单词本身过滤）
+const excludedWords = [];
+
+export function getAllWordsExcluding(wordsToExclude = excludedWords) {
+  const allWords = getWordsFromSentenceData();
+  return allWords.filter(w => !wordsToExclude.includes(w.english));
 }
 
-// 获取排除指定分类的所有单词
-const excludedCategories = ['numbers', 'colors'];
-
-export function getAllWordsExcluding(categories = excludedCategories) {
-  const allWords = [];
-  Object.keys(vocabularyData).forEach(key => {
-    if (key !== 'sentences' && !categories.includes(key)) {
-      allWords.push(...vocabularyData[key]);
-    }
-  });
-  return allWords;
-}
-
-// 随机获取指定数量的单词（排除指定分类）
-export function getRandomWordsExcluding(count = 10, categories = excludedCategories) {
-  const words = getAllWordsExcluding(categories);
+// 随机获取指定数量的单词（排除指定单词）
+export function getRandomWordsExcluding(count = 10, wordsToExclude = excludedWords) {
+  const words = getAllWordsExcluding(wordsToExclude);
   const shuffled = [...words].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, words.length));
 }
@@ -102,26 +91,15 @@ export function getRandomSentences(count = 10) {
 }
 
 // 获取题目选项（包括正确答案和干扰项）
-export function getQuizOptions(correctAnswer, category, count = 4) {
+export function getQuizOptions(correctAnswer, _category, count = 4) {
   let options = [correctAnswer];
-  const categoryWords = getWordsByCategory(category);
+  const allWords = getWordsFromSentenceData();
 
-  // 随机添加干扰项
-  while (options.length < count && categoryWords.length > 0) {
-    const randomWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
+  // 从所有单词中随机添加干扰项
+  while (options.length < count && allWords.length > 0) {
+    const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
     if (!options.includes(randomWord)) {
       options.push(randomWord);
-    }
-  }
-
-  // 如果类别单词不够，从所有单词中补充
-  if (options.length < count) {
-    const allWords = getAllWords();
-    while (options.length < count && allWords.length > 0) {
-      const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
-      if (!options.includes(randomWord)) {
-        options.push(randomWord);
-      }
     }
   }
 
