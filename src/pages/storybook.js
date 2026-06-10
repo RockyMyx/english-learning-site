@@ -1,4 +1,5 @@
 import { getAllStories, getStoryById } from '../data/storyData.js';
+import audioPlayer from '../utils/audio.js';
 
 const container = () => document.getElementById('storybook-page');
 
@@ -6,53 +7,12 @@ const container = () => document.getElementById('storybook-page');
 const playState = {
   isPlaying: false,
   isPaused: false,
+  isLoading: false,
+  preloaded: false,
   currentIndex: -1,
   sentences: [],
   voicesLoaded: false,
 };
-
-// ========== 语音引擎（直接使用 SpeechSynthesis，不走 audioPlayer） ==========
-
-function ensureVoices() {
-  return new Promise(resolve => {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) { playState.voicesLoaded = true; return resolve(voices); }
-    const handler = () => { window.speechSynthesis.getVoices(); resolve(window.speechSynthesis.getVoices()); };
-    window.speechSynthesis.onvoiceschanged = handler;
-    setTimeout(() => resolve(window.speechSynthesis.getVoices()), 2000);
-  });
-}
-
-function getEnglishVoice() {
-  const voices = window.speechSynthesis.getVoices();
-  const enVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
-  return enVoices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))
-    || enVoices.find(v => v.lang === 'en-US')
-    || enVoices[0]
-    || null;
-}
-
-function speakOne(text, rate = 0.7) {
-  return new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(text);
-    const voice = getEnglishVoice();
-    if (voice) { u.voice = voice; u.lang = voice.lang; }
-    else { u.lang = 'en-US'; }
-    u.rate = rate;
-    u.pitch = 1.0;
-    u.volume = 1.0;
-    u.onend = () => resolve();
-    u.onerror = () => resolve();
-    window.speechSynthesis.speak(u);
-  });
-}
-
-// 预热语音引擎（静默朗读空字符串，让浏览器加载语音包）
-async function warmUpVoice() {
-  if (playState.voicesLoaded) return;
-  await ensureVoices();
-  playState.voicesLoaded = true;
-}
 
 // ========== 页面：故事列表 ==========
 
@@ -130,9 +90,6 @@ export function initStorybookDetail(storyId) {
 
   playState.sentences = story.sentences;
 
-  // 预热语音
-  warmUpVoice();
-
   el.innerHTML = `
     <style>
       .story-sentence .cn-text {
@@ -186,6 +143,26 @@ export function initStorybookDetail(storyId) {
       .story-player .cb:disabled {opacity:0.4;cursor:not-allowed;transform:none !important;}
       .dark .story-player {background:#1e293b;border-color:rgba(59,130,246,0.2);}
       .dark .story-sentence.playing {background:linear-gradient(135deg,#1e3a5f 0%,#1e293b 100%) !important;}
+      /* 播放按钮 loading spinner */
+      .story-player .cb.main.loading {
+        pointer-events:none;
+        position:relative;
+      }
+      .story-player .cb.main.loading i {
+        animation:spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        from{transform:rotate(0deg);}
+        to{transform:rotate(360deg);}
+      }
+      /* 单句播放按钮 loading */
+      .s-play-btn.loading {
+        pointer-events:none;
+        opacity:0.8;
+      }
+      .s-play-btn.loading i {
+        animation:spin 0.8s linear infinite;
+      }
     </style>
     <div class="mode-content-linear">
       <div class="page-header-linear">
@@ -289,10 +266,8 @@ function bindDetailEvents(story) {
     const ratio = (e.clientX - rect.left) / rect.width;
     const target = Math.floor(ratio * playState.sentences.length);
     const wasPlaying = playState.isPlaying;
-    window.speechSynthesis.cancel();
+    stopPlayback();
     playState.currentIndex = Math.max(0, Math.min(target, playState.sentences.length - 1));
-    playState.isPaused = false;
-    playState.isPlaying = false;
     updateUI();
     if (wasPlaying) {
       playFromCurrent();
@@ -300,11 +275,39 @@ function bindDetailEvents(story) {
   });
 }
 
-// ========== 播放控制 ==========
+// ========== 播放控制（使用 audioPlayer 统一接口） ==========
+
+function setMainBtnLoading(loading) {
+  const btn = document.getElementById('cb-play');
+  const icon = document.getElementById('play-icon');
+  if (!btn || !icon) return;
+  if (loading) {
+    btn.classList.add('loading');
+    icon.className = 'fas fa-spinner';
+    playState.isLoading = true;
+  } else {
+    btn.classList.remove('loading');
+    playState.isLoading = false;
+    // 图标由 updateUI 设置
+  }
+}
+
+function setSingleBtnLoading(idx, loading) {
+  const btns = document.querySelectorAll('.s-play-btn');
+  const btn = btns[idx];
+  if (!btn) return;
+  const icon = btn.querySelector('i');
+  if (loading) {
+    btn.classList.add('loading');
+    if (icon) icon.className = 'fas fa-spinner';
+  } else {
+    btn.classList.remove('loading');
+    if (icon) icon.className = 'fas fa-volume-up';
+  }
+}
 
 async function playAll() {
   if (playState.isPlaying) return;
-  await warmUpVoice();
 
   if (playState.currentIndex < 0 || playState.currentIndex >= playState.sentences.length) {
     playState.currentIndex = 0;
@@ -312,16 +315,34 @@ async function playAll() {
 
   playState.isPlaying = true;
   playState.isPaused = false;
+  playState.preloaded = false;
+  setMainBtnLoading(true);
   updateUI();
+
+  // 先预加载所有句子语音
+  const texts = playState.sentences.map(s => s.en);
+  try {
+    await audioPlayer.preloadSentences(texts, 0.7, (loaded, total) => {
+      setStatus(`正在预加载语音 ${loaded}/${total}...`);
+    });
+  } catch (e) {
+    console.warn('[Storybook] Preload error:', e.message);
+  }
+
+  // 预加载完成，开始流畅播放
+  if (!playState.isPlaying) return; // 用户可能已停止
+  playState.preloaded = true;
+  audioPlayer.suppressLoading = true; // 播放期间不弹全局加载遮罩
+  setMainBtnLoading(false); // 结束 spinner，切为暂停图标
+  setStatus('预加载完成，开始播放...');
   playFromCurrent();
 }
 
 function playFromCurrent() {
-  // 逐句播放，使用直接 SpeechSynthesis
   playNext();
 }
 
-function playNext() {
+async function playNext() {
   if (!playState.isPlaying || playState.isPaused) return;
   if (playState.currentIndex >= playState.sentences.length) {
     onPlayComplete();
@@ -334,75 +355,71 @@ function playNext() {
   setStatus(`正在播放第 ${idx + 1} / ${playState.sentences.length} 句`);
 
   const text = playState.sentences[idx].en;
-  const u = new SpeechSynthesisUtterance(text);
-  const voice = getEnglishVoice();
-  if (voice) { u.voice = voice; u.lang = voice.lang; }
-  else { u.lang = 'en-US'; }
-  u.rate = 0.7;
-  u.pitch = 1.0;
-  u.volume = 1.0;
 
-  u.onend = () => {
+  try {
+    await audioPlayer.speak(text, { speed: 0.7 });
+
     if (!playState.isPlaying) return;
     playState.currentIndex++;
     if (playState.currentIndex >= playState.sentences.length) {
       onPlayComplete();
     } else {
-      // 句间短暂停顿后自动播放下一句
       setTimeout(playNext, 400);
     }
-  };
-
-  u.onerror = () => {
+  } catch (e) {
+    console.warn('[Storybook] playNext error:', e.message);
     if (!playState.isPlaying) return;
     playState.currentIndex++;
     setTimeout(playNext, 100);
-  };
-
-  window.speechSynthesis.speak(u);
+  }
 }
 
-function playSingle(idx) {
+async function playSingle(idx) {
   stopPlayback();
   playState.currentIndex = idx;
   playState.isPlaying = true;
   highlight(idx);
+  setSingleBtnLoading(idx, true);
+  setMainBtnLoading(true);
   updateUI();
-  setStatus(`正在播放第 ${idx + 1} 句`);
+  setStatus(`正在加载第 ${idx + 1} 句语音...`);
 
   const text = playState.sentences[idx].en;
-  const u = new SpeechSynthesisUtterance(text);
-  const voice = getEnglishVoice();
-  if (voice) { u.voice = voice; u.lang = voice.lang; }
-  else { u.lang = 'en-US'; }
-  u.rate = 0.7;
-  u.pitch = 1.0;
-  u.volume = 1.0;
 
-  u.onend = () => {
+  try {
+    await audioPlayer.speak(text, { speed: 0.7 });
+
     playState.isPlaying = false;
+    setSingleBtnLoading(idx, false);
+    setMainBtnLoading(false);
     unhighlightAll();
     updateUI();
     setStatus('点击播放按钮开始');
-  };
-  u.onerror = () => {
+  } catch (e) {
+    console.warn('[Storybook] playSingle error:', e.message);
     playState.isPlaying = false;
+    setSingleBtnLoading(idx, false);
+    setMainBtnLoading(false);
     unhighlightAll();
     updateUI();
-  };
-
-  window.speechSynthesis.speak(u);
+    setStatus('播放失败，请重试');
+  }
 }
 
 function doPause() {
-  window.speechSynthesis.pause();
+  // Web Speech API 支持暂停
+  if (window.speechSynthesis) {
+    window.speechSynthesis.pause();
+  }
   playState.isPaused = true;
   updateUI();
   setStatus(`已暂停 - 第 ${playState.currentIndex + 1} 句`);
 }
 
 function doResume() {
-  window.speechSynthesis.resume();
+  if (window.speechSynthesis) {
+    window.speechSynthesis.resume();
+  }
   playState.isPaused = false;
   playState.isPlaying = true;
   updateUI();
@@ -410,7 +427,7 @@ function doResume() {
 }
 
 function doPrev() {
-  window.speechSynthesis.cancel();
+  audioPlayer.stop();
   if (playState.currentIndex > 0) {
     playState.currentIndex--;
   }
@@ -421,7 +438,7 @@ function doPrev() {
 }
 
 function doNext() {
-  window.speechSynthesis.cancel();
+  audioPlayer.stop();
   if (playState.currentIndex < playState.sentences.length - 1) {
     playState.currentIndex++;
   }
@@ -432,11 +449,21 @@ function doNext() {
 }
 
 function stopPlayback() {
-  window.speechSynthesis.cancel();
+  audioPlayer.stop();
+  audioPlayer.suppressLoading = false;
   playState.isPlaying = false;
   playState.isPaused = false;
+  playState.isLoading = false;
+  playState.preloaded = false;
   playState.currentIndex = -1;
   unhighlightAll();
+  setMainBtnLoading(false);
+  // 清除所有单句按钮 loading
+  document.querySelectorAll('.s-play-btn.loading').forEach(btn => {
+    btn.classList.remove('loading');
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = 'fas fa-volume-up';
+  });
   updateUI();
   setStatus('点击播放按钮开始');
   const fill = document.getElementById('prog-fill');
@@ -444,10 +471,14 @@ function stopPlayback() {
 }
 
 function onPlayComplete() {
+  audioPlayer.suppressLoading = false;
   playState.isPlaying = false;
   playState.isPaused = false;
+  playState.isLoading = false;
+  playState.preloaded = false;
   playState.currentIndex = -1;
   unhighlightAll();
+  setMainBtnLoading(false);
   updateUI();
   setStatus('播放完成');
 }
@@ -475,9 +506,9 @@ function updateUI() {
   const fill = document.getElementById('prog-fill');
   if (fill) fill.style.width = total > 0 ? `${(cur / total) * 100}%` : '0%';
 
-  // 播放/暂停图标
+  // 播放/暂停图标（loading 中保持 spinner，否则按状态显示）
   const icon = document.getElementById('play-icon');
-  if (icon) {
+  if (icon && !playState.isLoading) {
     icon.className = playState.isPlaying ? 'fas fa-pause' : 'fas fa-play';
   }
 

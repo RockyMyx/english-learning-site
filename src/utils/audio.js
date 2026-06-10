@@ -16,6 +16,7 @@ class AudioPlayer {
     this.dbName = 'AudioCache';
     this.storeName = 'audioCache';
     this.db = null;
+    this.suppressLoading = false;
     this.initDB();
   }
 
@@ -63,10 +64,12 @@ class AudioPlayer {
   }
 
   triggerLoadingStart() {
+    if (this.suppressLoading) return;
     window.dispatchEvent(new CustomEvent('audio-loading-start'));
   }
 
   triggerLoadingEnd() {
+    if (this.suppressLoading) return;
     window.dispatchEvent(new CustomEvent('audio-loading-end'));
   }
 
@@ -126,49 +129,47 @@ class AudioPlayer {
       .trim();
   }
 
-  // 有道发音（单词）
-  speakYoudao(text) {
-    return new Promise((resolve, reject) => {
-      if (this.audio) {
-        this.audio.pause();
-        this.audio = null;
-      }
+  // 有道发音（单词）— 带 IndexedDB 缓存
+  async speakYoudao(text) {
+    const cacheKey = `youdao:${text}`;
 
+    // 尝试从缓存读取
+    try {
+      const cachedBlob = await this.getFromCache(cacheKey);
+      if (cachedBlob) {
+        await this.playBlob(cachedBlob);
+        return;
+      }
+    } catch (e) {
+      console.warn('[AudioPlayer] Youdao cache read error:', e.message);
+    }
+
+    this.triggerLoadingStart();
+
+    try {
       const useProxy = window.location.protocol === 'https:';
       const encodedText = encodeURIComponent(text);
       const audioUrl = useProxy
         ? `/api/youdao?text=${encodedText}`
         : `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
 
-      this.audio = new Audio();
-      this.audio.volume = 1.0;
-      this.audio.preload = 'auto';
+      const response = await fetch(audioUrl);
+      if (!response.ok) throw new Error(`有道发音加载失败: ${response.status}`);
 
-      let playAttempted = false;
+      const blob = await response.blob();
 
-      this.audio.oncanplaythrough = () => {
-        if (!playAttempted) {
-          playAttempted = true;
-          this.audio.play().catch(err => {
-            console.warn('[AudioPlayer] Youdao play failed:', err.message);
-            reject(err);
-          });
-        }
-      };
-
-      this.audio.onended = () => resolve();
-      this.audio.onerror = () => reject(new Error('有道发音加载失败'));
-
-      this.audio.src = audioUrl;
-
-      if (this.isMobile) {
-        this.audio.play().then(() => {
-          playAttempted = true;
-        }).catch(() => {});
+      // 保存到缓存
+      try {
+        await this.saveToCache(cacheKey, blob);
+      } catch (e) {
+        console.warn('[AudioPlayer] Youdao cache save error:', e.message);
       }
 
-      this.audio.load();
-    });
+      await this.playBlob(blob);
+    } catch (e) {
+      this.triggerLoadingEnd();
+      throw e;
+    }
   }
 
   // Azure Cognitive Services TTS（句子）
@@ -262,6 +263,49 @@ class AudioPlayer {
     } catch (e) {
       this.triggerLoadingEnd();
       throw e;
+    }
+  }
+
+  // 预加载一组句子的语音到缓存（不播放）
+  async preloadSentences(texts, speed = 1.0, onProgress) {
+    // PC 端：Web Speech API 不需要预加载，只需预热语音引擎
+    if (!this.isMobile) {
+      await this.waitForVoices();
+      // Chrome 已知问题：首次播放前几个词会被吞掉，发一个静默热身语音激活引擎
+      await new Promise(resolve => {
+        const u = new SpeechSynthesisUtterance(' ');
+        u.volume = 0.01;
+        u.rate = 10;
+        u.onend = resolve;
+        u.onerror = resolve;
+        window.speechSynthesis.speak(u);
+        setTimeout(resolve, 300);
+      });
+      if (onProgress) {
+        for (let i = 0; i < texts.length; i++) {
+          onProgress(i + 1, texts.length);
+        }
+      }
+      return;
+    }
+
+    // 移动端：逐句预加载到缓存
+    for (let i = 0; i < texts.length; i++) {
+      const text = this.cleanText(texts[i]);
+      if (!text) {
+        if (onProgress) onProgress(i + 1, texts.length);
+        continue;
+      }
+
+      if (!this.isSingleWord(text)) {
+        try {
+          await this.speakAzure(text, speed);
+        } catch (e) {
+          console.warn('[AudioPlayer] Preload error:', e.message);
+        }
+      }
+
+      if (onProgress) onProgress(i + 1, texts.length);
     }
   }
 
