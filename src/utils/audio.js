@@ -232,7 +232,11 @@ class AudioPlayer {
 
         await this.waitForVoices();
 
-        window.speechSynthesis.cancel();
+        // 只在有语音正在播放时才 cancel，避免重置已热身的音频管线
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+          await new Promise(r => setTimeout(r, 50));
+        }
 
         const utterance = new SpeechSynthesisUtterance(text);
         const voice = this.getEnglishVoice();
@@ -323,9 +327,6 @@ class AudioPlayer {
         // 音频已播完，只需暂停重置，不销毁
         this.audio.pause();
         this.audio.removeAttribute('src');
-      }
-      if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
       }
 
       const cleaned = this.cleanText(text);

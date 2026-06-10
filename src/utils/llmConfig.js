@@ -28,7 +28,7 @@ export const knowledgeBase = {
 - 玩具/运动：toy, kite, ball, doll, robot, tennis, guitar, piano, basketball, table-tennis, team
 - 交通：bus, train, lorry, car, bike, motorbike, plane, helicopter, boat, street
 - 家人：mother, father, grandmother, grandfather, sister, brother
-- 动作：listen, look, point, sit, sit down, stand, stand up, open, close, jump, fly, swim, walk, wash, brush, go, play, ride, drive, show, taste, touch, feed, help, pick up, see, cross, sail, watch, read, eat, find, smell, hear
+- 动作：listen, look, point, sit, sit down, stand, stand up, open, close, talk, jump, fly, swim, walk, wash, brush, go, play, ride, drive, show, taste, touch, feed, help, pick up, see, cross, sail, watch, read, eat, find, smell, hear,catch,ask
 - 自然：sea, plain, forest, river, wild
 - 形容词：big, small, long, short, clean, dirty, beautiful, ugly, happy, sad, old, young, hot, cold
 - 主宾语：I, me, you, he, him, she, her, they, them, we, us, it

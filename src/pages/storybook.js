@@ -414,7 +414,8 @@ function doPrev() {
   playState.isPaused = false;
   playState.isPlaying = true;
   updateUI();
-  setTimeout(() => playNext(myId), 100);
+  // 同步调用以保持在用户手势上下文中（移动端需要）
+  playNext(myId);
 }
 
 function doNext() {
@@ -425,7 +426,8 @@ function doNext() {
   playState.isPaused = false;
   playState.isPlaying = true;
   updateUI();
-  setTimeout(() => playNext(myId), 100);
+  // 同步调用以保持在用户手势上下文中（移动端需要）
+  playNext(myId);
 }
 
 function stopPlayback() {
