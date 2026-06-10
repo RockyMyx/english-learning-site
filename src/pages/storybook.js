@@ -517,6 +517,11 @@ function stopPlayback() {
   setStatus('点击播放按钮开始');
   const fill = document.getElementById('prog-fill');
   if (fill) fill.style.width = '0%';
+  // 滚动到第一句位置
+  const firstCard = document.querySelector('.story-sentence');
+  if (firstCard) {
+    firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function onPlayComplete() {
@@ -540,14 +545,17 @@ function highlight(idx) {
   const cards = document.querySelectorAll('.story-sentence');
   if (cards[idx]) {
     cards[idx].classList.add('playing');
-    // 使用 scrollIntoViewIfNeeded 适配微信/百度等 WebView
-    // 仅当卡片不在可视区域内时才滚动，避免国产浏览器整页滚动问题
+    // 检测卡片是否被粘性播放器遮挡或不在可视区域
     const card = cards[idx];
     const rect = card.getBoundingClientRect();
-    const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    const player = document.getElementById('sp');
+    const playerHeight = player ? player.offsetHeight : 0;
+    const safeTop = playerHeight + 8; // 播放器高度 + 一点间距
+    const inView = rect.top >= safeTop && rect.bottom <= window.innerHeight - 8;
     if (!inView) {
+      // 优先使用非标准 API 适配国产 WebView，否则降级
       if (card.scrollIntoViewIfNeeded) {
-        card.scrollIntoViewIfNeeded({ behavior: 'smooth', block: 'center' });
+        card.scrollIntoViewIfNeeded(true);
       } else {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
