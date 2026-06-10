@@ -230,12 +230,14 @@ class AudioPlayer {
           return;
         }
 
-        await this.waitForVoices();
+        // voices 已加载则不再等待
+        if (this.webSpeechVoices.length === 0) {
+          await this.waitForVoices(500);
+        }
 
-        // 只在有语音正在播放时才 cancel，避免重置已热身的音频管线
+        // 只在有语音正在播放时才 cancel
         if (window.speechSynthesis.speaking) {
           window.speechSynthesis.cancel();
-          await new Promise(r => setTimeout(r, 50));
         }
 
         const utterance = new SpeechSynthesisUtterance(text);
@@ -318,15 +320,6 @@ class AudioPlayer {
       if (!text) {
         reject(new Error('文本为空'));
         return;
-      }
-
-      // 只在有播放中的音频时才停止，避免无谓地销毁 Audio 元素
-      if (this.isSpeaking || this.speakQueue.length > 0) {
-        this.stop();
-      } else if (this.audio) {
-        // 音频已播完，只需暂停重置，不销毁
-        this.audio.pause();
-        this.audio.removeAttribute('src');
       }
 
       const cleaned = this.cleanText(text);
