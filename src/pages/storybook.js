@@ -333,6 +333,8 @@ async function playAll() {
   if (!playState.isPlaying) return; // 用户可能已停止
   playState.preloaded = true;
   audioPlayer.suppressLoading = true; // 播放期间不弹全局加载遮罩
+  // 清除预加载阶段残留的全局遮罩
+  window.dispatchEvent(new CustomEvent('audio-loading-end'));
   setMainBtnLoading(false); // 结束 spinner，切为暂停图标
   setStatus('预加载完成，开始播放...');
   playFromCurrent();
