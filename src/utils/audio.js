@@ -316,7 +316,18 @@ class AudioPlayer {
         return;
       }
 
-      this.stop();
+      // 只在有播放中的音频时才停止，避免无谓地销毁 Audio 元素
+      if (this.isSpeaking || this.speakQueue.length > 0) {
+        this.stop();
+      } else if (this.audio) {
+        // 音频已播完，只需暂停重置，不销毁
+        this.audio.pause();
+        this.audio.removeAttribute('src');
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+
       const cleaned = this.cleanText(text);
       if (!cleaned) {
         reject(new Error('清理后的文本为空'));
@@ -388,14 +399,13 @@ class AudioPlayer {
 
   playBlob(blob) {
     return new Promise((resolve, reject) => {
-      if (this.audio) {
-        this.audio.pause();
-        this.audio.src = '';
-        this.audio = null;
-      }
-
       const url = URL.createObjectURL(blob);
-      this.audio = new Audio();
+
+      // 复用现有 Audio 元素（移动端需要复用以保持用户手势授权）
+      if (!this.audio) {
+        this.audio = new Audio();
+      }
+      this.audio.pause();
       this.audio.src = url;
       this.audio.volume = 1.0;
       this.audio.preload = 'auto';
@@ -446,8 +456,7 @@ class AudioPlayer {
   stop() {
     if (this.audio) {
       this.audio.pause();
-      this.audio.src = '';
-      this.audio = null;
+      this.audio.removeAttribute('src');
     }
     this.isSpeaking = false;
     this.speakQueue = [];
