@@ -42,9 +42,9 @@ export const stories = [
       { en: 'We stand up and say, "Good morning!"', cn: '我们站起来说："早上好！"' },
       { en: 'We read books in the classroom.', cn: '我们在教室里读书。' },
       { en: 'I like to read English books.', cn: '我喜欢读英语书。' },
-      { en: 'At lunch, I eat an apple and a cake.', cn: '午餐时，我吃一个苹果和一块蛋糕。' },
-      { en: 'My friend has got a banana.', cn: '我的朋友有一个香蕉。' },
-      { en: 'After school, I go home.', cn: '放学后，我回家。' },
+      { en: 'After lunch, I eat an apple and a cake.', cn: '午餐时，我吃一个苹果和一块蛋糕。' },
+      { en: 'My friend eat a banana.', cn: '我的朋友有一个香蕉。' },
+      { en: 'After school, My mother drive me home.', cn: '放学后，我妈妈开车接我回家。' },
       { en: 'I am happy at school.', cn: '我在学校很开心。' },
     ]
   },
@@ -84,12 +84,12 @@ export const stories = [
       { en: 'She can\'t find the ball.', cn: '她找不到球了。' },
       { en: 'She sees a bird.', cn: '她看到一只小鸟。' },
       { en: 'The bird says, \'Can I help you?\'', cn: '小鸟说：‘我能帮你吗？’' },
-      { en: 'Lily says, \'Yes. Can you help me to find the ball', cn: '莉莉说：‘我丢了球。’' },
+      { en: 'Lily says, \'Yes. Can you help me to find the ball?\'', cn: '莉莉说：‘我丢了球。’' },
       { en: 'The bird points to a tree.', cn: '小鸟指着一棵树。' },
       { en: 'The ball is under the tree.', cn: '球在树下面。' },
       { en: 'Lily is very happy.', cn: '莉莉非常开心。' },
       { en: 'She says, \'Thank you, bird!\'', cn: '她说：‘谢谢你，小鸟！’' },
-      { en: 'The bird says:\'It\'s ok\' and flies away.', cn: '猫头鹰微笑着飞走了。' },
+      { en: 'The bird says:\'It\'s ok.\' and flies away.', cn: '猫头鹰微笑着飞走了。' },
       { en: 'Lily goes home with her ball.', cn: '莉莉带着球回家了。' }
     ]
   }

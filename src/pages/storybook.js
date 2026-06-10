@@ -24,7 +24,7 @@ export function initStorybook() {
   el.innerHTML = `
     <div class="mode-content-linear">
       <div class="page-header-linear">
-        <button class="back-btn-linear" onclick="router.navigate('/')">
+        <button class="back-btn-linear" id="story-list-back-btn">
           <i class="fas fa-arrow-left"></i> 返回
         </button>
         <h2 class="page-title-linear">
@@ -53,6 +53,11 @@ export function initStorybook() {
     </div>
   `;
 
+  // 返回按钮
+  document.getElementById('story-list-back-btn').addEventListener('click', () => {
+    window.router.navigate('/');
+  });
+
   document.querySelectorAll('.storybook-card').forEach(card => {
     card.addEventListener('mouseenter', () => {
       card.style.transform = 'translateY(-3px)';
@@ -63,7 +68,7 @@ export function initStorybook() {
       card.style.boxShadow = '0 2px 15px -3px rgba(0,0,0,0.07),0 10px 20px -2px rgba(0,0,0,0.04)';
     });
     card.addEventListener('click', () => {
-      router.navigate(`/storybook/${card.dataset.storyId}`);
+      window.router.navigate(`/storybook/${card.dataset.storyId}`);
     });
   });
 }
@@ -80,11 +85,14 @@ export function initStorybookDetail(storyId) {
       <div class="mode-content-linear" style="text-align:center;padding:3rem;">
         <i class="fas fa-exclamation-circle" style="font-size:2.5rem;color:#94a3b8;margin-bottom:1rem;"></i>
         <p style="color:#64748b;font-size:1.1rem;">未找到该故事</p>
-        <button class="back-btn-linear" style="margin-top:1.5rem;" onclick="router.navigate('/storybook')">
+        <button class="back-btn-linear" id="story-notfound-back-btn" style="margin-top:1.5rem;">
           <i class="fas fa-arrow-left"></i> 返回故事列表
         </button>
       </div>
     `;
+    document.getElementById('story-notfound-back-btn').addEventListener('click', () => {
+      window.router.navigate('/storybook');
+    });
     return;
   }
 
@@ -166,7 +174,7 @@ export function initStorybookDetail(storyId) {
     </style>
     <div class="mode-content-linear">
       <div class="page-header-linear">
-        <button class="back-btn-linear" onclick="router.navigate('/storybook')">
+        <button class="back-btn-linear" id="story-back-btn">
           <i class="fas fa-arrow-left"></i> 返回
         </button>
         <h2 style="flex:1;font-size:1.25rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
@@ -226,6 +234,12 @@ export function initStorybookDetail(storyId) {
 }
 
 function bindDetailEvents(story) {
+  // 返回按钮
+  document.getElementById('story-back-btn').addEventListener('click', () => {
+    stopPlayback();
+    window.router.navigate('/storybook');
+  });
+
   // 中文释义切换
   document.querySelectorAll('.toggle-cn').forEach(btn => {
     btn.addEventListener('click', () => {
