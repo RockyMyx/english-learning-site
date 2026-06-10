@@ -14,6 +14,9 @@ const playState = {
   voicesLoaded: false,
 };
 
+// 播放会话 ID，用于解决 prev/next/stop 导致的竞态问题
+let playbackId = 0;
+
 // ========== 页面：故事列表 ==========
 
 export function initStorybook() {
@@ -157,11 +160,16 @@ export function initStorybookDetail(storyId) {
         position:relative;
       }
       .story-player .cb.main.loading i {
+        -webkit-animation:spin 0.8s linear infinite;
         animation:spin 0.8s linear infinite;
       }
+      @-webkit-keyframes spin {
+        from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}
+        to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
+      }
       @keyframes spin {
-        from{transform:rotate(0deg);}
-        to{transform:rotate(360deg);}
+        from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}
+        to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
       }
       /* 单句播放按钮 loading */
       .s-play-btn.loading {
@@ -169,6 +177,7 @@ export function initStorybookDetail(storyId) {
         opacity:0.8;
       }
       .s-play-btn.loading i {
+        -webkit-animation:spin 0.8s linear infinite;
         animation:spin 0.8s linear infinite;
       }
     </style>
@@ -279,12 +288,15 @@ function bindDetailEvents(story) {
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / rect.width;
     const target = Math.floor(ratio * playState.sentences.length);
-    const wasPlaying = playState.isPlaying;
-    stopPlayback();
+    const wasPlaying = playState.isPlaying || playState.isPaused;
+    const myId = ++playbackId;
+    audioPlayer.stop();
+    playState.isPaused = false;
+    playState.isPlaying = wasPlaying;
     playState.currentIndex = Math.max(0, Math.min(target, playState.sentences.length - 1));
     updateUI();
     if (wasPlaying) {
-      playFromCurrent();
+      setTimeout(() => playNext(myId), 100);
     }
   });
 }
@@ -302,7 +314,7 @@ function setMainBtnLoading(loading) {
   } else {
     btn.classList.remove('loading');
     playState.isLoading = false;
-    // 图标由 updateUI 设置
+    updateUI();
   }
 }
 
@@ -320,6 +332,30 @@ function setSingleBtnLoading(idx, loading) {
   }
 }
 
+// 暂停当前正在播放的音频（兼容 PC Web Speech + 移动端 HTML Audio）
+function pauseCurrentAudio() {
+  // HTML Audio（移动端 Azure TTS）
+  if (audioPlayer.audio && !audioPlayer.audio.paused) {
+    audioPlayer.audio.pause();
+  }
+  // Web Speech API（PC 端）
+  if (window.speechSynthesis && window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause();
+  }
+}
+
+// 恢复当前暂停的音频
+function resumeCurrentAudio() {
+  // HTML Audio（移动端 Azure TTS）
+  if (audioPlayer.audio && audioPlayer.audio.paused) {
+    audioPlayer.audio.play().catch(() => {});
+  }
+  // Web Speech API（PC 端）
+  if (window.speechSynthesis && window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
+  }
+}
+
 async function playAll() {
   if (playState.isPlaying) return;
 
@@ -327,6 +363,7 @@ async function playAll() {
     playState.currentIndex = 0;
   }
 
+  const myId = ++playbackId;
   playState.isPlaying = true;
   playState.isPaused = false;
   playState.preloaded = false;
@@ -344,21 +381,17 @@ async function playAll() {
   }
 
   // 预加载完成，开始流畅播放
-  if (!playState.isPlaying) return; // 用户可能已停止
+  if (myId !== playbackId) return; // 用户已停止或操作了 prev/next
   playState.preloaded = true;
-  audioPlayer.suppressLoading = true; // 播放期间不弹全局加载遮罩
-  // 清除预加载阶段残留的全局遮罩
+  audioPlayer.suppressLoading = true;
   window.dispatchEvent(new CustomEvent('audio-loading-end'));
-  setMainBtnLoading(false); // 结束 spinner，切为暂停图标
+  setMainBtnLoading(false);
   setStatus('预加载完成，开始播放...');
-  playFromCurrent();
+  playNext(myId);
 }
 
-function playFromCurrent() {
-  playNext();
-}
-
-async function playNext() {
+function playNext(id) {
+  if (id !== playbackId) return; // 已被新操作取代
   if (!playState.isPlaying || playState.isPaused) return;
   if (playState.currentIndex >= playState.sentences.length) {
     onPlayComplete();
@@ -372,26 +405,29 @@ async function playNext() {
 
   const text = playState.sentences[idx].en;
 
-  try {
-    await audioPlayer.speak(text, { speed: 0.7 });
-
+  audioPlayer.speak(text, { speed: 0.7 }).then(() => {
+    if (id !== playbackId) return; // 已被新操作取代
     if (!playState.isPlaying) return;
+
     playState.currentIndex++;
     if (playState.currentIndex >= playState.sentences.length) {
       onPlayComplete();
     } else {
-      setTimeout(playNext, 400);
+      setTimeout(() => playNext(id), 400);
     }
-  } catch (e) {
+  }).catch((e) => {
+    // speak 被 stop() 中断时会 reject，检查是否被新操作取代
+    if (id !== playbackId) return;
     console.warn('[Storybook] playNext error:', e.message);
     if (!playState.isPlaying) return;
     playState.currentIndex++;
-    setTimeout(playNext, 100);
-  }
+    setTimeout(() => playNext(id), 100);
+  });
 }
 
 async function playSingle(idx) {
   stopPlayback();
+  const myId = ++playbackId;
   playState.currentIndex = idx;
   playState.isPlaying = true;
   highlight(idx);
@@ -405,6 +441,7 @@ async function playSingle(idx) {
   try {
     await audioPlayer.speak(text, { speed: 0.7 });
 
+    if (myId !== playbackId) return;
     playState.isPlaying = false;
     setSingleBtnLoading(idx, false);
     setMainBtnLoading(false);
@@ -412,6 +449,7 @@ async function playSingle(idx) {
     updateUI();
     setStatus('点击播放按钮开始');
   } catch (e) {
+    if (myId !== playbackId) return;
     console.warn('[Storybook] playSingle error:', e.message);
     playState.isPlaying = false;
     setSingleBtnLoading(idx, false);
@@ -423,48 +461,44 @@ async function playSingle(idx) {
 }
 
 function doPause() {
-  // Web Speech API 支持暂停
-  if (window.speechSynthesis) {
-    window.speechSynthesis.pause();
-  }
+  pauseCurrentAudio();
   playState.isPaused = true;
   updateUI();
   setStatus(`已暂停 - 第 ${playState.currentIndex + 1} 句`);
 }
 
 function doResume() {
-  if (window.speechSynthesis) {
-    window.speechSynthesis.resume();
-  }
   playState.isPaused = false;
   playState.isPlaying = true;
+  resumeCurrentAudio();
   updateUI();
   setStatus(`正在播放第 ${playState.currentIndex + 1} / ${playState.sentences.length} 句`);
 }
 
 function doPrev() {
+  if (playState.currentIndex <= 0) return;
+  const myId = ++playbackId; // 让旧的 playNext 自动退出
   audioPlayer.stop();
-  if (playState.currentIndex > 0) {
-    playState.currentIndex--;
-  }
+  playState.currentIndex--;
   playState.isPaused = false;
   playState.isPlaying = true;
   updateUI();
-  setTimeout(playNext, 50);
+  setTimeout(() => playNext(myId), 100);
 }
 
 function doNext() {
+  if (playState.currentIndex >= playState.sentences.length - 1) return;
+  const myId = ++playbackId; // 让旧的 playNext 自动退出
   audioPlayer.stop();
-  if (playState.currentIndex < playState.sentences.length - 1) {
-    playState.currentIndex++;
-  }
+  playState.currentIndex++;
   playState.isPaused = false;
   playState.isPlaying = true;
   updateUI();
-  setTimeout(playNext, 50);
+  setTimeout(() => playNext(myId), 100);
 }
 
 function stopPlayback() {
+  playbackId++; // 让所有 pending 的 playNext 自动退出
   audioPlayer.stop();
   audioPlayer.suppressLoading = false;
   playState.isPlaying = false;
@@ -474,7 +508,6 @@ function stopPlayback() {
   playState.currentIndex = -1;
   unhighlightAll();
   setMainBtnLoading(false);
-  // 清除所有单句按钮 loading
   document.querySelectorAll('.s-play-btn.loading').forEach(btn => {
     btn.classList.remove('loading');
     const icon = btn.querySelector('i');
@@ -487,6 +520,7 @@ function stopPlayback() {
 }
 
 function onPlayComplete() {
+  playbackId++;
   audioPlayer.suppressLoading = false;
   playState.isPlaying = false;
   playState.isPaused = false;
@@ -506,7 +540,18 @@ function highlight(idx) {
   const cards = document.querySelectorAll('.story-sentence');
   if (cards[idx]) {
     cards[idx].classList.add('playing');
-    cards[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // 使用 scrollIntoViewIfNeeded 适配微信/百度等 WebView
+    // 仅当卡片不在可视区域内时才滚动，避免国产浏览器整页滚动问题
+    const card = cards[idx];
+    const rect = card.getBoundingClientRect();
+    const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    if (!inView) {
+      if (card.scrollIntoViewIfNeeded) {
+        card.scrollIntoViewIfNeeded({ behavior: 'smooth', block: 'center' });
+      } else {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 }
 
@@ -522,17 +567,19 @@ function updateUI() {
   const fill = document.getElementById('prog-fill');
   if (fill) fill.style.width = total > 0 ? `${(cur / total) * 100}%` : '0%';
 
-  // 播放/暂停图标（loading 中保持 spinner，否则按状态显示）
+  // 播放/暂停图标：暂停中显示播放图标（点击恢复），播放中显示暂停图标（点击暂停）
   const icon = document.getElementById('play-icon');
   if (icon && !playState.isLoading) {
-    icon.className = playState.isPlaying ? 'fas fa-pause' : 'fas fa-play';
+    const effectivePlaying = playState.isPlaying && !playState.isPaused;
+    icon.className = effectivePlaying ? 'fas fa-pause' : 'fas fa-play';
   }
 
-  // 上/下句按钮
+  // 上/下句按钮：未播放时都禁用，第一句时禁用上一句，最后一句时禁用下一句
   const prev = document.getElementById('cb-prev');
   const next = document.getElementById('cb-next');
-  if (prev) prev.disabled = playState.currentIndex <= 0;
-  if (next) next.disabled = playState.currentIndex >= total - 1;
+  const noActivePlayback = !playState.isPlaying && !playState.isPaused;
+  if (prev) prev.disabled = noActivePlayback || playState.currentIndex <= 0;
+  if (next) next.disabled = noActivePlayback || playState.currentIndex >= total - 1;
 }
 
 function setStatus(text) {
