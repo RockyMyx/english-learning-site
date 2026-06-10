@@ -171,15 +171,6 @@ export function initStorybookDetail(storyId) {
         from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}
         to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
       }
-      /* 单句播放按钮 loading */
-      .s-play-btn.loading {
-        pointer-events:none;
-        opacity:0.8;
-      }
-      .s-play-btn.loading i {
-        -webkit-animation:spin 0.8s linear infinite;
-        animation:spin 0.8s linear infinite;
-      }
     </style>
     <div class="mode-content-linear">
       <div class="page-header-linear">
@@ -224,9 +215,6 @@ export function initStorybookDetail(storyId) {
                   <p style="font-size:0.95rem;color:#64748b;margin:0;line-height:1.5;">${s.cn}</p>
                 </div>
               </div>
-              <button class="s-play-btn" data-idx="${i}" style="flex-shrink:0;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%);color:white;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(59,130,246,0.25);">
-                <i class="fas fa-volume-up" style="font-size:0.85rem;"></i>
-              </button>
             </div>
             <div style="margin-top:0.5rem;padding-left:36px;">
               <button class="toggle-cn" style="background:none;border:none;color:#3b82f6;font-size:0.8rem;cursor:pointer;padding:0;font-weight:500;">
@@ -257,14 +245,6 @@ function bindDetailEvents(story) {
       btn.innerHTML = showing
         ? '<i class="fas fa-eye-slash" style="margin-right:0.25rem;"></i>隐藏中文释义'
         : '<i class="fas fa-eye" style="margin-right:0.25rem;"></i>查看中文释义';
-    });
-  });
-
-  // 单句播放
-  document.querySelectorAll('.s-play-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.idx);
-      playSingle(idx);
     });
   });
 
@@ -315,20 +295,6 @@ function setMainBtnLoading(loading) {
     btn.classList.remove('loading');
     playState.isLoading = false;
     updateUI();
-  }
-}
-
-function setSingleBtnLoading(idx, loading) {
-  const btns = document.querySelectorAll('.s-play-btn');
-  const btn = btns[idx];
-  if (!btn) return;
-  const icon = btn.querySelector('i');
-  if (loading) {
-    btn.classList.add('loading');
-    if (icon) icon.className = 'fas fa-spinner';
-  } else {
-    btn.classList.remove('loading');
-    if (icon) icon.className = 'fas fa-volume-up';
   }
 }
 
@@ -425,41 +391,6 @@ function playNext(id) {
   });
 }
 
-async function playSingle(idx) {
-  stopPlayback();
-  const myId = ++playbackId;
-  playState.currentIndex = idx;
-  playState.isPlaying = true;
-  highlight(idx);
-  setSingleBtnLoading(idx, true);
-  setMainBtnLoading(true);
-  updateUI();
-  setStatus(`正在加载第 ${idx + 1} 句语音...`);
-
-  const text = playState.sentences[idx].en;
-
-  try {
-    await audioPlayer.speak(text, { speed: 0.7 });
-
-    if (myId !== playbackId) return;
-    playState.isPlaying = false;
-    setSingleBtnLoading(idx, false);
-    setMainBtnLoading(false);
-    unhighlightAll();
-    updateUI();
-    setStatus('点击播放按钮开始');
-  } catch (e) {
-    if (myId !== playbackId) return;
-    console.warn('[Storybook] playSingle error:', e.message);
-    playState.isPlaying = false;
-    setSingleBtnLoading(idx, false);
-    setMainBtnLoading(false);
-    unhighlightAll();
-    updateUI();
-    setStatus('播放失败，请重试');
-  }
-}
-
 function doPause() {
   pauseCurrentAudio();
   playState.isPaused = true;
@@ -508,20 +439,12 @@ function stopPlayback() {
   playState.currentIndex = -1;
   unhighlightAll();
   setMainBtnLoading(false);
-  document.querySelectorAll('.s-play-btn.loading').forEach(btn => {
-    btn.classList.remove('loading');
-    const icon = btn.querySelector('i');
-    if (icon) icon.className = 'fas fa-volume-up';
-  });
   updateUI();
   setStatus('点击播放按钮开始');
   const fill = document.getElementById('prog-fill');
   if (fill) fill.style.width = '0%';
-  // 滚动到第一句位置
-  const firstCard = document.querySelector('.story-sentence');
-  if (firstCard) {
-    firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  // 滚动到页面顶部，确保第一句可见
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function onPlayComplete() {
@@ -540,26 +463,27 @@ function onPlayComplete() {
 
 // ========== UI 更新 ==========
 
+// 将指定卡片滚动到可视区域（避开固定导航栏和 sticky 播放器）
+function scrollCardToVisible(card) {
+  if (!card) return;
+  const player = document.getElementById('sp');
+  const playerH = player ? player.offsetHeight : 0;
+  const navH = 60; // 固定导航栏高度
+  const totalOffset = navH + playerH + 8; // 总遮挡高度 + 间距
+  const cardRect = card.getBoundingClientRect();
+  // 卡片顶部在可见区域内，不需要滚动
+  if (cardRect.top >= totalOffset && cardRect.bottom <= window.innerHeight - 4) return;
+  // 计算目标滚动位置：让卡片顶部刚好在导航栏+播放器下方
+  const targetScrollTop = cardRect.top + window.scrollY - totalOffset;
+  window.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+}
+
 function highlight(idx) {
   unhighlightAll();
   const cards = document.querySelectorAll('.story-sentence');
   if (cards[idx]) {
     cards[idx].classList.add('playing');
-    // 检测卡片是否被粘性播放器遮挡或不在可视区域
-    const card = cards[idx];
-    const rect = card.getBoundingClientRect();
-    const player = document.getElementById('sp');
-    const playerHeight = player ? player.offsetHeight : 0;
-    const safeTop = playerHeight + 8; // 播放器高度 + 一点间距
-    const inView = rect.top >= safeTop && rect.bottom <= window.innerHeight - 8;
-    if (!inView) {
-      // 优先使用非标准 API 适配国产 WebView，否则降级
-      if (card.scrollIntoViewIfNeeded) {
-        card.scrollIntoViewIfNeeded(true);
-      } else {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
+    scrollCardToVisible(cards[idx]);
   }
 }
 
